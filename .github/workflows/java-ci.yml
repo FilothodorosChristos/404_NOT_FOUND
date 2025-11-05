@@ -1,5 +1,4 @@
-
-          name: Java CI with Jacoco
+name: Java CI with Jacoco
 
 on:
   push:
@@ -9,41 +8,39 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout του repo
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # 1. Checkout του repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # 2. Setup Java 25
-    - name: Set up JDK 25
-      uses: actions/setup-java@v3
-      with:
-        distribution: temurin
-        java-version: 25
+      # 2. Setup Java 25
+      - name: Set up JDK 25
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 25
 
-    # 3. Compile και test
-    - name: Build and Test
-      run: mvn clean test
+      # 3. Compile και test
+      - name: Build and Test
+        run: mvn clean test
 
-    # 4. Checkstyle
-    - name: Checkstyle
-      run: mvn checkstyle:check
+      # 4. Checkstyle
+      - name: Checkstyle
+        run: mvn checkstyle:check
 
-    # 5. SpotBugs
-    - name: SpotBugs
-      run: mvn spotbugs:check
+      # 5. SpotBugs
+      - name: SpotBugs
+        run: mvn spotbugs:check
 
-    # 6. Jacoco report
-    - name: Jacoco Coverage
-      run: mvn jacoco:report
+      # 6. Jacoco report
+      - name: Jacoco Coverage
+        run: mvn jacoco:report
 
-    # 7. Upload Jacoco report as artifact
-    - name: Upload Jacoco report
-      uses: actions/upload-artifact@v3
-      with:
-        name: jacoco-report
-        path: target/site/jacoco/
-
+      # 7. Upload Jacoco report as artifact
+      - name: Upload Jacoco report
+        uses: actions/upload-artifact@v3
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
