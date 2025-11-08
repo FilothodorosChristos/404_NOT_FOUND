@@ -1,3 +1,48 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class DatabaseSetup {
-    
+
+    public static void main(String[] args) {
+        String url = "jdbc:sqlite:budgetDB.db"; // ίδια βάση με την CreateDatabase
+
+        try (Connection conn = DriverManager.getConnection(url);
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute("PRAGMA foreign_keys = ON;");
+
+            // Πίνακας foreis
+            String createForeisTable = """
+                CREATE TABLE IF NOT EXISTS foreis (
+                    foreas_id INTEGER PRIMARY KEY,
+                    year_id INTEGER NOT NULL,
+                    regular_budget REAL,
+                    public_inv_budget REAL,
+                    total REAL
+                );
+            """;
+
+            // Πίνακας cashflows
+            String createCashflowsTable = """
+                CREATE TABLE IF NOT EXISTS cashflows (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    year_id INTEGER NOT NULL,
+                    type TEXT NOT NULL,
+                    name TEXT NOT NULL,
+                    amount REAL,
+                    FOREIGN KEY (year_id) REFERENCES foreis(year_id)
+                );
+            """;
+
+            stmt.execute(createCashflowsTable);
+            stmt.execute(createForeisTable);
+
+            System.out.println("Οι πίνακες δημιουργήθηκαν με επιτυχία στη βάση budgetDB.db.");
+
+        } catch (SQLException e) {
+            System.out.println("Σφάλμα κατά τη δημιουργία των πινάκων: " + e.getMessage());
+        }
+    }
 }

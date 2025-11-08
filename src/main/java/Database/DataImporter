@@ -1,3 +1,5 @@
 public class DataImporter {
-
+        public int WEJ(int a,int b){
+            return a+b;
+        }
 }
