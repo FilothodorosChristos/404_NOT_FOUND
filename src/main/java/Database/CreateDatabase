@@ -3,8 +3,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class CreateDatabase {
-    public static void main(String[] args) {
-        String url = "jdbc:sqlite:budgetDB.db"; // όνομα αρχείου βάσης
+    public static void createDatabase() {
+        String url = "jdbc:sqlite:budgetDB.db";
 
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
