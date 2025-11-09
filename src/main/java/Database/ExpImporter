@@ -3,35 +3,35 @@ import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.Scanner;
 //CHECK FOR ERRORS!!!
-// ...existing code...
+
 public class ExpImporter {
 
-    private static final String DB_URL = "jdbc:sqlite:budgetDB.db";
+    private static final String url = "jdbc:sqlite:budgetDB.db";
     private static boolean foreisCleared = false;
     private static boolean cashflowsCleared = false;
 
     public static void importer() {
         // Πίνακες και τύποι CSV
-        int[] years = {2023, 2024, 2025};
+        int[] years = {23, 24, 25};
         String[] cashflowTypes = {"Esoda", "Exoda"};
 
         // Διαγράφουμε και εισάγουμε πρώτα foreis
         for (int year : years) {
-            String filename = "B" + (year - 2000) + "Foreis.csv";
+            String filename = "B" + year + "Foreis.csv";
             insertForeisFromCsv(filename);
         }
 
         // Διαγράφουμε και εισάγουμε cashflows
         for (int year : years) {
             for (String type : cashflowTypes) {
-                String filename = "B" + (year - 2000) + type + ".csv";
+                String filename = "B" + year + type + ".csv";
                 insertCashflowsFromCsv(filename, type);
             }
         }
     }
 
     public static void insertForeisFromCsv(String filename) {
-        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+        try (Connection conn = DriverManager.getConnection(url)) {
             conn.setAutoCommit(false);
 
             // Διαγραφή μόνο την πρώτη φορά που εισάγουμε foreis
@@ -45,14 +45,14 @@ public class ExpImporter {
             String sql = "INSERT INTO foreis (foreas_id, year_id, regular_budget, public_inv_budget, total) " +
                          "VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 Scanner sc = new Scanner(new File(filename))) {
+                 Scanner myScanner = new Scanner(new File(filename))) {
 
-                if (sc.hasNextLine()) sc.nextLine(); // Παράβλεψη header
+                if (myScanner.hasNextLine()) sc.nextLine(); // Παράβλεψη header
 
                 int lineNo = 1;
-                while (sc.hasNextLine()) {
+                while (myScanner.hasNextLine()) {
                     lineNo++;
-                    String line = sc.nextLine().trim();
+                    String line = myScanner.nextLine().trim();
                     if (line.isEmpty()) continue;
                     String[] parts = line.split(",", -1);
                     if (parts.length < 5) {
@@ -89,7 +89,7 @@ public class ExpImporter {
     }
 
     public static void insertCashflowsFromCsv(String filename, String type) {
-        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+        try (Connection conn = DriverManager.getConnection(url)) {
             conn.setAutoCommit(false);
 
             // Διαγραφή μόνο την πρώτη φορά που εισάγουμε cashflows
@@ -107,9 +107,9 @@ public class ExpImporter {
                 if (sc.hasNextLine()) sc.nextLine(); // Παράβλεψη header
 
                 int lineNo = 1;
-                while (sc.hasNextLine()) {
+                while (myScanner.hasNextLine()) {
                     lineNo++;
-                    String line = sc.nextLine().trim();
+                    String line = myScanner.nextLine().trim();
                     if (line.isEmpty()) continue;
                     String[] parts = line.split(",", -1);
                     if (parts.length < 3) {
@@ -144,4 +144,3 @@ public class ExpImporter {
         }
     }
 }
-// ...existing code...
