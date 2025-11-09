@@ -1,0 +1,20 @@
+import java.sql.*; // things like classes Connection,Statement,Resultset, ... are taken
+import java.util.*; // to make lists and get the methods we need
+public class CashflowDAO {
+    public List<Cashflow> selectCashFlow() {  // returns a list with objects type Cashflow
+        List<Cashflow> cashflows = new Arraylist<>(); // we have to make a cashflow class to work 
+        String sql = "SELECT * FROM cashflow";
+        try (Connection connection = DatabaseConnection.getConnection(); // takes the url of sql and makes the connection
+             Statement statement = connection.createStatement(); // gives the commands we give to the sql
+             Resultset resultset = statement.executeQuery(sql)) { // takes the results of the commands we gave
+                while(resultset.next()) {
+                    Cashflow cashflow = new Cashflow( resultset.getInt("id"),resultset.getInt("year_id"),resultset.getString("name"),resultset.getString("type"),resultset.getDouble("amount"));
+                    // the above line makes objects cashflow with the output of the sql commands (SELECT)
+                    cashflows.add(cashflow);
+                }
+             } catch (SQLException e) {
+                e.printStackTrace(); // prints the type of exception , and when it happened (which method)
+             }
+             return cashflows;
+    }
+}
