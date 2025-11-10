@@ -82,7 +82,7 @@ public class DataImporter {
                 System.out.println("Δεν βρέθηκε το αρχείο: " + filename);
             } catch (SQLException e) {
                 conn.rollback();
-                System.out.println("Σφάλμα κατά την εισαγωγή στο foreis: " + e.getMessage());
+                System.out.println("Σφάλμα κατά την εισαγωγή στον πίνακα foreis: " + e.getMessage());
             }
 
         } catch (SQLException e) {
