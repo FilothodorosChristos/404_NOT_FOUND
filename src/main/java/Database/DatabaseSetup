@@ -18,6 +18,8 @@ public class DatabaseSetup {
                 CREATE TABLE IF NOT EXISTS foreis (
                     foreas_id INTEGER PRIMARY KEY,
                     year_id INTEGER NOT NULL,
+                    type TEXT NOT NULL,
+                    name TEXT NOT NULL,
                     regular_budget REAL,
                     public_inv_budget REAL,
                     total REAL
