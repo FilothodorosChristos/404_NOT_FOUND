@@ -17,4 +17,19 @@ public class CashflowDAO {
              }
              return cashflows;
     }
+    public void addCashFlow(Cashflow cashflow) { // adding the new line cashflow we want
+          String sql = "INSERT INTO cashflow(year_id, name, type, amount) VALUES(?, ?, ?, ?)"; // the command at sql
+          try (Connection connection = DatabaseConnection.getConnection(); // making the connection with sql, taking and opening the url
+               PreparedStatement preparedStatement = connection.prepareStatement(sql);) { // giving the command with the values of the set methods
+               // giving prices at the attributes of the object
+               preparedStatement.setInt(1,cashflow.getYearId);
+               preparedStatement.setString(2,cashflow.getName());
+               preparedStatement.setString(3,cashflow.getType());
+               preparedStatement.setDouble(4,cashflow.getAmount());
+               preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace(); // prints the type of exception , and when it happened (which method)
+        }
+    }
 }
+
