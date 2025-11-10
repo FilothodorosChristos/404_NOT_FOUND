@@ -1,18 +1,26 @@
 import java.sql.*; // things like classes Connection,Statement,Resultset, ... are taken
 import java.util.*; // to make lists and get the methods we need
 public class CashflowDAO {
+    private Cashflow mapRow(ResultSet rs) throws SQLException {
+        return new Cashflow(
+            rs.getInt("id"),
+            rs.getInt("year_id"),
+            rs.getString("name"),
+            rs.getString("type"),
+            rs.getDouble("amount")
+        );
+    }
     public List<Cashflow> selectCashFlow() {  // returns a list with objects type Cashflow
-        List<Cashflow> cashflows = new Arraylist<>(); // we have to make a cashflow class to work 
+        List<Cashflow> cashflows = new ArrayList<>(); // we have to make a cashflow class to work 
         String sql = "SELECT * FROM cashflow";
         try (Connection connection = DatabaseConnection.getConnection(); // takes the url of sql and makes the connection
              Statement statement = connection.createStatement(); // gives the commands we give to the sql
              Resultset resultset = statement.executeQuery(sql)) { // takes the results of the commands we gave
                 while(resultset.next()) {
-                    Cashflow cashflow = new Cashflow( resultset.getInt("id"),resultset.getInt("year_id"),resultset.getString("name"),resultset.getString("type"),resultset.getDouble("amount"));
-                    // the above line makes objects cashflow with the output of the sql commands (SELECT)
-                    cashflows.add(cashflow);
+                    cashflows.add(mapRow(resultset));
                 }
              } catch (SQLException e) {
+                System.err.println("Error found at selectCashflow");
                 e.printStackTrace(); // prints the type of exception , and when it happened (which method)
              }
              return cashflows;
@@ -20,14 +28,15 @@ public class CashflowDAO {
     public void addCashFlow(Cashflow cashflow) { // adding the new line cashflow we want
           String sql = "INSERT INTO cashflow(year_id, name, type, amount) VALUES(?, ?, ?, ?)"; // the command at sql
           try (Connection connection = DatabaseConnection.getConnection(); // making the connection with sql, taking and opening the url
-               PreparedStatement preparedStatement = connection.prepareStatement(sql);) { // giving the command with the values of the set methods
+               PreparedStatement preparedStatement = connection.prepareStatement(sql)) { // giving the command with the values of the set methods
                // giving prices at the attributes of the object
-               preparedStatement.setInt(1,cashflow.getYearId);
+               preparedStatement.setInt(1,cashflow.getYearId());
                preparedStatement.setString(2,cashflow.getName());
                preparedStatement.setString(3,cashflow.getType());
                preparedStatement.setDouble(4,cashflow.getAmount());
                preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            System.err.println("Error found at addCashflow");
             e.printStackTrace(); // prints the type of exception , and when it happened (which method)
         }
     }
