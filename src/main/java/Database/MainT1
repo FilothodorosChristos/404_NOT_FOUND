@@ -1,12 +1,10 @@
 package database;
 
-public static void MainT1 {
+public class MainT1 {
 
     public static void main(String[] args) {
-    CreateDatabase.createDatabase();  
-    DatabaseSetup.setupDatabase();
-    DataImport.importer();
-    DataImport.insertForeisFromCsv();
-    DataImport.insertCashflowsFromCsv();
+        CreateDatabase.createDatabase();  
+        DatabaseSetup.setupDatabase();
+        DataImport.importer();
     }
 }
