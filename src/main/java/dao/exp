@@ -14,7 +14,7 @@ public class CashflowDAO {
         List<Cashflow> cashflows = new ArrayList<>(); // we have to make a cashflow class to work 
         String sql = "SELECT * FROM cashflow";
         try (Connection connection = DatabaseConnection.getConnection(); // takes the url of sql and makes the connection
-             Statement statement = connection.createStatement(); // gives the commands we give to the sql
+             PreparedStatement statement = connection.createStatement(); // gives the commands we give to the sql
              Resultset resultset = statement.executeQuery(sql)) { // takes the results of the commands we gave
                 while(resultset.next()) {
                     cashflows.add(mapRow(resultset));
@@ -39,6 +39,21 @@ public class CashflowDAO {
             System.err.println("Error found at addCashflow");
             e.printStackTrace(); // prints the type of exception , and when it happened (which method)
         }
+    }
+    public void updateCashFlow(Cashflow cashflow) {
+        String sql = "UPDATE cashflow SET year_id = ?, name = ?, type = ?, amount = ? WHERE id = ?"; // the command we are going to give
+        try (Connection connection = DatabaseConnection.getConnection(); // making the connection with sql
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) { // giving the command with the vaulues of the set methods
+                prepareStatement.setInt(1, cashflow.getYearId());
+                preparedStatement.setString(2, cashflow.getName());
+                preparedStatement.setString(3, cashflow.getType());
+                preparedStatement.setDouble(4, cashflow.getAmount());
+                preparedStatement.setInt(5, cashflow.getId());
+                preparedStatement.executeUpdate();
+             } catch (SQLException e) {
+                System.err.println("Wrong at updateCashFlow");
+                e.printStackTrace();
+             }
     }
 }
 
