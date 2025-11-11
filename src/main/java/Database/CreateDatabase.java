@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+
 public class CreateDatabase {
     public static void createDB() {
         String url = "jdbc:sqlite:budgetDB.db";
@@ -16,4 +17,6 @@ public class CreateDatabase {
             System.out.println("Σφάλμα: " + e.getMessage());
         }
     }
+
+
 }
