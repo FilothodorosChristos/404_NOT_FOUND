@@ -4,35 +4,35 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Scanner;
 
-public class DataImporter {
+public class DataImp2 {
 
     private static final String URL = "jdbc:sqlite:budgetDB.db";
     private static final int[] YEARS = {23, 24, 25};
     private static final String[] CASHFLOW_TYPES = {"Esoda", "Exoda"};
 
     public static void importer() {
-        
+
+        // Καθαρισμός πινάκων
         try (Connection conn = DriverManager.getConnection(URL);
-         Statement stmt = conn.createStatement()) {
+             Statement stmt = conn.createStatement()) {
 
-        // Διαγραφή όλων των δεδομένων στους πίνακες
-        stmt.executeUpdate("DELETE FROM cashflows;");
-        stmt.executeUpdate("DELETE FROM foreis;");
-        System.out.println("Οι πίνακες καθαρίστηκαν.");
+            stmt.executeUpdate("DELETE FROM cashflows;");
+            stmt.executeUpdate("DELETE FROM foreis;");
+            System.out.println("Οι πίνακες καθαρίστηκαν.");
 
-    } catch (SQLException e) {
-        System.out.println("Σφάλμα κατά το καθάρισμα των πινάκων: " + e.getMessage());
-        return;
-    }
+        } catch (SQLException e) {
+            System.out.println("Σφάλμα κατά το καθάρισμα των πινάκων: " + e.getMessage());
+            return;
+        }
 
-        // Εισαγωγή foreis πρώτα
+        // Εισαγωγή foreis
         for (int year : YEARS) {
             String filename = "B" + year + "Foreis.csv";
             try {
                 insertForeisFromCsv(filename);
                 System.out.println("Εισήχθησαν δεδομένα από " + filename);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("Πρόβλημα με " + filename + ": " + e.getMessage());
             }
         }
 
@@ -44,7 +44,7 @@ public class DataImporter {
                     insertCashflowsFromCsv(filename, type);
                     System.out.println("Εισήχθησαν δεδομένα από " + filename);
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    System.out.println("Πρόβλημα με " + filename + ": " + e.getMessage());
                 }
             }
         }
@@ -69,7 +69,14 @@ public class DataImporter {
                 if (line.isEmpty()) continue;
 
                 String[] parts = line.split(",", -1);
-                if (parts.length < 7) continue;
+
+                // Debug: εμφανίζουμε κάθε γραμμή
+                System.out.println("Foreis line " + lineNo + ": " + line);
+
+                if (parts.length < 6) {
+                    System.out.println("  -> Παράλειψη: λιγότερα από 7 πεδία");
+                    continue;
+                }
 
                 try {
                     pstmt.setInt(1, Integer.parseInt(parts[0].trim()));
@@ -81,13 +88,14 @@ public class DataImporter {
                     pstmt.setDouble(7, Double.parseDouble(parts[6].trim()));
                     pstmt.addBatch();
                 } catch (NumberFormatException nfe) {
-                    // παραλείπουμε γραμμή με λάθος αριθμό
+                    System.out.println("  -> Παράλειψη: αριθμητικό σφάλμα στο line " + lineNo + " (" + nfe.getMessage() + ")");
                 }
             }
+
             pstmt.executeBatch();
             conn.commit();
         } catch (SQLException e) {
-            throw new Exception("Σφάλμα κατά την εισαγωγή στον πίνακα foreis: " + e.getMessage());
+            throw new Exception("Σφάλμα στον πίνακα foreis: " + e.getMessage());
         }
     }
 
@@ -110,7 +118,14 @@ public class DataImporter {
                 if (line.isEmpty()) continue;
 
                 String[] parts = line.split(",", -1);
-                if (parts.length < 3) continue;
+
+                // Debug: εμφανίζουμε κάθε γραμμή
+                System.out.println("Cashflows line " + lineNo + ": " + line);
+
+                if (parts.length < 3) {
+                    System.out.println("  -> Παράλειψη: λιγότερα από 3 πεδία");
+                    continue;
+                }
 
                 try {
                     pstmt.setInt(1, Integer.parseInt(parts[0].trim()));
@@ -119,14 +134,14 @@ public class DataImporter {
                     pstmt.setDouble(4, Double.parseDouble(parts[2].trim()));
                     pstmt.addBatch();
                 } catch (NumberFormatException nfe) {
-                    // παραλείπουμε γραμμή με λάθος αριθμό
+                    System.out.println("  -> Παράλειψη: αριθμητικό σφάλμα στο line " + lineNo + " (" + nfe.getMessage() + ")");
                 }
             }
 
             pstmt.executeBatch();
             conn.commit();
         } catch (SQLException e) {
-            throw new Exception("Σφάλμα κατά την εισαγωγή στον πίνακα cashflows: " + e.getMessage());
+            throw new Exception("Σφάλμα στον πίνακα cashflows: " + e.getMessage());
         }
     }
 }

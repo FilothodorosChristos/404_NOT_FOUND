@@ -7,10 +7,10 @@ import java.sql.Statement;
 
 public class DatabaseSetup {
 
-    public static void setDatabase() {
-        String url = "jdbc:sqlite:budgetDB.db"; // ίδια βάση με την CreateDatabase
+    private static final String URL = "jdbc:sqlite:budgetDB.db";
 
-        try (Connection conn = DriverManager.getConnection(url);
+    public static void setDatabase() {
+        try (Connection conn = DriverManager.getConnection(URL);
              Statement stmt = conn.createStatement()) {
 
             stmt.execute("PRAGMA foreign_keys = ON;");
@@ -40,13 +40,37 @@ public class DatabaseSetup {
                 );
             """;
 
-            stmt.execute(createCashflowsTable);
             stmt.execute(createForeisTable);
+            stmt.execute(createCashflowsTable);
 
-            System.out.println("Οι πίνακες δημιουργήθηκαν με επιτυχία στη βάση budgetDB.db.");
+            System.out.println("Οι πίνακες δημιουργήθηκαν με επιτυχία.");
 
         } catch (SQLException e) {
             System.out.println("Σφάλμα κατά τη δημιουργία των πινάκων: " + e.getMessage());
         }
     }
+
+    public static void dropTables() {
+        try (Connection conn = DriverManager.getConnection(URL);
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute("PRAGMA foreign_keys = OFF;");
+
+            stmt.executeUpdate("DROP TABLE IF EXISTS cashflows;");
+            stmt.executeUpdate("DROP TABLE IF EXISTS foreis;");
+
+            stmt.execute("PRAGMA foreign_keys = ON;");
+
+            System.out.println("Επιτυχής διαγραφή των πινάκων.");
+
+            // Επαναδημιουργία των πινάκων
+            setDatabase();
+
+            System.out.println("Οι πίνακες επαναδημιουργήθηκαν με επιτυχία.");
+
+        } catch (SQLException e) {
+            System.out.println("Σφάλμα κατά τη διαγραφή των πινάκων: " + e.getMessage());
+        }
+    }
 }
+
