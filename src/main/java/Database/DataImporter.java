@@ -108,7 +108,7 @@ public class DataImporter {
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  Scanner myScanner = new Scanner(new File(filename))) {
 
-                if (myScanner.hasNextLine()) sc.nextLine(); // Παράβλεψη header
+                if (myScanner.hasNextLine()) myScanner.nextLine(); // Παράβλεψη header
 
                 int lineNo = 1;
                 while (myScanner.hasNextLine()) {
