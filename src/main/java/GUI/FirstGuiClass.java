@@ -69,53 +69,53 @@ class SecondWindow extends JFrame {
     public SecondWindow() {
         setTitle("GoverLens");
         setSize(1000, 800);
-        
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         JLabel lbl1 = new JLabel("Επίλεξε έτος");
-        lbl1.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        lbl1.setFont(new Font("Tahoma", Font.PLAIN, 30));
         lbl1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lbl2 = new JLabel("προϋπολογισμού");
-        lbl2.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        lbl2.setFont(new Font("Tahoma", Font.PLAIN, 30));
         lbl2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton btn2023 = new JButton("2023");
         btn2023.setForeground(new Color(0, 0, 0));
         btn2023.setBackground(new Color(70, 130, 180));
-        btn2023.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        btn2023.setFont(new Font("Tahoma", Font.BOLD, 28));
         btn2023.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btn2023.setMaximumSize(new Dimension(300, 100)); 
         btn2023.addActionListener(e -> {
-          new ThirdWindow();
-          this.dispose();
+            new ThirdWindow();
+            this.dispose();
         });
 
         JButton btn2024 = new JButton("2024");
         btn2024.setForeground(new Color(0, 0, 0));
         btn2024.setBackground(new Color(70, 130, 180));
-        btn2024.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        btn2024.setFont(new Font("Tahoma", Font.BOLD, 28));
         btn2024.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btn2024.setMaximumSize(new Dimension(300, 100)); 
         btn2024.addActionListener(e -> {
-          new ThirdWindow();
-          this.dispose();
+            new ThirdWindow();
+            this.dispose();
         });
 
         JButton btn2025 = new JButton("2025");
         btn2025.setForeground(new Color(0, 0, 0));
         btn2025.setBackground(new Color(70, 130, 180));
-        btn2025.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        btn2025.setFont(new Font("Tahoma", Font.BOLD, 28)); 
         btn2025.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btn2025.setMaximumSize(new Dimension(300, 100)); 
         btn2025.addActionListener(e -> {
-          new ThirdWindow();
-          this.dispose();
+            new ThirdWindow();
+            this.dispose();
         });
 
-       
         panel.add(Box.createVerticalStrut(20));
         panel.add(lbl1);
         panel.add(lbl2);
@@ -130,6 +130,7 @@ class SecondWindow extends JFrame {
         setVisible(true);
     }
 }
+
 
 //third
 
@@ -204,5 +205,3 @@ class ThirdWindow extends JFrame {
           frame.setVisible(true);
         };
      }
-
-
