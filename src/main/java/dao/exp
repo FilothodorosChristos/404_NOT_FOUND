@@ -1,6 +1,21 @@
-import java.sql.*; // things like classes Connection,Statement,Resultset, ... are taken
-import java.util.*; // to make lists and get the methods we need
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Η κλάση CashflowDAO είναι υπεύθυνη για την επικοινωνία
+ * της Java με τη βάση δεδομένων όσον αφορά τον πίνακα "cashflow".
+ * Περιέχει μεθόδους για ανάγνωση, εισαγωγή και ενημέρωση εγγραφών.
+ */
 public class CashflowDAO {
+
+    /**
+     * Δημιουργεί ένα αντικείμενο Cashflow από μία γραμμή αποτελεσμάτων της SQL.
+     * Κάθε στήλη της γραμμής αντιστοιχίζεται στα πεδία του αντικειμένου.
+     */
     private Cashflow mapRow(ResultSet rs) throws SQLException {
         return new Cashflow(
             rs.getInt("id"),
@@ -10,50 +25,73 @@ public class CashflowDAO {
             rs.getDouble("amount")
         );
     }
-    public List<Cashflow> selectCashFlow() {  // returns a list with objects type Cashflow
-        List<Cashflow> cashflows = new ArrayList<>(); // we have to make a cashflow class to work 
+
+    /**
+     * Επιστρέφει όλες τις εγγραφές του πίνακα cashflow από τη βάση δεδομένων.
+     * Δημιουργεί λίστα αντικειμένων τύπου Cashflow.
+     */
+    public List<Cashflow> selectCashFlow() {
+        List<Cashflow> cashflows = new ArrayList<>();
         String sql = "SELECT * FROM cashflow";
-        try (Connection connection = DatabaseConnection.getConnection(); // takes the url of sql and makes the connection
-             PreparedStatement statement = connection.createStatement(); // gives the commands we give to the sql
-             Resultset resultset = statement.executeQuery(sql)) { // takes the results of the commands we gave
-                while(resultset.next()) {
-                    cashflows.add(mapRow(resultset));
-                }
-             } catch (SQLException e) {
-                System.err.println("Error found at selectCashflow");
-                e.printStackTrace(); // prints the type of exception , and when it happened (which method)
-             }
-             return cashflows;
-    }
-    public void addCashFlow(Cashflow cashflow) { // adding the new line cashflow we want
-          String sql = "INSERT INTO cashflow(year_id, name, type, amount) VALUES(?, ?, ?, ?)"; // the command at sql
-          try (Connection connection = DatabaseConnection.getConnection(); // making the connection with sql, taking and opening the url
-               PreparedStatement preparedStatement = connection.prepareStatement(sql)) { // giving the command with the values of the set methods
-               // giving prices at the attributes of the object
-               preparedStatement.setInt(1,cashflow.getYearId());
-               preparedStatement.setString(2,cashflow.getName());
-               preparedStatement.setString(3,cashflow.getType());
-               preparedStatement.setDouble(4,cashflow.getAmount());
-               preparedStatement.executeUpdate();
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                cashflows.add(mapRow(resultSet));
+            }
+
         } catch (SQLException e) {
-            System.err.println("Error found at addCashflow");
-            e.printStackTrace(); // prints the type of exception , and when it happened (which method)
+            System.err.println("Error found at selectCashFlow");
+            e.printStackTrace();
+        }
+        return cashflows;
+    }
+
+    /**
+     * Εισάγει μια νέα εγγραφή cashflow στη βάση δεδομένων.
+     * Χρησιμοποιεί PreparedStatement για ασφάλεια και αποφυγή λαθών.
+     */
+    public void addCashFlow(Cashflow cashflow) {
+        String sql = "INSERT INTO cashflow(year_id, name, type, amount) VALUES(?, ?, ?, ?)";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, cashflow.getYearId());
+            preparedStatement.setString(2, cashflow.getName());
+            preparedStatement.setString(3, cashflow.getType());
+            preparedStatement.setDouble(4, cashflow.getAmount());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error found at addCashFlow");
+            e.printStackTrace();
         }
     }
+
+    /**
+     * Ενημερώνει μια υπάρχουσα εγγραφή cashflow στη βάση δεδομένων
+     * με τα νέα δεδομένα που περιέχονται στο αντικείμενο cashflow.
+     */
     public void updateCashFlow(Cashflow cashflow) {
-        String sql = "UPDATE cashflow SET year_id = ?, name = ?, type = ?, amount = ? WHERE id = ?"; // the command we are going to give
-        try (Connection connection = DatabaseConnection.getConnection(); // making the connection with sql
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) { // giving the command with the vaulues of the set methods
-                prepareStatement.setInt(1, cashflow.getYearId());
-                preparedStatement.setString(2, cashflow.getName());
-                preparedStatement.setString(3, cashflow.getType());
-                preparedStatement.setDouble(4, cashflow.getAmount());
-                preparedStatement.setInt(5, cashflow.getId());
-                preparedStatement.executeUpdate();
-             } catch (SQLException e) {
-                System.err.println("Wrong at updateCashFlow");
-                e.printStackTrace();
-             }
+        String sql = "UPDATE cashflow SET year_id = ?, name = ?, type = ?, amount = ? WHERE id = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, cashflow.getYearId());
+            preparedStatement.setString(2, cashflow.getName());
+            preparedStatement.setString(3, cashflow.getType());
+            preparedStatement.setDouble(4, cashflow.getAmount());
+            preparedStatement.setInt(5, cashflow.getId());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error found at updateCashFlow");
+            e.printStackTrace();
+        }
     }
 }
 
