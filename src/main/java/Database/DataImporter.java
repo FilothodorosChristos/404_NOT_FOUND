@@ -11,21 +11,9 @@ public class DataImporter {
     private static final String[] CASHFLOW_TYPES = {"Esoda", "Exoda"};
 
     public static void importer() {
-        
-        try (Connection conn = DriverManager.getConnection(URL);
-         Statement stmt = conn.createStatement()) {
+        DatabaseSetup.dropTables(); //καθαρισμός πινάκων πριν απο το γέμισμα 
 
-        // Διαγραφή όλων των δεδομένων στους πίνακες
-        stmt.executeUpdate("DELETE FROM cashflows;");
-        stmt.executeUpdate("DELETE FROM foreis;");
-        System.out.println("Οι πίνακες καθαρίστηκαν.");
-
-    } catch (SQLException e) {
-        System.out.println("Σφάλμα κατά το καθάρισμα των πινάκων: " + e.getMessage());
-        return;
-    }
-
-        // Εισαγωγή foreis πρώτα
+        // Εισαγωγή foreis
         for (int year : YEARS) {
             String filename = "B" + year + "Foreis.csv";
             try {
@@ -57,7 +45,7 @@ public class DataImporter {
         try (Connection conn = DriverManager.getConnection(URL);
              PreparedStatement pstmt = conn.prepareStatement(
                      "INSERT INTO foreis (foreas_id, year_id, type, name, regular_budget, public_inv_budget, total) VALUES (?, ?, ?, ?, ?, ?, ?)");
-             Scanner scanner = new Scanner(is)) {
+             Scanner scanner = new Scanner(is, "UTF-8")) { // <-- UTF-8
 
             conn.setAutoCommit(false);
             if (scanner.hasNextLine()) scanner.nextLine(); // Παράβλεψη header
@@ -68,8 +56,11 @@ public class DataImporter {
                 String line = scanner.nextLine().trim();
                 if (line.isEmpty()) continue;
 
-                String[] parts = line.split(",", -1);
-                if (parts.length < 7) continue;
+                String[] parts = line.split(";", -1); // <-- διαχωριστικό ;
+                if (parts.length < 6) {
+                    System.out.println("Foreis line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 6 πεδία");
+                    continue;
+                }
 
                 try {
                     pstmt.setInt(1, Integer.parseInt(parts[0].trim()));
@@ -98,7 +89,7 @@ public class DataImporter {
         try (Connection conn = DriverManager.getConnection(URL);
              PreparedStatement pstmt = conn.prepareStatement(
                      "INSERT INTO cashflows (year_id, type, name, amount) VALUES (?, ?, ?, ?)");
-             Scanner scanner = new Scanner(is)) {
+             Scanner scanner = new Scanner(is, "UTF-8")) { // <-- UTF-8
 
             conn.setAutoCommit(false);
             if (scanner.hasNextLine()) scanner.nextLine(); // Παράβλεψη header
@@ -109,17 +100,21 @@ public class DataImporter {
                 String line = scanner.nextLine().trim();
                 if (line.isEmpty()) continue;
 
-                String[] parts = line.split(",", -1);
-                if (parts.length < 3) continue;
+                String[] parts = line.split(";", -1); // <-- διαχωριστικό ;
+                if (parts.length < 3) {
+                    System.out.println("Cashflows line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 3 πεδία");
+                    continue;
+                }
 
                 try {
-                    pstmt.setInt(1, Integer.parseInt(parts[0].trim()));
-                    pstmt.setString(2, type);
-                    pstmt.setString(3, parts[1].trim());
-                    pstmt.setDouble(4, Double.parseDouble(parts[2].trim()));
+                    pstmt.setInt(1, Integer.parseInt(parts[0].trim())); // year_id
+                    pstmt.setString(2, parts[1].trim());               // type από CSV (Έσοδο / Έξοδο)
+                    pstmt.setString(3, parts[2].trim());               // name
+                    pstmt.setDouble(4, Double.parseDouble(parts[3].trim())); // amount
+
                     pstmt.addBatch();
                 } catch (NumberFormatException nfe) {
-                    // παραλείπουμε γραμμή με λάθος αριθμό
+                    // παραλείπει γραμμή με λάθος αριθμό
                 }
             }
 

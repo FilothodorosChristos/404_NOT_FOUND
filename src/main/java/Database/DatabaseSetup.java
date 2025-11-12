@@ -18,13 +18,15 @@ public class DatabaseSetup {
             // Πίνακας foreis
             String createForeisTable = """
                 CREATE TABLE IF NOT EXISTS foreis (
-                    foreas_id INTEGER PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    foreas_id INTEGER,
                     year_id INTEGER NOT NULL,
                     type TEXT NOT NULL,
                     name TEXT NOT NULL,
                     regular_budget REAL,
                     public_inv_budget REAL,
-                    total REAL
+                    total REAL,
+                    UNIQUE(foreas_id, year_id)
                 );
             """;
 
@@ -65,8 +67,6 @@ public class DatabaseSetup {
 
             // Επαναδημιουργία των πινάκων
             setDatabase();
-
-            System.out.println("Οι πίνακες επαναδημιουργήθηκαν με επιτυχία.");
 
         } catch (SQLException e) {
             System.out.println("Σφάλμα κατά τη διαγραφή των πινάκων: " + e.getMessage());
