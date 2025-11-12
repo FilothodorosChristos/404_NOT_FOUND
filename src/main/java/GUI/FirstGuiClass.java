@@ -71,18 +71,18 @@ class SecondWindow extends JFrame {
         setSize(1000, 800);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+          
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
+        //putting a label to my window 
         JLabel lbl1 = new JLabel("Επίλεξε έτος");
         lbl1.setFont(new Font("Tahoma", Font.PLAIN, 30));
         lbl1.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+         
         JLabel lbl2 = new JLabel("προϋπολογισμού");
         lbl2.setFont(new Font("Tahoma", Font.PLAIN, 30));
         lbl2.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+        //first button of 2023
         JButton btn2023 = new JButton("2023");
         btn2023.setForeground(new Color(0, 0, 0));
         btn2023.setBackground(new Color(70, 130, 180));
@@ -93,7 +93,7 @@ class SecondWindow extends JFrame {
             new ThirdWindow();
             this.dispose();
         });
-
+          //second button 2024
         JButton btn2024 = new JButton("2024");
         btn2024.setForeground(new Color(0, 0, 0));
         btn2024.setBackground(new Color(70, 130, 180));
@@ -104,7 +104,7 @@ class SecondWindow extends JFrame {
             new ThirdWindow();
             this.dispose();
         });
-
+        //3rd botton 2025 
         JButton btn2025 = new JButton("2025");
         btn2025.setForeground(new Color(0, 0, 0));
         btn2025.setBackground(new Color(70, 130, 180));
@@ -115,7 +115,7 @@ class SecondWindow extends JFrame {
             new ThirdWindow();
             this.dispose();
         });
-
+         //adjustments for touch up causes
         panel.add(Box.createVerticalStrut(20));
         panel.add(lbl1);
         panel.add(lbl2);
