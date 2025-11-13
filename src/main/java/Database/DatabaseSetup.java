@@ -55,7 +55,7 @@ public class DatabaseSetup {
         }
     }
 
-    public static void dropTables() {
+    public static void cleanTables() {
         try (Connection conn = DriverManager.getConnection(URL);
              Statement stmt = conn.createStatement()) {
 

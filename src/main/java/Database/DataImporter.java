@@ -12,7 +12,7 @@ public class DataImporter {
     private static final String[] CASHFLOW_TYPES = {"Esoda", "Exoda"};
 
     public static void importer() {
-        DatabaseSetup.dropTables(); //καθαρισμός πινάκων πριν απο το γέμισμα 
+        DatabaseSetup.cleanTables(); //καθαρισμός πινάκων πριν απο το γέμισμα 
 
         // Εισαγωγή foreis
         for (int year : YEARS) {
