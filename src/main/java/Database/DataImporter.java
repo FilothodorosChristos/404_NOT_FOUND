@@ -3,6 +3,7 @@ package database;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.Scanner;
+import java.io.FileNotFoundException;
 
 public class DataImporter {
 
@@ -20,7 +21,7 @@ public class DataImporter {
                 insertForeisFromCsv(filename);
                 System.out.println("Εισήχθησαν δεδομένα από " + filename);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
             }
         }
 
@@ -32,7 +33,7 @@ public class DataImporter {
                     insertCashflowsFromCsv(filename, type);
                     System.out.println("Εισήχθησαν δεδομένα από " + filename);
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    System.err.println(e.getMessage());
                 }
             }
         }
@@ -40,7 +41,7 @@ public class DataImporter {
 
     private static void insertForeisFromCsv(String filename) throws Exception {
         InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
-        if (is == null) throw new Exception("Δεν βρέθηκε το αρχείο resources/data/" + filename);
+        if (is == null) throw new FileNotFoundException("Δεν βρέθηκε το αρχείο resources/data/" + filename);
 
         try (Connection conn = DriverManager.getConnection(URL);
              PreparedStatement pstmt = conn.prepareStatement(
@@ -58,7 +59,7 @@ public class DataImporter {
 
                 String[] parts = line.split(";", -1); // <-- διαχωριστικό ;
                 if (parts.length < 6) {
-                    System.out.println("Foreis line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 6 πεδία");
+                    System.err.println("Foreis line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 6 πεδία");
                     continue;
                 }
 
@@ -84,7 +85,7 @@ public class DataImporter {
 
     private static void insertCashflowsFromCsv(String filename, String type) throws Exception {
         InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
-        if (is == null) throw new Exception("Δεν βρέθηκε το αρχείο resources/data/" + filename);
+        if (is == null) throw new FileNotFoundException("Δεν βρέθηκε το αρχείο resources/data/" + filename);
 
         try (Connection conn = DriverManager.getConnection(URL);
              PreparedStatement pstmt = conn.prepareStatement(
@@ -102,7 +103,7 @@ public class DataImporter {
 
                 String[] parts = line.split(";", -1); // <-- διαχωριστικό ;
                 if (parts.length < 3) {
-                    System.out.println("Cashflows line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 3 πεδία");
+                    System.err.println("Cashflows line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 3 πεδία");
                     continue;
                 }
 
@@ -114,7 +115,7 @@ public class DataImporter {
 
                     pstmt.addBatch();
                 } catch (NumberFormatException nfe) {
-                    // παραλείπει γραμμή με λάθος αριθμό
+                    System.err.println("Παράλειψη γραμμής με λάθος αριθμό");
                 }
             }
 

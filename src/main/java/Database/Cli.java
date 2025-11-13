@@ -1,9 +1,9 @@
 package database;
 
-public class MainT1 {
+public class Cli {
 
     public static void main(String[] args) {
-        CreateDatabase.createDB();  
+          
         DatabaseSetup.setDatabase();
         DataImporter.importer();
     }

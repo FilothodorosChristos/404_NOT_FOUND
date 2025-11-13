@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Class with methods to set up and delete database tables.
+ */
 public class DatabaseSetup {
 
     private static final String URL = "jdbc:sqlite:budgetDB.db";
@@ -48,7 +51,7 @@ public class DatabaseSetup {
             System.out.println("Οι πίνακες δημιουργήθηκαν με επιτυχία.");
 
         } catch (SQLException e) {
-            System.out.println("Σφάλμα κατά τη δημιουργία των πινάκων: " + e.getMessage());
+            System.err.println("Σφάλμα κατά τη δημιουργία των πινάκων: " + e.getMessage());
         }
     }
 
@@ -69,7 +72,7 @@ public class DatabaseSetup {
             setDatabase();
 
         } catch (SQLException e) {
-            System.out.println("Σφάλμα κατά τη διαγραφή των πινάκων: " + e.getMessage());
+            System.err.println("Σφάλμα κατά τη διαγραφή των πινάκων: " + e.getMessage());
         }
     }
 }
