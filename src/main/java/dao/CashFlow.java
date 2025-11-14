@@ -1,8 +1,11 @@
+package dao;
+
 /**
  * Η κλάση Cashflow αναπαριστά μία εγγραφή του πίνακα "cashflow".
  * Περιέχει τα πεδία id, yearId, name, type και amount,
  * καθώς και τους απαραίτητους constructors και μεθόδους πρόσβασης.
  */
+
 public class CashFlow {
 
   private int id;
@@ -14,7 +17,7 @@ public class CashFlow {
   /**
    * Δημιουργεί ένα νέο αντικείμενο Cashflow αρχικοποιώντας όλα τα πεδία του.
    */
-  public Cashflow(int id, int yearId, String name, String type, double amount) {
+  public CashFlow(int id, int yearId, String name, String type, double amount) {
     this.id = id;
     this.yearId = yearId;
     this.name = name;
