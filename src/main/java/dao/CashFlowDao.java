@@ -93,4 +93,24 @@ public class CashFlowDao  {
       e.printStackTrace();
     }
   }
+  /**
+   * Διαγράφει μια εγγραφή cashflow από τη βάση δεδομένων
+   * χρησιμοποιώντας το μοναδικό id της.
+   */
+
+  public void deleteCashFlow(int id) {
+    String sql = "DELETE FROM cashflow WHERE id = ?";
+
+    try (Connection connection = DatabaseSetup.getConnection();
+         PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+      preparedStatement.setInt(1, id);
+      preparedStatement.executeUpdate();
+
+    } catch (SQLException e) {
+      System.err.println("Error found at deleteCashFlow");
+      e.printStackTrace();
+    }
+  }
+
 }
