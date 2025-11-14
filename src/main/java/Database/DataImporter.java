@@ -12,7 +12,7 @@ public class DataImporter {
     private static final String[] CASHFLOW_TYPES = {"Esoda", "Exoda"};
 
     public static void importer() {
-        DatabaseSetup.cleanTables(); //καθαρισμός πινάκων πριν απο το γέμισμα 
+        DatabaseSetup.cleanTables(); //καθαρισμός πινάκων πριν απο το γέμισμα
 
         // Εισαγωγή foreis
         for (int year : YEARS) {
@@ -39,7 +39,7 @@ public class DataImporter {
         }
     }
 
-    private static void insertForeisFromCsv(String filename) throws Exception {
+    static void insertForeisFromCsv(String filename) throws Exception {
         InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
         if (is == null) throw new FileNotFoundException("Δεν βρέθηκε το αρχείο resources/data/" + filename);
 
@@ -83,7 +83,7 @@ public class DataImporter {
         }
     }
 
-    private static void insertCashflowsFromCsv(String filename, String type) throws Exception {
+    static void insertCashflowsFromCsv(String filename, String type) throws Exception {
         InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
         if (is == null) throw new FileNotFoundException("Δεν βρέθηκε το αρχείο resources/data/" + filename);
 
