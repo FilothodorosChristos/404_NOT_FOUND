@@ -1,13 +1,15 @@
 package database;
 
 import org.junit.jupiter.api.Test;
+
+import database.DatabaseSetup;
+
 import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import database.DatabaseSetup;
 
 public class DatabaseSetupTest {
 
@@ -43,7 +45,7 @@ public class DatabaseSetupTest {
         DatabaseSetup.setDatabase();
 
         // 2. Εκτέλεση της μεθόδου προς δοκιμή
-        DatabaseSetup.dropTables();
+        DatabaseSetup.cleanTables();
 
         // 3. Έλεγχος: Επαληθεύουμε ότι οι πίνακες έχουν διαγραφεί
         try (Connection conn = DriverManager.getConnection(URL);
