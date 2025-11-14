@@ -1,3 +1,5 @@
+package dao;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,8 +18,8 @@ public class CashFlowDao  {
    * Δημιουργεί ένα αντικείμενο Cashflow από μία γραμμή αποτελεσμάτων της SQL.
    * Κάθε στήλη της γραμμής αντιστοιχίζεται στα πεδία του αντικειμένου.
    */
-  private Cashflow mapRow(ResultSet rs) throws SQLException {
-    return new Cashflow(
+  private CashFlow mapRow(ResultSet rs) throws SQLException {
+    return new CashFlow(
             rs.getInt("id"),
             rs.getInt("year_id"),
             rs.getString("name"),
@@ -27,34 +29,41 @@ public class CashFlowDao  {
   }
 
   /**
-   * Επιστρέφει όλες τις εγγραφές του πίνακα cashflow από τη βάση δεδομένων.
+   * Επιστρέφει όλες τις εγγραφές του πίνακα cashflow που ταιριάζουν με τα ορίσματα από τη βάση δεδομένων.
    * Δημιουργεί λίστα αντικειμένων τύπου Cashflow.
    */
-  public List<Cashflow> selectCashFlow() {
-    List<Cashflow> cashflows = new ArrayList<>();
-    String sql = "SELECT * FROM cashflow";
+  public List<CashFlow> selectCashFlow(int year, String type) {
+    List<CashFlow> cashflows = new ArrayList<>();
+    String sql = "SELECT * FROM cashflows WHERE year_id = ? AND type = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
+         PreparedStatement statement = connection.prepareStatement(sql)) {
 
-      while (resultSet.next()) {
-        cashflows.add(mapRow(resultSet));
-      }
+        statement.setInt(1, year);
+        statement.setString(2, type);
+
+        try (ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                cashflows.add(mapRow(resultSet));
+            }
+        }
 
     } catch (SQLException e) {
-      System.err.println("Error found at selectCashFlow");
-      e.printStackTrace();
+        System.err.println("Error found at selectCashFlow");
+        e.printStackTrace();
     }
+
     return cashflows;
-  }
+}
+
 
   /**
    * Εισάγει μια νέα εγγραφή cashflow στη βάση δεδομένων.
    * Χρησιμοποιεί PreparedStatement για ασφάλεια και αποφυγή λαθών.
    */
-  public void addCashFlow(Cashflow cashflow) {
-    String sql = "INSERT INTO cashflow(year_id, name, type, amount) VALUES(?, ?, ?, ?)";
+  public void addCashFlow(CashFlow cashflow) {
+    String sql = "INSERT INTO cashflows(year_id, name, type, amount) VALUES(?, ?, ?, ?)";
 
     try (Connection connection = DatabaseSetup.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -75,8 +84,8 @@ public class CashFlowDao  {
    * Ενημερώνει μια υπάρχουσα εγγραφή cashflow στη βάση δεδομένων
    * με τα νέα δεδομένα που περιέχονται στο αντικείμενο cashflow.
    */
-  public void updateCashFlow(Cashflow cashflow) {
-    String sql = "UPDATE cashflow SET year_id = ?, name = ?, type = ?, amount = ? WHERE id = ?";
+  public void updateCashFlow(CashFlow cashflow) {
+    String sql = "UPDATE cashflows SET year_id = ?, name = ?, type = ?, amount = ? WHERE id = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -99,7 +108,7 @@ public class CashFlowDao  {
    */
 
   public void deleteCashFlow(int id) {
-    String sql = "DELETE FROM cashflow WHERE id = ?";
+    String sql = "DELETE FROM cashflows WHERE id = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
          PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
