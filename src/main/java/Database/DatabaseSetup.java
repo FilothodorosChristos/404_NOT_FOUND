@@ -55,7 +55,7 @@ public class DatabaseSetup {
         }
     }
 
-    public static void dropTables() {
+    public static void cleanTables() {
         try (Connection conn = DriverManager.getConnection(URL);
              Statement stmt = conn.createStatement()) {
 
@@ -68,12 +68,17 @@ public class DatabaseSetup {
 
             System.out.println("Επιτυχής διαγραφή των πινάκων.");
 
-            // Επαναδημιουργία των πινάκων
+            // Επαναδημιουργία των πινάκων, ίσως στο μελλον μπουν έλεγχοι
             setDatabase();
 
         } catch (SQLException e) {
             System.err.println("Σφάλμα κατά τη διαγραφή των πινάκων: " + e.getMessage());
         }
     }
+
+    public static Connection getConnection() throws SQLException {
+    return DriverManager.getConnection(URL);
+}
+
 }
 
