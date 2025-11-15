@@ -7,13 +7,18 @@ import java.io.FileNotFoundException;
 
 public class DataImporter {
 
-    private static final String URL = "jdbc:sqlite:budgetDB.db";
+    private static String URL = "jdbc:sqlite:budgetDB.db";
     private static final int[] YEARS = {23, 24, 25};
     private static final String[] CASHFLOW_TYPES = {"Esoda", "Exoda"};
 
+    //μέθοδος setter για τα τεστ
+    public static void setURL(String url) {
+        URL = url;
+    }
+
     public static void importer() {
-        DatabaseSetup.cleanTables(); //καθαρισμός πινάκων πριν απο το γέμισμα
-        DatabaseSetup.setDatabase(); //δημιουργία πινάκων ξανά
+        DatabaseSetup.resetTables(); //καθαρισμός πινάκων πριν απο το γέμισμα
+
         // Εισαγωγή foreis
         for (int year : YEARS) {
             String filename = "B" + year + "Foreis.csv";

@@ -10,7 +10,12 @@ import java.sql.Statement;
  */
 public class DatabaseSetup {
 
-    private static final String URL = "jdbc:sqlite:budgetDB.db";
+    private static String URL = "jdbc:sqlite:budgetDB.db";
+
+    //setter για τα τεστ
+    public static void setURL(String url) {
+        URL = url;
+    }
 
     public static void setDatabase() {
         try (Connection conn = DriverManager.getConnection(URL);
@@ -82,4 +87,3 @@ public class DatabaseSetup {
 }
 
 }
-

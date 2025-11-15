@@ -5,6 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
+import database.DatabaseSetup;
+import database.DataImporter;
+
 import java.sql.*;
 
 import static org.junit.jupiter.api.Assertions.*;
