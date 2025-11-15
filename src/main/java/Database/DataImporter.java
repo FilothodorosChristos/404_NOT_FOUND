@@ -13,7 +13,7 @@ public class DataImporter {
 
     public static void importer() {
         DatabaseSetup.cleanTables(); //καθαρισμός πινάκων πριν απο το γέμισμα
-
+        DatabaseSetup.setDatabase(); //δημιουργία πινάκων ξανά
         // Εισαγωγή foreis
         for (int year : YEARS) {
             String filename = "B" + year + "Foreis.csv";

@@ -1,28 +1,32 @@
 package database;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import java.lang.reflect.Field;
+
 import java.sql.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DataImporterTest {
 
     // url για προσωρινή in-memory βάση δεδομένων για testing
-    private static final String TEST_URL = "jdbc:sqlite::memory:"; 
+    private static final String TEST_URL = "jdbc:sqlite::memory:";
+    private static final String REAL_URL = "jdbc:sqlite:budgetDB.db"; 
 
     //Αντικαθιστούμε το URL της DataImporter κλάσης πριν από όλα τα tests
     @BeforeAll
-    static void setupTestUrl() throws Exception {
-        Field urlField = DataImporter.class.getDeclaredField("URL");
-        urlField.setAccessible(true);
-
-        // Αφαιρούμε το final modifier, αν υπάρχει, και θέτουμε τη νέα τιμή
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-
-        // Εξαναγκασμός της τιμής του URL για να δείχνει στην in-memory DB
-        urlField.set(null, TEST_URL); 
+    static void setupTestUrl() {
+        DatabaseSetup.setURL(TEST_URL);
+        DataImporter.setURL(TEST_URL);
+    }
+    
+    //Εισάγουμε το url της πραγματικής βάσης μετά τα tests
+    @AfterAll
+    static void restoreRealUrl() {
+        DatabaseSetup.setURL(REAL_URL);
+        DataImporter.setURL(REAL_URL);
     }
 
     // Δημιουργεί το σχήμα (πίνακες) στην in-memory βάση πριν από κάθε test.
@@ -49,7 +53,7 @@ public class DataImporterTest {
         // Mock DatabaseSetup.cleanTables() - Ο DataImporter καλεί αυτή τη μέθοδο,
         // αλλά για τον test σκοπό, την αντικαθιστούμε με το DROP TABLE παραπάνω.
     }
-
+    // Βοηθητική μέθοδος για μέτρηση γραμμών σε πίνακα
     private int countRows(String tableName) throws SQLException {
         try (Connection conn = DriverManager.getConnection(TEST_URL);
              Statement stmt = conn.createStatement();
@@ -57,6 +61,8 @@ public class DataImporterTest {
             if (rs.next()) {
                 return rs.getInt(1);
             }
+        } catch (SQLException e) {
+            fail("Σφάλμα κατά την μέτρηση γραμμών στον πίνακα " + tableName + ": " + e.getMessage());
         }
         return 0;
     }
@@ -64,9 +70,9 @@ public class DataImporterTest {
     @Test
     void insertForeisFromCsv_ShouldInsertValidRowsAndSkipInvalid() throws Exception {
         // Καλούμε τη μέθοδο insertForeisFromCsv με το όνομα του mock αρχείου.
-        // Ο DataImporter θα ψάξει για το αρχείο στο testing classpath (/data/B23Foreis.csv)
+        // Ο DataImporter θα ψάξει για το αρχείο στο testing classpath (/data/B23ForeisTEST.csv)
         
-        DataImporter.insertForeisFromCsv("B23Foreis.csv");
+        DataImporter.insertForeisFromCsv("B23ForeisTEST.csv");
 
         // Επαλήθευση: 
         // 1. Πρέπει να έχουν εισαχθεί 2 γραμμές (1001 και 1002) - η γραμμή 1003 είναι invalid
@@ -89,7 +95,7 @@ public class DataImporterTest {
     void insertCashflowsFromCsv_ShouldInsertValidRowsAndSkipInvalid() throws Exception {
         // Καλούμε τη μέθοδο insertCashflowsFromCsv με το όνομα του mock αρχείου.
         
-        DataImporter.insertCashflowsFromCsv("B23Esoda.csv", "Esoda");
+        DataImporter.insertCashflowsFromCsv("B23EsodaTEST.csv", "Έσοδο");
 
         // Επαλήθευση: 
         // 1. Πρέπει να έχουν εισαχθεί 2 γραμμές (ΦΠΑ, Φόρος Εισοδήματος) - η 3η γραμμή είναι invalid
