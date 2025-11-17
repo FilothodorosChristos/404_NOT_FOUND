@@ -104,7 +104,7 @@ public class DataImporterTest {
         // Καλούμε τη μέθοδο insertForeisFromCsv με το όνομα του mock αρχείου.
         // Ο DataImporter θα ψάξει για το αρχείο στο testing classpath
         
-        DataImporter.insertForeisFromCsv("B23Foreis.csv");
+        DataImporter.insertForeisFromCsv("B23ForeisTEST.csv");
 
         // Επαλήθευση: 
         // 1. Πρέπει να έχουν εισαχθεί 2 γραμμές (1001 και 1002) - η γραμμή 1003 είναι invalid
@@ -127,7 +127,7 @@ public class DataImporterTest {
     void insertCashflowsFromCsv_ShouldInsertValidRowsAndSkipInvalid() throws Exception {
         // Καλούμε τη μέθοδο insertCashflowsFromCsv με το όνομα του mock αρχείου.
         
-        DataImporter.insertCashflowsFromCsv("B23Esoda.csv", "Έσοδο");
+        DataImporter.insertCashflowsFromCsv("B23EsodaTEST.csv", "Έσοδο");
 
         // Επαλήθευση: 
         // 1. Πρέπει να έχουν εισαχθεί 2 γραμμές (ΦΠΑ, Φόρος Εισοδήματος) - η 3η γραμμή είναι invalid
@@ -150,7 +150,7 @@ public class DataImporterTest {
     void insertForeisFromCsv_ShouldThrowFileNotFoundException() {
         // Αναμένουμε μια εξαίρεση για αρχείο που δεν υπάρχει (π.χ., "B26Foreis.csv")
         Exception exception = assertThrows(Exception.class, () -> {
-            DataImporter.insertForeisFromCsv("B26Foreis.csv"); // Δεν υπάρχει
+            DataImporter.insertForeisFromCsv("B26ForeisTEST.csv"); // Δεν υπάρχει
         });
 
         // Ελέγχουμε αν το μήνυμα της εξαίρεσης είναι αυτό που περιμένουμε.

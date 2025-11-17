@@ -45,7 +45,8 @@ public class DataImporter {
     }
 
     static void insertForeisFromCsv(String filename) throws Exception {
-        InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
+        //InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("data/" + filename);
         if (is == null) throw new FileNotFoundException("Δεν βρέθηκε το αρχείο resources/data/" + filename);
 
         try (Connection conn = DriverManager.getConnection(URL);
@@ -63,7 +64,7 @@ public class DataImporter {
                 if (line.isEmpty()) continue;
 
                 String[] parts = line.split(";", -1); // <-- διαχωριστικό ;
-                if (parts.length < 6) {
+                if (parts.length < 7) {
                     System.err.println("Foreis line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 6 πεδία");
                     continue;
                 }
@@ -89,7 +90,9 @@ public class DataImporter {
     }
 
     static void insertCashflowsFromCsv(String filename, String type) throws Exception {
-        InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
+        //InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("data/" + filename);
+
         if (is == null) throw new FileNotFoundException("Δεν βρέθηκε το αρχείο resources/data/" + filename);
 
         try (Connection conn = DriverManager.getConnection(URL);
@@ -107,7 +110,7 @@ public class DataImporter {
                 if (line.isEmpty()) continue;
 
                 String[] parts = line.split(";", -1); // <-- διαχωριστικό ;
-                if (parts.length < 3) {
+                if (parts.length < 4) {
                     System.err.println("Cashflows line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 3 πεδία");
                     continue;
                 }
