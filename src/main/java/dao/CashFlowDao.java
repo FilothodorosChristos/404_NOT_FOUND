@@ -53,8 +53,7 @@ public class CashFlowDao {
       }
 
     } catch (SQLException e) {
-      System.err.println("Error found at selectCashFlow");
-      e.printStackTrace();
+      throw new RuntimeException("Σφάλμα στη βάση (selectCashFlow): " + e.getMessage(), e);
     }
 
     return cashflows;
@@ -78,8 +77,7 @@ public class CashFlowDao {
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
-      System.err.println("Error found at addCashFlow");
-      e.printStackTrace();
+      throw new RuntimeException("Σφάλμα στη βάση (addCashFlow): " + e.getMessage(), e);
     }
   }
 
@@ -102,8 +100,7 @@ public class CashFlowDao {
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
-      System.err.println("Error found at updateCashFlow");
-      e.printStackTrace();
+      throw new RuntimeException("Σφάλμα στη βάση (updateCashFlow): " + e.getMessage(), e);
     }
   }
 
@@ -122,8 +119,7 @@ public class CashFlowDao {
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
-      System.err.println("Error found at deleteCashFlow");
-      e.printStackTrace();
+      throw new RuntimeException("Σφάλμα στη βάση (deleteCashFlow): " + e.getMessage(), e);
     }
   }
 }
