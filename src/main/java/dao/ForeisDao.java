@@ -48,10 +48,8 @@ public class ForeisDao {
       }
 
     } catch (SQLException e) {
-      System.err.println("Error found at selectForeis");
-      e.printStackTrace();
+      throw new RuntimeException("Σφάλμα στη βάση (selectForeis): " + e.getMessage(), e);
     }
-
     return foreisList;
   }
 
@@ -76,8 +74,7 @@ public class ForeisDao {
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
-      System.err.println("Error found at addForeis");
-      e.printStackTrace();
+      throw new RuntimeException("Σφάλμα στη βάση (addForeis): " + e.getMessage(), e);
     }
   }
 
@@ -103,8 +100,7 @@ public class ForeisDao {
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
-      System.err.println("Error found at updateForeis");
-      e.printStackTrace();
+      throw new RuntimeException("Σφάλμα στη βάση (updateForeis): " + e.getMessage(), e);
     }
   }
 
@@ -121,10 +117,8 @@ public class ForeisDao {
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
-      System.err.println("Error found at deleteForeis");
-      e.printStackTrace();
+      throw new RuntimeException("Σφάλμα στη βάση (deleteForeis): " + e.getMessage(), e);
     }
   }
 }
-
 
