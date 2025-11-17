@@ -64,6 +64,22 @@ public class CashFlow {
   public void setAmount(double amount) {
     this.amount = amount;
   }
+  /**
+   * Επιστρέφει μια αναγνώσιμη αναπαράσταση του αντικειμένου CashFlow,
+   * εμφανίζοντας όλες τις τιμές των πεδίων του.
+   */
+
+  @Override
+   public String toString() {
+    return "CashFlow{" 
+             + "id=" + id 
+            + ", yearId=" + yearId 
+             + ", name='" + name + '\'' 
+             + ", type='" + type + '\'' 
+             + ", amount=" + amount 
+             + '}';
+  }
+
 }
 
 
