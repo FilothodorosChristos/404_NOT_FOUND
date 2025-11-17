@@ -1,4 +1,4 @@
-package database;
+package ksksksk;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,16 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseSetupTest {
 
-    // In-memory DB για πλήρη απομόνωση
+
     private static Connection conn;
     private static final String TEST_DB_FILE = "test_db_temp.db";
+
     private static final String TEST_URL = "jdbc:sqlite:" + TEST_DB_FILE;
+
     private static final String REAL_URL = "jdbc:sqlite:budgetDB.db";
 
-    /*@BeforeEach
-    void setTestUrl() {
-        DatabaseSetup.setURL(TEST_URL);
-    }  */
 
     @BeforeAll
     static void setup() throws Exception {
