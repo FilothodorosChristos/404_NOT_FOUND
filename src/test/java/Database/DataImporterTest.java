@@ -5,10 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-import database.DatabaseSetup;
-import database.DataImporter;
+//import java.nio.file.Paths;
+//import java.nio.file.Files;
+//import database.DatabaseSetup;
+//import database.DataImporter;
 
 import java.sql.*;
 
@@ -16,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DataImporterTest {
 
-    // url για προσωρινή in-memory βάση δεδομένων για testing
-    //private static final String TEST_URL = "jdbc:sqlite:file:test_db?mode=memory&cache=shared";
-    
     // SQLite requires the database name to be exactly the same and the connections to be in the same process.
     // use a temporary file-based database for testing
     private static final String TEST_URL = "jdbc:sqlite:test_db_temp.db";
