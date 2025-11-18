@@ -1,6 +1,7 @@
+package menus;
 public class YearMenu extends Menu {
     
-    public YearMenu(UserIO io) {
+    public YearMenu(UserIo io) {
         super(io);
     }
 

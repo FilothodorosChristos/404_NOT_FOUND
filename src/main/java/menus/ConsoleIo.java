@@ -1,6 +1,7 @@
+package menus;
 import java.util.Scanner;
 
-public class ConsoleIO implements UserIO {
+public class ConsoleIo implements UserIo {
     private final Scanner scanner = new Scanner(System.in);
 
     @Override

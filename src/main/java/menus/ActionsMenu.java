@@ -2,7 +2,7 @@
 public class ActionsMenu extends Menu {
     private final int year;
 
-    public ActionsMenu(UserIO io, int year) {
+    public ActionsMenu(UserIo io, int year) {
         super(io);
         this.year = year;
     }

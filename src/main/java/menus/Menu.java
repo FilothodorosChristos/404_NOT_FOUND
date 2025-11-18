@@ -1,7 +1,8 @@
+package menus;
 public abstract class Menu {
     protected final UserIo IO;
 
-    public Menu(UserIO io) {
+    public Menu(UserIo io) {
         this.IO = io;
     }
 
