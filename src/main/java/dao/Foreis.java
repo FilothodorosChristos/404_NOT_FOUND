@@ -2,25 +2,37 @@ package dao;
 
 /**
  * Η κλάση Foreis αναπαριστά μία εγγραφή του πίνακα "foreis".
- * Περιέχει πληροφορίες για το έτος, τον τύπο φορέα, το όνομα,
- * καθώς και τα ποσά του τακτικού προϋπολογισμού, του ΠΔΕ και το συνολικό ποσό.
+ * Περιέχει τα στοιχεία του φορέα καθώς και τα οικονομικά του δεδομένα.
  */
 public class Foreis {
 
-  private int id;
+  /** Το μοναδικό αναγνωριστικό του φορέα (πρωτεύον κλειδί). */
+  private int foreasId;
+
+  /** Το έτος στο οποίο αντιστοιχεί η εγγραφή. */
   private int yearId;
+
+  /** Ο τύπος του φορέα. */
   private String type;
+
+  /** Το όνομα του φορέα. */
   private String name;
+
+  /** Το ποσό του τακτικού προϋπολογισμού. */
   private double regularBudget;
+
+  /** Το ποσό του προϋπολογισμού δημοσίων επενδύσεων. */
   private double publicInvBudget;
+
+  /** Το συνολικό ποσό. */
   private double total;
 
   /**
-    * Δημιουργεί ένα νέο αντικείμενο Foreis αρχικοποιώντας όλα τα πεδία.
-    */
-  public Foreis(int id, int yearId, String type, String name,
-                  double regularBudget, double publicInvBudget, double total) {
-    this.id = id;
+   * Δημιουργεί ένα νέο αντικείμενο Foreis αρχικοποιώντας όλα τα πεδία.
+   */
+  public Foreis(int foreasId, int yearId, String type, String name,
+                double regularBudget, double publicInvBudget, double total) {
+    this.foreasId = foreasId;
     this.yearId = yearId;
     this.type = type;
     this.name = name;
@@ -29,12 +41,12 @@ public class Foreis {
     this.total = total;
   }
 
-  public int getId() {
-    return id;
+  public int getForeasId() {
+    return foreasId;
   }
 
-  public void setId(int id) {
-    this.id = id;
+  public void setForeasId(int foreasId) {
+    this.foreasId = foreasId;
   }
 
   public int getYearId() {
@@ -85,17 +97,22 @@ public class Foreis {
     this.total = total;
   }
 
+  /**
+   * Επιστρέφει συμβολοσειρά που περιγράφει το αντικείμενο Foreis.
+   */
   @Override
-    public String toString() {
-    return "Foreis{" 
-               + "id=" + id 
-               + ", yearId=" + yearId 
-               + ", type='" + type + '\'' 
-               + ", name='" + name + '\'' 
-               + ", regularBudget=" + regularBudget 
-               + ", publicInvBudget=" + publicInvBudget 
-               + ", total=" + total 
-               + '}';
+  public String toString() {
+    return "Foreis{"
+        + "foreasId=" + foreasId
+        + ", yearId=" + yearId
+        + ", type='" + type + '\''
+        + ", name='" + name + '\''
+        + ", regularBudget=" + regularBudget
+        + ", publicInvBudget=" + publicInvBudget
+        + ", total=" + total
+        + '}';
   }
 }
+
+
 
