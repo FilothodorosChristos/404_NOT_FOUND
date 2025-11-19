@@ -402,14 +402,6 @@ public class FirstGuiClass {
             JButton prev4 = new JButton("< Προηγούμενο");
             prev4.addActionListener(e -> cardLayout.show(mainPanel, "panel3"));
 
-            // ------------------------------------------------------------------
-            // ⭐ ΔΙΟΡΘΩΣΗ: ΑΦΑΙΡΟΥΜΕ ΤΟ CUSTOM STYLING ΓΙΑ ΝΑ ΕΙΝΑΙ DEFAULT
-            // ------------------------------------------------------------------
-            // prev4.setBorder(new RoundedBorder(10)); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev4.setFocusPainted(false); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev4.setForeground(Color.WHITE); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev4.setBackground(new Color(0, 0, 128)); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev4.setFont(new Font("Arial", Font.BOLD, 18));
             prev4.setPreferredSize(new Dimension(150, 40));
             prev4.setMinimumSize(new Dimension(150, 40));
             prev4.setMaximumSize(new Dimension(150, 40));
