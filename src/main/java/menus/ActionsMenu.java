@@ -1,3 +1,4 @@
+package menus;
 
 public class ActionsMenu extends Menu {
     private final int year;
@@ -32,7 +33,7 @@ public class ActionsMenu extends Menu {
             case 2 -> IO.showMessage("Επεξεργασία δεδομένων για " + year);
             case 3 -> IO.showMessage("Σύγκριση δεδομένων για " + year);
             case 4 -> IO.showMessage("Εκτέλεση σεναρίων για " + year);
-            case 5 -> new BudgetYearMenu(IO).show(); // επιστροφή στο μενού επιλογής έτους
+            case 5 -> new YearMenu(IO).show(); // επιστροφή στο μενού επιλογής έτους
         }
     }
 }

@@ -1,6 +1,10 @@
+package menus;
+
+import database.DataImporter;
+
 public class MainMenu extends Menu {
 
-    public MainMenu(UserIO io) {
+    public MainMenu(UserIo io) {
         super(io);
     }
 
@@ -20,7 +24,7 @@ public class MainMenu extends Menu {
                 DataImporter.importer();
                 System.out.println("Νέα προσομοίωση ξεκίνησε.");
             }
-            case 2 -> io.showMessage("Φόρτωση προηγούμενης προσομοίωσης...");
+            case 2 -> IO.showMessage("Φόρτωση προηγούμενης προσομοίωσης...");
         }
     }
 }
