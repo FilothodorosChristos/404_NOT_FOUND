@@ -248,14 +248,7 @@ public class FirstGuiClass {
             JButton prev1 = new JButton("< Προηγούμενο");
             prev1.addActionListener(e -> cardLayout.show(mainPanel, "panel1"));
 
-            // ------------------------------------------------------------------
-            // ⭐ ΔΙΟΡΘΩΣΗ: ΑΦΑΙΡΟΥΜΕ ΤΟ CUSTOM STYLING ΓΙΑ ΝΑ ΕΙΝΑΙ DEFAULT
-            // ------------------------------------------------------------------
-            // prev1.setBorder(new RoundedBorder(10)); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev1.setFocusPainted(false); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev1.setForeground(Color.WHITE); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev1.setBackground(new Color(0, 0, 128)); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev1.setFont(new Font("Arial", Font.BOLD, 18));
+         
             prev1.setPreferredSize(new Dimension(150, 40));
             prev1.setMinimumSize(new Dimension(150, 40));
             prev1.setMaximumSize(new Dimension(150, 40));
@@ -325,14 +318,7 @@ public class FirstGuiClass {
             JButton prev2 = new JButton("< Προηγούμενο");
             prev2.addActionListener(e -> cardLayout.show(mainPanel, "panel2"));
 
-            // ------------------------------------------------------------------
-            // ⭐ ΔΙΟΡΘΩΣΗ: ΑΦΑΙΡΟΥΜΕ ΤΟ CUSTOM STYLING ΓΙΑ ΝΑ ΕΙΝΑΙ DEFAULT
-            // ------------------------------------------------------------------
-            // prev2.setBorder(new RoundedBorder(10)); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev2.setFocusPainted(false); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev2.setForeground(Color.WHITE); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev2.setBackground(new Color(0, 0, 128)); // <-- ΑΦΑΙΡΕΘΗΚΕ
-            // prev2.setFont(new Font("Arial", Font.BOLD, 18));
+       
             prev2.setPreferredSize(new Dimension(150, 40));
             prev2.setMinimumSize(new Dimension(150, 40));
             prev2.setMaximumSize(new Dimension(150, 40));
