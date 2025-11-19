@@ -1,37 +1,35 @@
 package dao;
 
 /**
- * Η κλάση Foreis αναπαριστά μία εγγραφή του πίνακα "foreis".
- * Περιέχει τα στοιχεία του φορέα καθώς και τα οικονομικά του δεδομένα.
+ * Η κλάση Foreis αναπαριστά μια εγγραφή του πίνακα "foreis".
+ * Περιλαμβάνει τα πεδία id, foreasId, yearId, type, name,
+ * regularBudget, publicInvBudget και total.
  */
 public class Foreis {
 
-  /** Το μοναδικό αναγνωριστικό του φορέα (πρωτεύον κλειδί). */
-  private int foreasId;
-
-  /** Το έτος στο οποίο αντιστοιχεί η εγγραφή. */
+  private int id;                
+  private int foreasId;          
   private int yearId;
-
-  /** Ο τύπος του φορέα. */
   private String type;
-
-  /** Το όνομα του φορέα. */
   private String name;
-
-  /** Το ποσό του τακτικού προϋπολογισμού. */
   private double regularBudget;
-
-  /** Το ποσό του προϋπολογισμού δημοσίων επενδύσεων. */
   private double publicInvBudget;
-
-  /** Το συνολικό ποσό. */
   private double total;
 
   /**
-   * Δημιουργεί ένα νέο αντικείμενο Foreis αρχικοποιώντας όλα τα πεδία.
+   * Δημιουργεί ένα αντικείμενο Foreis αρχικοποιώντας όλα τα πεδία του.
    */
-  public Foreis(int foreasId, int yearId, String type, String name,
-                double regularBudget, double publicInvBudget, double total) {
+  public Foreis(
+      int id,
+      int foreasId,
+      int yearId,
+      String type,
+      String name,
+      double regularBudget,
+      double publicInvBudget,
+      double total
+  ) {
+    this.id = id;
     this.foreasId = foreasId;
     this.yearId = yearId;
     this.type = type;
@@ -39,6 +37,14 @@ public class Foreis {
     this.regularBudget = regularBudget;
     this.publicInvBudget = publicInvBudget;
     this.total = total;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 
   public int getForeasId() {
@@ -98,12 +104,13 @@ public class Foreis {
   }
 
   /**
-   * Επιστρέφει συμβολοσειρά που περιγράφει το αντικείμενο Foreis.
+   * Επιστρέφει αναπαράσταση τύπου String του αντικειμένου Foreis.
    */
   @Override
   public String toString() {
     return "Foreis{"
-        + "foreasId=" + foreasId
+        + "id=" + id
+        + ", foreasId=" + foreasId
         + ", yearId=" + yearId
         + ", type='" + type + '\''
         + ", name='" + name + '\''
@@ -113,6 +120,7 @@ public class Foreis {
         + '}';
   }
 }
+
 
 
 
