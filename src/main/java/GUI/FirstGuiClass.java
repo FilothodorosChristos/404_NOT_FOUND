@@ -24,7 +24,31 @@ class ImagePanel extends JPanel {
     }
 }
 
-public class FirstGuiClas {
+public class FirstGuiClass {
+
+    // Η κλάση RoundedBorder ως static nested class
+    static class RoundedBorder extends AbstractBorder {
+        private int radius;
+
+        public RoundedBorder() {
+            this.radius = 10;
+        }
+
+        public RoundedBorder(int radius) {
+            this.radius = radius;
+        }
+
+        @Override
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setColor(Color.BLACK); // Χρώμα περιγράμματος
+            g2.setStroke(new BasicStroke(2)); // Πάχος περιγράμματος
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+            g2.dispose();
+        }
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // MAIN FRAME
@@ -115,8 +139,14 @@ public class FirstGuiClas {
             JPanel buttonPanel1 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             buttonPanel1.setOpaque(false);
             JButton next1 = new JButton("Επόμενο >");
-            buttonPanel1.add(next1);
 
+            // ⭐ ΝΕΕΣ ΓΡΑΜΜΕΣ ΓΙΑ ΑΥΞΗΣΗ ΜΕΓΕΘΟΥΣ
+            Dimension nextBtnSize = new Dimension(180, 40);
+            next1.setPreferredSize(nextBtnSize);
+            next1.setMinimumSize(nextBtnSize);
+            next1.setMaximumSize(nextBtnSize);
+
+            buttonPanel1.add(next1);
             JPanel southWrapper = new JPanel();
             southWrapper.setLayout(new BorderLayout());
             southWrapper.setOpaque(false);
@@ -126,25 +156,131 @@ public class FirstGuiClas {
 
             panel1.add(southWrapper, BorderLayout.SOUTH);
 
-            // PANEL 2 - YEAR SELECTION
+            // PANEL 2 -- OLD OR NEW PROJECT
 
-            class RoundedBorder extends AbstractBorder {
-                private int radius;
-
-                public RoundedBorder(int radius) {
-                    this.radius = radius;
-                }
+            JPanel panel2 = new JPanel(new BorderLayout()) {
+                Image image = new ImageIcon("GoverLensLogo.jpg").getImage();
+                Image background = new ImageIcon("BackroundPhoto.jpg").getImage();
 
                 @Override
-                public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    // Background εικόνα
+                    g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+
                     Graphics2D g2 = (Graphics2D) g.create();
-                    g2.setColor(Color.BLACK); // χρώμα περιγράμματος, μπορείς να αλλάξεις
-                    g2.setStroke(new BasicStroke(2)); // πάχος περιγράμματος
-                    g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                    int diameter = (int) (Math.min(getWidth(), getHeight()) * 0.4);
+
+                    int x = (getWidth() - diameter) / 2;
+                    int y = (getHeight() - diameter) / 3;
+
+                    Shape clip = new Ellipse2D.Double(x, y, diameter, diameter);
+                    g2.setClip(clip);
+                    g2.drawImage(image, x, y, diameter, diameter, this);
+
+                    g2.setClip(null);
+                    g2.setStroke(new BasicStroke(4));
+                    g2.setColor(Color.DARK_GRAY);
+                    g2.drawOval(x, y, diameter, diameter);
                     g2.dispose();
                 }
+            };
+
+            // ... (textPanel2 setup remains the same, but it's not strictly necessary for
+            // the layout fix)
+            JPanel textPanel2 = new JPanel();
+            textPanel2.setOpaque(false);
+            textPanel2.setLayout(new BoxLayout(textPanel2, BoxLayout.Y_AXIS));
+
+            JLabel paragraph5 = new JLabel("Καλώς ήρθατε στην GoverLens! ");
+            paragraph5.setFont(new Font("Tahoma", Font.PLAIN, 50));
+            paragraph5.setForeground(Color.WHITE);
+            paragraph5.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            textPanel2.add(Box.createVerticalStrut(40)); // λίγο κενό πάνω
+            textPanel2.add(paragraph5);
+            panel2.add(textPanel2, BorderLayout.CENTER);
+
+            // --- BUTTON STYLE ---
+            Font btnFont = new Font("Arial", Font.BOLD, 24);
+            Dimension btnSize = new Dimension(350, 90);
+
+            // Create buttons
+            JButton oldButton = new JButton("Συνέχεια Προσομοίωσης");
+            JButton newButton = new JButton("Καινούργια Προσομοίωση");
+
+            JButton[] buttons = { oldButton, newButton };
+
+            for (JButton b : buttons) {
+                b.setBorder(new RoundedBorder(15));
+                b.setFocusPainted(false);
+                b.setForeground(new Color(0, 0, 128));
+                b.setBackground(Color.WHITE);
+                b.setFont(btnFont);
+                b.setPreferredSize(btnSize);
+                b.setMaximumSize(btnSize);
+                b.setMinimumSize(btnSize);
+                b.setContentAreaFilled(true);
+                b.setOpaque(true);
             }
-            JPanel panel2 = new ImagePanel("BackroundPhoto.jpg");
+
+            // --- ACTIONS ---
+            // Και τα 2 πάνε στο panel3
+            oldButton.addActionListener(e -> cardLayout.show(mainPanel, "panel3"));
+            newButton.addActionListener(e -> cardLayout.show(mainPanel, "panel3"));
+
+            // --- UNIFIED SOUTH LAYOUT (PREV LEFT + OLD/NEW BUTTONS CENTERED) ---
+
+            // Panel for the two main buttons, ensuring they are centered
+            JPanel bigButtonsPanel = new JPanel();
+            bigButtonsPanel.setOpaque(false);
+            bigButtonsPanel.setLayout(new BoxLayout(bigButtonsPanel, BoxLayout.X_AXIS));
+
+            bigButtonsPanel.add(Box.createHorizontalGlue());
+            bigButtonsPanel.add(oldButton);
+            bigButtonsPanel.add(Box.createHorizontalStrut(40));
+            bigButtonsPanel.add(newButton);
+            bigButtonsPanel.add(Box.createHorizontalGlue());
+
+            // Create the PREVIOUS button
+            JButton prev1 = new JButton("< Προηγούμενο");
+            prev1.addActionListener(e -> cardLayout.show(mainPanel, "panel1"));
+
+            // ------------------------------------------------------------------
+            // ⭐ ΔΙΟΡΘΩΣΗ: ΑΦΑΙΡΟΥΜΕ ΤΟ CUSTOM STYLING ΓΙΑ ΝΑ ΕΙΝΑΙ DEFAULT
+            // ------------------------------------------------------------------
+            // prev1.setBorder(new RoundedBorder(10)); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev1.setFocusPainted(false); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev1.setForeground(Color.WHITE); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev1.setBackground(new Color(0, 0, 128)); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev1.setFont(new Font("Arial", Font.BOLD, 18));
+            prev1.setPreferredSize(new Dimension(150, 40));
+            prev1.setMinimumSize(new Dimension(150, 40));
+            prev1.setMaximumSize(new Dimension(150, 40));
+
+            // Wrapper to hold the Previous button on the left (BOTTOM-LEFT ALIGNMENT)
+            JPanel prevWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            prevWrapper.setOpaque(false);
+            prevWrapper.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 0));
+            prevWrapper.add(prev1);
+
+            // Outer panel for the SOUTH region, using BorderLayout
+            JPanel southPanel = new JPanel(new BorderLayout());
+            southPanel.setOpaque(false);
+
+            // Add the main action buttons to the NORTH of the south panel (centered high)
+            southPanel.add(bigButtonsPanel, BorderLayout.NORTH);
+            // Add the Previous button to the SOUTH of the south panel (bottom-left)
+            southPanel.add(prevWrapper, BorderLayout.SOUTH);
+
+            panel2.add(southPanel, BorderLayout.SOUTH);
+
+            // PANEL 3 - YEAR SELECTION
+
+            JPanel panel3 = new ImagePanel("BackroundPhoto.jpg");
+            panel3.setLayout(new BorderLayout());
 
             JPanel yearsPanel = new JPanel();
             yearsPanel.setLayout(new BoxLayout(yearsPanel, BoxLayout.Y_AXIS));
@@ -166,15 +302,14 @@ public class FirstGuiClas {
                 btn.setFont(new Font("Tahoma", Font.BOLD, 28));
                 btn.setAlignmentX(Component.CENTER_ALIGNMENT);
                 btn.setMaximumSize(new Dimension(300, 70));
-                btn.setBorder(new RoundedBorder(30)); // ακτίνα στρογγυλέματος
+                btn.setBorder(new RoundedBorder(30));
                 btn.setFocusPainted(true);
-                btn.addActionListener(e -> cardLayout.show(mainPanel, "panel3"));
+                btn.addActionListener(e -> cardLayout.show(mainPanel, "panel4"));
             }
 
             yearsPanel.add(Box.createVerticalStrut(20));
             yearsPanel.add(lbl1);
-            yearsPanel.add(Box.createVerticalStrut(20));
-            yearsPanel.add(lbl1);
+
             yearsPanel.add(Box.createVerticalStrut(20));
             yearsPanel.add(btn2023);
             yearsPanel.add(Box.createVerticalStrut(20));
@@ -182,29 +317,39 @@ public class FirstGuiClas {
             yearsPanel.add(Box.createVerticalStrut(20));
             yearsPanel.add(btn2025);
 
-            panel2.add(yearsPanel, BorderLayout.CENTER);
+            panel3.add(yearsPanel, BorderLayout.CENTER);
 
-            JPanel bottomPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            bottomPanel2.setOpaque(false);
-            bottomPanel2.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
+            JPanel bottomPanel4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            bottomPanel4.setOpaque(false);
+            bottomPanel4.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
             JButton prev2 = new JButton("< Προηγούμενο");
-            prev2.addActionListener(e -> cardLayout.show(mainPanel, "panel1"));
-            bottomPanel2.add(prev2);
-            panel2.add(bottomPanel2, BorderLayout.SOUTH);
+            prev2.addActionListener(e -> cardLayout.show(mainPanel, "panel2"));
 
-            // PANEL 3 - USER ACTIONS
+            // ------------------------------------------------------------------
+            // ⭐ ΔΙΟΡΘΩΣΗ: ΑΦΑΙΡΟΥΜΕ ΤΟ CUSTOM STYLING ΓΙΑ ΝΑ ΕΙΝΑΙ DEFAULT
+            // ------------------------------------------------------------------
+            // prev2.setBorder(new RoundedBorder(10)); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev2.setFocusPainted(false); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev2.setForeground(Color.WHITE); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev2.setBackground(new Color(0, 0, 128)); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev2.setFont(new Font("Arial", Font.BOLD, 18));
+            prev2.setPreferredSize(new Dimension(150, 40));
+            prev2.setMinimumSize(new Dimension(150, 40));
+            prev2.setMaximumSize(new Dimension(150, 40));
 
-            JPanel panel3 = new ImagePanel("BackroundPhoto.jpg");
-            panel3.setLayout(new BorderLayout());
+            bottomPanel4.add(prev2);
+            panel3.add(bottomPanel4, BorderLayout.SOUTH);
+
+            // PANEL 4 - USER ACTIONS
+
+            JPanel panel4 = new ImagePanel("BackroundPhoto.jpg");
+            panel4.setLayout(new BorderLayout());
 
             JLabel label = new JLabel("Παρακαλώ επιλέξτε διαδικασία:");
             label.setForeground(Color.WHITE);
             label.setFont(new Font("Arial", Font.PLAIN, 40));
             label.setAlignmentX(Component.CENTER_ALIGNMENT);
             label.setBorder(BorderFactory.createEmptyBorder(30, 0, 40, 0));
-
-            Font btnFont = new Font("Arial", Font.BOLD, 40);
-            Dimension btnSize = new Dimension(300, 80);
 
             JButton viewButton = new JButton("Προβολή");
             JButton editButton = new JButton("Επεξεργασία");
@@ -232,7 +377,6 @@ public class FirstGuiClas {
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(20, 30, 20, 30);
 
-            
             gbc.gridx = 0;
             gbc.gridy = 0;
             buttonsGridPanel.add(viewButton, gbc);
@@ -249,7 +393,7 @@ public class FirstGuiClas {
             gbc.gridy = 1;
             buttonsGridPanel.add(comparationButton, gbc);
 
-            // Panel για να κεντράρει το label και τα κουμπιά ΟΡΙΖΟΝΤΙΑ 
+            // Panel για να κεντράρει το label και τα κουμπιά ΟΡΙΖΟΝΤΙΑ
             // αλλά παραμένουν ΠΑΝΩ
             JPanel topCenterPanel = new JPanel();
             topCenterPanel.setLayout(new BoxLayout(topCenterPanel, BoxLayout.Y_AXIS));
@@ -258,27 +402,40 @@ public class FirstGuiClas {
             label.setAlignmentX(Component.CENTER_ALIGNMENT);
             buttonsGridPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            topCenterPanel.add(Box.createRigidArea(new Dimension(0, 40))); 
+            topCenterPanel.add(Box.createRigidArea(new Dimension(0, 40)));
             topCenterPanel.add(label);
             topCenterPanel.add(Box.createRigidArea(new Dimension(0, 20)));
             topCenterPanel.add(buttonsGridPanel);
 
-            panel3.add(topCenterPanel, BorderLayout.NORTH);
+            panel4.add(topCenterPanel, BorderLayout.NORTH);
 
+            JPanel bottomPanel5 = new JPanel(new BorderLayout());
+            bottomPanel5.setOpaque(false);
+            bottomPanel5.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
 
-            JPanel bottomPanel3 = new JPanel(new BorderLayout());
-            bottomPanel3.setOpaque(false);
-            bottomPanel3.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
+            JButton prev4 = new JButton("< Προηγούμενο");
+            prev4.addActionListener(e -> cardLayout.show(mainPanel, "panel3"));
 
-            JButton prev3 = new JButton("< Προηγούμενο");
-            prev3.addActionListener(e -> cardLayout.show(mainPanel, "panel2"));
-            bottomPanel3.add(prev3, BorderLayout.WEST);
+            // ------------------------------------------------------------------
+            // ⭐ ΔΙΟΡΘΩΣΗ: ΑΦΑΙΡΟΥΜΕ ΤΟ CUSTOM STYLING ΓΙΑ ΝΑ ΕΙΝΑΙ DEFAULT
+            // ------------------------------------------------------------------
+            // prev4.setBorder(new RoundedBorder(10)); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev4.setFocusPainted(false); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev4.setForeground(Color.WHITE); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev4.setBackground(new Color(0, 0, 128)); // <-- ΑΦΑΙΡΕΘΗΚΕ
+            // prev4.setFont(new Font("Arial", Font.BOLD, 18));
+            prev4.setPreferredSize(new Dimension(150, 40));
+            prev4.setMinimumSize(new Dimension(150, 40));
+            prev4.setMaximumSize(new Dimension(150, 40));
 
-            panel3.add(bottomPanel3, BorderLayout.SOUTH);
+            bottomPanel5.add(prev4, BorderLayout.WEST);
+
+            panel4.add(bottomPanel5, BorderLayout.SOUTH);
 
             mainPanel.add(panel1, "panel1");
             mainPanel.add(panel2, "panel2");
             mainPanel.add(panel3, "panel3");
+            mainPanel.add(panel4, "panel4");
 
             frame.add(mainPanel);
             frame.setVisible(true);
