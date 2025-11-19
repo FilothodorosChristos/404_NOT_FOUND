@@ -11,8 +11,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.DriverManager;
 
-import database.DatabaseSetup;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseSetupTest {
