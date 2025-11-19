@@ -1,5 +1,6 @@
 package dao;
 
+import database.DatabaseSetup;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,7 +40,6 @@ public class CashFlowDao {
   public List<CashFlow> selectCashFlow(int year, String type) {
     List<CashFlow> cashflows = new ArrayList<>();
     String sql = "SELECT * FROM cashflows WHERE year_id = ? AND type = ?";
-
     try (Connection connection = DatabaseSetup.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
