@@ -1,0 +1,62 @@
+@startuml
+
+skinparam defaultFontSize 22
+skinparam classFontSize 24
+skinparam arrowFontSize 22
+skinparam titleFontSize 26
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+package "GUI" {
+
+    class GoverLensApp {
+        +main()
+        +createAndShowGUI()
+        +createWelcomePanel()
+        +createProjectSelectionPanel()
+        +createYearSelectionPanel()
+        +createActionSelectionPanel()
+    }
+
+    class RoundedBorder {
+        +paintBorder()
+        +getBorderInsets(): Insets
+        +isBorderOpaque(): boolean
+    }
+
+    class ImagePanel {
+        -backgroundImage: Image
+        +paintComponent()
+    }
+}
+
+package "database" {
+
+    class DatabaseSetup {
+        -URL: String
+        +setURL()
+        +setDatabase()
+        +resetTables()
+        +cleanTables()
+        +getConnection(): Connection
+    }
+
+    class DataImporter {
+        -URL: String
+        -YEARS: int[]
+        -CASHFLOW_TYPES: String[]
+        +setURL()
+        +importer()
+        +insertForeisFromCsv()
+        +insertCashflowsFromCsv()
+    }
+}
+
+GoverLensApp --> ImagePanel : uses
+GoverLensApp --> RoundedBorder : uses
+GoverLensApp --> DataImporter : uses
+GoverLensApp --> DatabaseSetup : uses
+
+DataImporter --> DatabaseSetup
+
+@enduml
