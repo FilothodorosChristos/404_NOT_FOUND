@@ -23,7 +23,8 @@ public class MainMenu extends Menu {
             case 1 -> { 
                 DataImporter.importer();
                 System.out.println("Νέα προσομοίωση ξεκίνησε.");
-                new YearMenu(IO).show();
+                YearMenu myYearMenu = new YearMenu(IO);
+                myYearMenu.show();
             }
             case 2 -> {
                 IO.showMessage("Φόρτωση προηγούμενης προσομοίωσης...");
