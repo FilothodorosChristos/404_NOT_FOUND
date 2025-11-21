@@ -10,80 +10,80 @@ import java.sql.Statement;
  */
 public class DatabaseSetup {
 
-    private static String URL = "jdbc:sqlite:budgetDB.db";
+  private static String URL = "jdbc:sqlite:budgetDB.db";
 
-    //setter για τα τεστ
-    public static void setURL(String url) {
-        URL = url;
+  //setter για τα τεστ
+  public static void setURL(String url) {
+      URL = url;
+  }
+
+  public static void setDatabase() {
+    try (Connection conn = DriverManager.getConnection(URL);
+          Statement stmt = conn.createStatement()) {
+
+      stmt.execute("PRAGMA foreign_keys = ON;");
+
+      // Πίνακας foreis
+      String createForeisTable = """
+              CREATE TABLE IF NOT EXISTS foreis (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  foreas_id INTEGER,
+                  year_id INTEGER NOT NULL,
+                  type TEXT NOT NULL,
+                  name TEXT NOT NULL,
+                  regular_budget REAL,
+                  public_inv_budget REAL,
+                  total REAL,
+                  UNIQUE(foreas_id, year_id)
+              );
+          """;
+
+      // Πίνακας cashflows
+      String createCashflowsTable = """
+              CREATE TABLE IF NOT EXISTS cashflows (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  year_id INTEGER NOT NULL,
+                  type TEXT NOT NULL,
+                  name TEXT NOT NULL,
+                  amount REAL
+              );
+          """;
+
+      stmt.execute(createForeisTable);
+      stmt.execute(createCashflowsTable);
+
+      System.out.println("Οι πίνακες δημιουργήθηκαν με επιτυχία.");
+
+    } catch (SQLException e) {
+      System.err.println("Σφάλμα κατά τη δημιουργία των πινάκων: " + e.getMessage());
     }
-
-    public static void setDatabase() {
-        try (Connection conn = DriverManager.getConnection(URL);
-             Statement stmt = conn.createStatement()) {
-
-            stmt.execute("PRAGMA foreign_keys = ON;");
-
-            // Πίνακας foreis
-            String createForeisTable = """
-                CREATE TABLE IF NOT EXISTS foreis (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    foreas_id INTEGER,
-                    year_id INTEGER NOT NULL,
-                    type TEXT NOT NULL,
-                    name TEXT NOT NULL,
-                    regular_budget REAL,
-                    public_inv_budget REAL,
-                    total REAL,
-                    UNIQUE(foreas_id, year_id)
-                );
-            """;
-
-            // Πίνακας cashflows
-            String createCashflowsTable = """
-                CREATE TABLE IF NOT EXISTS cashflows (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    year_id INTEGER NOT NULL,
-                    type TEXT NOT NULL,
-                    name TEXT NOT NULL,
-                    amount REAL
-                );
-            """;
-
-            stmt.execute(createForeisTable);
-            stmt.execute(createCashflowsTable);
-
-            System.out.println("Οι πίνακες δημιουργήθηκαν με επιτυχία.");
-
-        } catch (SQLException e) {
-            System.err.println("Σφάλμα κατά τη δημιουργία των πινάκων: " + e.getMessage());
-        }
-    }
-
-    public static void resetTables() {
-        cleanTables();
-        setDatabase();
-    }
-
-     public static void cleanTables() {
-        try (Connection conn = DriverManager.getConnection(URL);
-             Statement stmt = conn.createStatement()) {
-
-            stmt.execute("PRAGMA foreign_keys = OFF;");
-
-            stmt.executeUpdate("DROP TABLE IF EXISTS cashflows;");
-            stmt.executeUpdate("DROP TABLE IF EXISTS foreis;");
-
-            stmt.execute("PRAGMA foreign_keys = ON;");
-
-            System.out.println("Επιτυχής διαγραφή των πινάκων.");
-
-        } catch (SQLException e) {
-            System.err.println("Σφάλμα κατά τη διαγραφή των πινάκων: " + e.getMessage());
-        }
-    }
-
-    public static Connection getConnection() throws SQLException {
-    return DriverManager.getConnection(URL);
 }
+
+  public static void resetTables() {
+    cleanTables();
+    setDatabase();
+}
+
+  public static void cleanTables() {
+    try (Connection conn = DriverManager.getConnection(URL);
+        Statement stmt = conn.createStatement()) {
+
+      stmt.execute("PRAGMA foreign_keys = OFF;");
+
+      stmt.executeUpdate("DROP TABLE IF EXISTS cashflows;");
+      stmt.executeUpdate("DROP TABLE IF EXISTS foreis;");
+
+      stmt.execute("PRAGMA foreign_keys = ON;");
+
+      System.out.println("Επιτυχής διαγραφή των πινάκων.");
+
+    } catch (SQLException e) {
+      System.err.println("Σφάλμα κατά τη διαγραφή των πινάκων: " + e.getMessage());
+    }
+  }
+
+  public static Connection getConnection() throws SQLException {
+    return DriverManager.getConnection(URL);
+  }
 
 }
