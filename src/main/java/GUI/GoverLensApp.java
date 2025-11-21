@@ -345,7 +345,7 @@ public class GoverLensApp {
     }
     
     private void handleAction(String action) {
-        String message = String.format("Επιλέξατε: %s\nΈτος: %s", action, selectedYear);
+        String message = String.format("Επιλέξατε: %s%nΈτος: %s", action, selectedYear);
         JOptionPane.showMessageDialog(null, message, "Ενέργεια", JOptionPane.INFORMATION_MESSAGE);
         // Here you would implement actual functionality
     }
