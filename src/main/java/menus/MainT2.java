@@ -6,10 +6,6 @@ public class MainT2 {
         UserIo consoleIo = new ConsoleIo();
         MainMenu myMainMenu = new MainMenu(consoleIo);
         myMainMenu.show();
-        myMainMenu.handleChoice(2);
-
-
-
-}
+    }
 
 }
