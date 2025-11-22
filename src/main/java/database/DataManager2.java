@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.*;
 
 /**
+ * ΓΙΑ BACKUP ΜΟΝΟ! ΜΗ ΓΡΑΨΕΤΕ ΤΕΣΤ ΓΙΑ ΑΥΤΗ ΤΗΝ ΚΛΑΣΗ!
  * Διαχείριση της SQLite βάσης δεδομένων της εφαρμογής.
  * 
  * Περιλαμβάνει:
