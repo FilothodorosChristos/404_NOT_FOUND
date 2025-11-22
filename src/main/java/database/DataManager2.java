@@ -21,9 +21,6 @@ public class DataManager2 {
     // Resource της clean database
     private static final String CLEAN_DB_RESOURCE = "/db/originalDB.db";
 
-    // JDBC URL της working DB
-    //private static String url = "jdbc:sqlite:" + workingDb.toAbsolutePath();
-
     /**
      * Επιστρέφει το JDBC url της τρέχουσας working DB.
      */

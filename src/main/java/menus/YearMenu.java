@@ -1,11 +1,11 @@
 package menus;
 public class YearMenu extends Menu {
 
-  private final MainMenu parentMenu;
+  private final MainMenu PARENT_MENU;
 
   public YearMenu(UserIo io, MainMenu parentMenu) {
     super(io);
-    this.parentMenu = parentMenu;
+    this.PARENT_MENU = parentMenu;
   }
 
   public void show() {
@@ -21,10 +21,10 @@ public class YearMenu extends Menu {
    @Override
   protected void handleChoice(int option) {
     switch (option) {
-      case 1 -> new ActionsMenu(IO, 2023).show();
-      case 2 -> new ActionsMenu(IO, 2024).show();
-      case 3 -> new ActionsMenu(IO, 2025).show();
-      case 4 -> parentMenu.show();
+      case 1 -> new ActionsMenu(IO, 2023, this).show();
+      case 2 -> new ActionsMenu(IO, 2024, this).show();
+      case 3 -> new ActionsMenu(IO, 2025, this).show();
+      case 4 -> PARENT_MENU.show();
       default -> IO.showMessage("Μη έγκυρη επιλογή.");
     }
   }

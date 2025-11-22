@@ -14,7 +14,8 @@ public class MainMenu extends Menu {
             ---    Επιλέξτε:   ---
             1) Νέα προσομοίωση
             2) Συνέχεια προσομοίωσης
-        """, 2);
+            3) Έξοδος
+        """, 3);
     }
 
     @Override
@@ -30,6 +31,9 @@ public class MainMenu extends Menu {
                 IO.showMessage("Φόρτωση προηγούμενης προσομοίωσης...");
                 YearMenu myYearMenu = new YearMenu(IO, this);
                 myYearMenu.show();
+            }
+            case 3 -> {
+                IO.exit();
             }
         }
     }

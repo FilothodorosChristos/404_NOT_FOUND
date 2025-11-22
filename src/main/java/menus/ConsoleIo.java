@@ -26,5 +26,11 @@ public class ConsoleIo implements UserIo {
     public void showMessage(String message) {
         System.out.println(message);
     }
+
+    @Override
+    public void exit() {
+        System.out.println("Έξοδος από την εφαρμογή. Αντίο!");
+        System.exit(0);
+    }
 }
  

@@ -1,11 +1,16 @@
 package menus;
 
+import dao.CashFlowDao;
+import dao.ForeisDao;
+
 public class ActionsMenu extends Menu {
     private final int year;
+    private final YearMenu PARENT_MENU;
 
-    public ActionsMenu(UserIo io, int year) {
+    public ActionsMenu(UserIo io, int year, YearMenu parentMenu) {
         super(io);
         this.year = year;
+        this.PARENT_MENU = parentMenu;
     }
 
     public void show() {
@@ -33,7 +38,7 @@ public class ActionsMenu extends Menu {
             case 2 -> IO.showMessage("Επεξεργασία δεδομένων για " + year);
             case 3 -> IO.showMessage("Σύγκριση δεδομένων για " + year);
             case 4 -> IO.showMessage("Εκτέλεση σεναρίων για " + year);
-            case 5 -> new YearMenu(IO).show(); // επιστροφή στο μενού επιλογής έτους
+            case 5 -> PARENT_MENU.show(); // επιστροφή στο μενού επιλογής έτους
         }
     }
 }

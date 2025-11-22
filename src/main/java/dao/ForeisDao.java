@@ -37,10 +37,10 @@ public class ForeisDao {
    */
   public List<Foreis> selectForeis(int year, String type) {
     List<Foreis> foreisList = new ArrayList<>();
-    final String sql = "SELECT * FROM foreis WHERE year_id = ? AND type = ?";
+    final String SQL = "SELECT * FROM foreis WHERE year_id = ? AND type = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(SQL)) {
 
       statement.setInt(1, year);
       statement.setString(2, type);
@@ -62,14 +62,14 @@ public class ForeisDao {
    * Εισάγει μια νέα εγγραφή foreis στη βάση δεδομένων.
    */
   public void addForeis(Foreis foreis) {
-    final String sql =
+    final String SQL =
         "INSERT INTO foreis(" 
         + "year_id, type, name, regular_budget," 
         + "public_inv_budget, total, foreas_id) " 
         + "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
 
       preparedStatement.setInt(1, foreis.getYearId());
       preparedStatement.setString(2, foreis.getType());
@@ -89,12 +89,12 @@ public class ForeisDao {
    * Ενημερώνει μια υπάρχουσα εγγραφή foreis με νέα δεδομένα.
    */
   public void updateForeis(Foreis foreis) {
-    final String sql =
+    final String SQL =
         "UPDATE foreis SET year_id = ?, type = ?, name = ?, regular_budget = ?, "
         + "public_inv_budget = ?, total = ?, foreas_id = ? WHERE id = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
 
       preparedStatement.setInt(1, foreis.getYearId());
       preparedStatement.setString(2, foreis.getType());
@@ -115,10 +115,10 @@ public class ForeisDao {
    * Διαγράφει μια εγγραφή foreis με βάση το ID της.
    */
   public void deleteForeis(int id) {
-    final String sql = "DELETE FROM foreis WHERE id = ?";
+    final String SQL = "DELETE FROM foreis WHERE id = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
 
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
