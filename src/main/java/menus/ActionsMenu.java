@@ -27,14 +27,7 @@ public class ActionsMenu extends Menu {
     @Override
     protected void handleChoice(int choice) {
         switch(choice) {
-            case 1 -> { IO.showMessage("Προβολή δεδομένων για " + year);
-            IO.showMessage("Έσοδα");
-            CashFlowDao.selectCashFlow(year, "Έσοδο");
-            IO.showMessage("Έξοδα");
-            CashFlowDao.selectCashFlow(year, "Έξοδο");
-            IO.showMessage("Φορείς");
-            ForeisDao.selectForeis(year);
-            }
+            case 1 -> IO.showMessage("Προβολή δεδομένων για " + year);
             case 2 -> IO.showMessage("Επεξεργασία δεδομένων για " + year);
             case 3 -> IO.showMessage("Σύγκριση δεδομένων για " + year);
             case 4 -> IO.showMessage("Εκτέλεση σεναρίων για " + year);
