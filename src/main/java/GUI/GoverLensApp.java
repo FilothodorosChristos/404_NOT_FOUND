@@ -127,7 +127,7 @@ public class GoverLensApp {
         // Title
         JPanel titlePanel = createTransparentVerticalPanel();
         titlePanel.add(Box.createVerticalStrut(40));
-        titlePanel.add(createCenteredLabel("Καλώs ήρθατε στην GoverLens! ", TITLE_FONT));
+        titlePanel.add(createCenteredLabel("Καλώς ήρθατε στην GoverLens! ", TITLE_FONT));
         panel.add(titlePanel, BorderLayout.CENTER);
         
         // Main buttons
@@ -163,7 +163,7 @@ public class GoverLensApp {
         
         JPanel centerPanel = createTransparentVerticalPanel();
         centerPanel.add(Box.createVerticalGlue());
-        centerPanel.add(createCenteredLabel("Επίλεξε έτος προυπολογισμού:", SECTION_TITLE_FONT, Color.WHITE));
+        centerPanel.add(createCenteredLabel("Επιλέξτε έτος προυπολογισμού:", SECTION_TITLE_FONT, Color.WHITE));
         centerPanel.add(Box.createVerticalStrut(30));
         
         String[] years = {"2023", "2024", "2025"};
@@ -345,7 +345,7 @@ public class GoverLensApp {
     }
     
     private void handleAction(String action) {
-        String message = String.format("Επιλέξατε: %s\nΈτος: %s", action, selectedYear);
+        String message = String.format("Επιλέξατε: %s%nΈτος: %s", action, selectedYear);
         JOptionPane.showMessageDialog(null, message, "Ενέργεια", JOptionPane.INFORMATION_MESSAGE);
         // Here you would implement actual functionality
     }
