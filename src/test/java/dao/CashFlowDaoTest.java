@@ -52,8 +52,8 @@ public class CashFlowDaoTest {
     CashFlow c = new CashFlow(
                 0,
                 2023,
-                "Test Income",
                 "income",
+                "Test Income",
                 500.0
         );
 
@@ -76,8 +76,8 @@ public class CashFlowDaoTest {
     CashFlow c = new CashFlow(
                 0,
                 2023,
-                "Old Name",
                 "expense",
+                "Old Name",
                 200.0
         );
 

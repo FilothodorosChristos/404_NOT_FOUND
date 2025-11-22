@@ -37,21 +37,21 @@ public class CashFlowTest {
     // Ελέγχουμε ότι οι setters άλλαξαν τις τιμές σωστά
     assertEquals(2, cf.getId());
     assertEquals(2024, cf.getYearId());
-    assertEquals("Expense", cf.getName());
     assertEquals("Cost", cf.getType());
+    assertEquals("Expense", cf.getName());
     assertEquals(500.0, cf.getAmount());
   }
 
   @Test
     public void testToString() {
-    CashFlow cf = new CashFlow(3, 2025, "Donation", "Revenue", 200.0);
+    CashFlow cf = new CashFlow(3, 2025, "Revenue","Donation", 200.0);
     String str = cf.toString();
 
     // Ελέγχουμε ότι η toString περιέχει τα σωστά δεδομένα
     assertTrue(str.contains("id=3"));
     assertTrue(str.contains("yearId=2025"));
-    assertTrue(str.contains("name='Donation'"));
     assertTrue(str.contains("type='Revenue'"));
+    assertTrue(str.contains("name='Donation'"));
     assertTrue(str.contains("amount=200.0"));
   }
 }
