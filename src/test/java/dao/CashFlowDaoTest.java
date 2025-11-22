@@ -102,8 +102,8 @@ public class CashFlowDaoTest {
     CashFlow c = new CashFlow(
                 0,
                 2023,
-                "To Delete",
                 "income",
+                "To Delete",
                 100.0
         );
 
