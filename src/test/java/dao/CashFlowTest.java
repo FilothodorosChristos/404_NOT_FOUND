@@ -18,8 +18,8 @@ public class CashFlowTest {
     // Ελέγχουμε ότι ο constructor έχει αρχικοποιήσει σωστά όλα τα πεδία
     assertEquals(1, cf.getId());
     assertEquals(2023, cf.getYearId());
-    assertEquals("Income", cf.getName());
-    assertEquals("Revenue", cf.getType());
+    assertEquals("Income", cf.getType());
+    assertEquals("Revenue", cf.getName());
     assertEquals(1000.0, cf.getAmount());
   }
 
