@@ -30,8 +30,9 @@ package "GUI" #AED6F1 {
         • isBorderOpaque(): boolean
     }
 
-    class ImagePanel {
-        • paintComponent()
+    class ImagePanelHelper as " " {
+        • GoverLensLogo.jpg
+        • BackroundPhoto.jpg
     }
 }
 
