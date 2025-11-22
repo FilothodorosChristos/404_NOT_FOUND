@@ -1,62 +1,112 @@
 @startuml
-
-skinparam defaultFontSize 22
-skinparam classFontSize 24
-skinparam arrowFontSize 22
-skinparam titleFontSize 26
 skinparam packageStyle rectangle
+skinparam roundcorner 0
+skinparam shadowing false
+skinparam ArrowColor #34495E
+skinparam ArrowThickness 1.2
+skinparam classFontSize 16
+skinparam defaultFontSize 14
+skinparam padding 5
+skinparam packagePadding 10
+skinparam packageMargin 10
 skinparam classAttributeIconSize 0
+skinparam tightVSpacing true
+skinparam linetype ortho
 
-package "GUI" {
-
+' ===== GUI =====
+package "GUI" #AED6F1 {
     class GoverLensApp {
-        +main()
-        +createAndShowGUI()
-        +createWelcomePanel()
-        +createProjectSelectionPanel()
-        +createYearSelectionPanel()
-        +createActionSelectionPanel()
+        • main()
+        • createAndShowGUI()
+        • createWelcomePanel()
+        • createProjectSelectionPanel()
+        • createYearSelectionPanel()
+        • createActionSelectionPanel()
     }
 
     class RoundedBorder {
-        +paintBorder()
-        +getBorderInsets(): Insets
-        +isBorderOpaque(): boolean
+        • paintBorder()
+        • getBorderInsets(): Insets
+        • isBorderOpaque(): boolean
     }
 
     class ImagePanel {
-        -backgroundImage: Image
-        +paintComponent()
+        • paintComponent()
     }
 }
 
-package "database" {
+' ===== DAO =====
+package "DAO" #F9E79F {
+    class CashFlow {
+        • getId()
+        • setId()
+        • getAmount()
+        • setAmount()
+    }
 
+    class CashFlowDao {
+        • selectCashFlow()
+        • addCashFlow()
+        • updateCashFlow()
+        • deleteCashFlow()
+    }
+
+    class Foreis {
+        • getId()
+        • setId()
+        • getTotal()
+        • setTotal()
+    }
+
+    class ForeisDao {
+        • selectForeis()
+        • addForeis()
+        • updateForeis()
+        • deleteForeis()
+    }
+}
+
+' ===== Database =====
+package "Database" #A9DFBF {
     class DatabaseSetup {
-        -URL: String
-        +setURL()
-        +setDatabase()
-        +resetTables()
-        +cleanTables()
-        +getConnection(): Connection
+        • setURL()
+        • setDatabase()
+        • resetTables()
+        • cleanTables()
+        • getConnection(): Connection
     }
 
     class DataImporter {
-        -URL: String
-        -YEARS: int[]
-        -CASHFLOW_TYPES: String[]
-        +setURL()
-        +importer()
-        +insertForeisFromCsv()
-        +insertCashflowsFromCsv()
+        • setURL()
+        • importer()
+        • insertForeisFromCsv()
+        • insertCashflowsFromCsv()
     }
 }
 
-GoverLensApp --> ImagePanel : uses
-GoverLensApp --> RoundedBorder : uses
-GoverLensApp --> DataImporter : uses
-GoverLensApp --> DatabaseSetup : uses
+' ===== TESTS =====
+package "Tests" #D2B4DE {
+    class CashFlowTest
+    class CashFlowDaoTest
+    class ForeisTest
+    class ForeisDaoTest
+    class DataImporterTest
+    class DatabaseSetupTest
+}
 
-DataImporter --> DatabaseSetup
+' ===== ΟΜΑΔΟΠΟΙΗΣΗ ΓΙΑ COMPACT =====
+CashFlowTest -[hidden]-> CashFlowDaoTest
+ForeisTest -[hidden]-> ForeisDaoTest
+DataImporterTest -[hidden]-> DatabaseSetupTest
 
+' ===== ΣΥΝΔΕΣΕΙΣ =====
+GoverLensApp --> DAO
+GoverLensApp --> Database
+
+CashFlowTest --> CashFlow
+CashFlowDaoTest --> CashFlowDao
+ForeisTest --> Foreis
+ForeisDaoTest --> ForeisDao
+DataImporterTest --> DataImporter
+DatabaseSetupTest --> DatabaseSetup
 @enduml
