@@ -16,28 +16,28 @@ skinparam packagePadding 1
 skinparam packageMargin 1
 rectangle "menus" #FAD7A0 {
     class UserIo {
-        + getString(prompt)
-        + getInt(prompt)
-        + showMessage(message)
-        + exit()
+        • getString(prompt)
+        • getInt(prompt)
+        • showMessage(message)
+        • exit()
     }
     class ConsoleIo {
-        + getString(message)
-        + getInt(message)
-        + showMessage(message)
-        + exit()
+        • getString(message)
+        • getInt(message)
+        • showMessage(message)
+        • exit()
     }
     class Menu {
-        + showMenu(message, optionsCount)
-        + handleChoice(choice)
+        • showMenu(message, optionsCount)
+        • handleChoice(choice)
     }
     class MainMenu {
-        + show()
-        + handleChoice(choice)
+        • show()
+        • handleChoice(choice)
     }
     class YearMenu {
-        + show()
-        + handleChoice(option)
+        • show()
+        • handleChoice(option)
     }
 
     ' Κοντά μεταξύ τους
@@ -53,18 +53,11 @@ skinparam packagePadding 10
 skinparam packageMargin 10
 package "GUI" #AED6F1 {
     class GoverLensApp {
-        • main()
         • createAndShowGUI()
         • createWelcomePanel()
         • createProjectSelectionPanel()
         • createYearSelectionPanel()
         • createActionSelectionPanel()
-    }
-
-    class RoundedBorder {
-        • paintBorder()
-        • getBorderInsets(): Insets
-        • isBorderOpaque(): boolean
     }
 
     class ImagePanelHelper as " " {
@@ -124,12 +117,24 @@ package "Database" #A9DFBF {
 
 ' ===== TESTS =====
 package "Tests" #D2B4DE {
-    class CashFlowTest
-    class CashFlowDaoTest
-    class ForeisTest
-    class ForeisDaoTest
-    class DataImporterTest
-    class DatabaseSetupTest
+    class CashFlowTest {
+        • testSomething()
+    }
+    class CashFlowDaoTest {
+        • testDaoMethods()
+    }
+    class ForeisTest {
+        • testSomething()
+    }
+    class ForeisDaoTest {
+        • testDaoMethods()
+    }
+    class DataImporterTest {
+        • testImport()
+    }
+    class DatabaseSetupTest {
+        • testSetup()
+    }
 }
 
 ' ===== ΟΜΑΔΟΠΟΙΗΣΗ ΓΙΑ COMPACT =====
@@ -148,4 +153,5 @@ ForeisTest --> Foreis
 ForeisDaoTest --> ForeisDao
 DataImporterTest --> DataImporter
 DatabaseSetupTest --> DatabaseSetup
+
 @enduml
