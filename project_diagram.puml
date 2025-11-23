@@ -6,14 +6,51 @@ skinparam ArrowColor #34495E
 skinparam ArrowThickness 1.2
 skinparam classFontSize 16
 skinparam defaultFontSize 14
-skinparam padding 5
-skinparam packagePadding 10
-skinparam packageMargin 10
 skinparam classAttributeIconSize 0
 skinparam tightVSpacing true
 skinparam linetype ortho
 
+' ===== ΠΟΛΥ ΜΙΚΡΟ MENU ΠΑΝΩ ΠΑΝΩ =====
+skinparam padding 1
+skinparam packagePadding 1
+skinparam packageMargin 1
+rectangle "menus" #FAD7A0 {
+    class UserIo {
+        + getString(prompt)
+        + getInt(prompt)
+        + showMessage(message)
+        + exit()
+    }
+    class ConsoleIo {
+        + getString(message)
+        + getInt(message)
+        + showMessage(message)
+        + exit()
+    }
+    class Menu {
+        + showMenu(message, optionsCount)
+        + handleChoice(choice)
+    }
+    class MainMenu {
+        + show()
+        + handleChoice(choice)
+    }
+    class YearMenu {
+        + show()
+        + handleChoice(option)
+    }
+
+    ' Κοντά μεταξύ τους
+    UserIo -[hidden]-> ConsoleIo
+    ConsoleIo -[hidden]-> Menu
+    Menu -[hidden]-> MainMenu
+    MainMenu -[hidden]-> YearMenu
+}
+
 ' ===== GUI =====
+skinparam padding 5
+skinparam packagePadding 10
+skinparam packageMargin 10
 package "GUI" #AED6F1 {
     class GoverLensApp {
         • main()
@@ -101,6 +138,7 @@ ForeisTest -[hidden]-> ForeisDaoTest
 DataImporterTest -[hidden]-> DatabaseSetupTest
 
 ' ===== ΣΥΝΔΕΣΕΙΣ =====
+Menu --> GUI
 GoverLensApp --> DAO
 GoverLensApp --> Database
 
