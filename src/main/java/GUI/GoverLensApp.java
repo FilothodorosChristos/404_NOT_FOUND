@@ -1,53 +1,92 @@
 package GUI;
-
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+/**
+ * Main GUI application class for GoverLens.
+ * Handles navigation between screens using CardLayout.
+ * Screens include: welcome, project selection, year selection, and action selection.
+ * Logic of the original code remains unchanged. Only JavaDoc comments are added.
+ */
+
 
 public class GoverLensApp {
     
-    // ========== CONSTANTS ==========
+ /** File path to the logo image. */
     private static final String LOGO_PATH = "GoverLensLogo.jpg";
+
+    /** File path to the background image. */
     private static final String BACKGROUND_PATH = "BackroundPhoto.jpg";
-    
+
+    /** Width of the main application window. */
     private static final int FRAME_WIDTH = 1000;
+
+    /** Height of the main application window. */
     private static final int FRAME_HEIGHT = 800;
-    
+
+    /** Navy-blue color used in UI. */
     private static final Color NAVY_BLUE = new Color(0, 0, 128);
+
+    /** White color for text. */
     private static final Color TEXT_WHITE = Color.WHITE;
-    
+
+    /** Font used for main titles. */
     private static final Font TITLE_FONT = new Font("Tahoma", Font.PLAIN, 50);
+
+    /** Font used for subtitles. */
     private static final Font SUBTITLE_FONT = new Font("Tahoma", Font.PLAIN, 24);
+
+    /** Font used for section headers. */
     private static final Font SECTION_TITLE_FONT = new Font("Tahoma", Font.PLAIN, 30);
+
+    /** Font used for large buttons. */
     private static final Font BUTTON_FONT = new Font("Arial", Font.BOLD, 24);
+
+    /** Font used for year-selection buttons. */
     private static final Font YEAR_BUTTON_FONT = new Font("Tahoma", Font.BOLD, 28);
-    
+
+    /** Size of large action buttons. */
     private static final Dimension LARGE_BUTTON_SIZE = new Dimension(350, 90);
+
+    /** Size of year buttons. */
     private static final Dimension YEAR_BUTTON_SIZE = new Dimension(300, 70);
+
+    /** Size of navigation buttons. */
     private static final Dimension NAV_BUTTON_SIZE = new Dimension(150, 40);
     
-    // ========== CACHED IMAGES ==========
+    /** Cached logo image. */
     private Image logoImage;
+
+    /** Cached background image. */
     private Image backgroundImage;
     
-    // ========== STATE ==========
+    /** Stores the selected budget year. */
     private String selectedYear;
     
-    // ========== MAIN ==========
-    public static void main(String[] args) {
+      /**
+     * Starts the GoverLens application.
+     * SwingUtilities.invokeLater is used to ensure safe GUI creation.
+     *
+     * @param args command-line arguments (unused)
+     */
+    
+       public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new GoverLensApp().createAndShowGUI());
     }
-    
-    // ========== GUI CREATION ==========
+       /**
+     * Creates and displays the main GUI window.
+     * Loads images, initializes the main frame, creates all panels,
+     * and registers them in a CardLayout container.
+     */
     private void createAndShowGUI() {
         loadImages();
-        
+
         JFrame frame = createMainFrame();
         CardLayout cardLayout = new CardLayout();
         JPanel mainPanel = new JPanel(cardLayout);
         
-        // Add all panels
+        
         mainPanel.add(createWelcomePanel(cardLayout, mainPanel), "welcome");
         mainPanel.add(createProjectSelectionPanel(cardLayout, mainPanel), "projectSelection");
         mainPanel.add(createYearSelectionPanel(cardLayout, mainPanel), "yearSelection");
@@ -58,7 +97,10 @@ public class GoverLensApp {
         cardLayout.show(mainPanel, "welcome");
     }
     
-    // ========== IMAGE LOADING ==========
+     /**
+     * Loads the logo and background images from disk.
+     * Prints an error message if loading fails.
+     */
     private void loadImages() {
         try {
             logoImage = new ImageIcon(LOGO_PATH).getImage();
@@ -69,7 +111,12 @@ public class GoverLensApp {
         }
     }
     
-    // ========== FRAME SETUP ==========
+     /**
+     * Creates the main application JFrame with predefined size,
+     * close operation, position, and window icon.
+     *
+     * @return the configured JFrame
+     */
     private JFrame createMainFrame() {
         JFrame frame = new JFrame("Καλώς Ήρθατε στην GoverLens.");
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -79,17 +126,24 @@ public class GoverLensApp {
         return frame;
     }
     
-    // ========== PANEL 1: WELCOME ==========
+     /**
+ * Creates the welcome panel displayed when the application starts.
+ * Shows the logo, welcome text, subtitle, and a "Next" button.
+ *
+ * @param layout the CardLayout managing panel switching
+ * @param container the main container holding all panels
+ * @return the configured welcome JPanel
+ */
     private JPanel createWelcomePanel(CardLayout layout, JPanel container) {
         JPanel panel = createLogoBackgroundPanel();
         
-        // Center text
+        
         JPanel centerPanel = createTransparentVerticalPanel();
         centerPanel.add(Box.createVerticalStrut(40));
         centerPanel.add(createCenteredLabel("Καλώς ήρθατε στην GoverLens! ", TITLE_FONT));
         panel.add(centerPanel, BorderLayout.CENTER);
         
-        // Bottom section
+        
         JPanel bottomSection = createTransparentVerticalPanel();
         bottomSection.add(Box.createVerticalStrut(80));
         bottomSection.add(createCenteredLabel("________________________________________________________", SUBTITLE_FONT));
@@ -120,17 +174,24 @@ public class GoverLensApp {
         return panel;
     }
     
-    // ========== PANEL 2: PROJECT SELECTION ==========
+    /**
+ * Creates the project selection panel.
+ * Allows the user to continue an existing project or start a new simulation.
+ *
+ * @param layout the CardLayout managing panel switching
+ * @param container the main container holding all panels
+ * @return the configured project selection JPanel
+ */
     private JPanel createProjectSelectionPanel(CardLayout layout, JPanel container) {
         JPanel panel = createLogoBackgroundPanel();
         
-        // Title
+        
         JPanel titlePanel = createTransparentVerticalPanel();
         titlePanel.add(Box.createVerticalStrut(40));
         titlePanel.add(createCenteredLabel("Καλώς ήρθατε στην GoverLens! ", TITLE_FONT));
         panel.add(titlePanel, BorderLayout.CENTER);
         
-        // Main buttons
+        
         JButton oldProjectBtn = createStyledButton("Συνέχεια Προσομοίωσης", LARGE_BUTTON_SIZE, BUTTON_FONT);
         JButton newProjectBtn = createStyledButton("Καινούργια Προσομοίωση", LARGE_BUTTON_SIZE, BUTTON_FONT);
         
@@ -144,7 +205,7 @@ public class GoverLensApp {
         buttonsPanel.add(newProjectBtn);
         buttonsPanel.add(Box.createHorizontalGlue());
         
-        // Navigation
+        
         JButton prevButton = createNavigationButton("< Προηγούμενο", e -> layout.show(container, "welcome"));
         
         JPanel southPanel = new JPanel(new BorderLayout());
@@ -156,7 +217,14 @@ public class GoverLensApp {
         return panel;
     }
     
-    // ========== PANEL 3: YEAR SELECTION ==========
+    /**
+ * Creates the year selection panel.
+ * Displays buttons for available years and allows navigation back to project selection.
+ *
+ * @param layout the CardLayout managing panel switching
+ * @param container the main container holding all panels
+ * @return the configured year selection JPanel
+ */
     private JPanel createYearSelectionPanel(CardLayout layout, JPanel container) {
         JPanel panel = new ImagePanel(backgroundImage);
         panel.setLayout(new BorderLayout());
@@ -181,6 +249,15 @@ public class GoverLensApp {
         
         return panel;
     }
+    /**
+ * Creates a year button for the year selection panel.
+ * When clicked, sets the selected year and navigates to the action selection panel.
+ *
+ * @param year the year displayed on the button
+ * @param layout the CardLayout managing panel switching
+ * @param container the main container holding all panels
+ * @return the configured year JButton
+ */
     
     private JButton createYearButton(String year, CardLayout layout, JPanel container) {
         JButton btn = createStyledButton(year, YEAR_BUTTON_SIZE, YEAR_BUTTON_FONT);
@@ -194,31 +271,38 @@ public class GoverLensApp {
         return btn;
     }
     
-    // ========== PANEL 4: ACTION SELECTION ==========
+    /**
+ * Creates the action selection panel.
+ * Allows the user to choose between viewing, editing, charts, or comparison.
+ *
+ * @param layout the CardLayout managing panel switching
+ * @param container the main container holding all panels
+ * @return the configured action selection JPanel
+ */
     private JPanel createActionSelectionPanel(CardLayout layout, JPanel container) {
         JPanel panel = new ImagePanel(backgroundImage);
         panel.setLayout(new BorderLayout());
         
         JLabel label = createCenteredLabel("Παρακαλώ επιλέξτε διαδικασία:", SECTION_TITLE_FONT, Color.WHITE);
         
-        // Create action buttons
+        
         JButton viewBtn = createStyledButton("Προβολή", LARGE_BUTTON_SIZE, BUTTON_FONT);
         JButton editBtn = createStyledButton("Επεξεργασία", LARGE_BUTTON_SIZE, BUTTON_FONT);
         JButton diagramBtn = createStyledButton("Διαγράμματα", LARGE_BUTTON_SIZE, BUTTON_FONT);
         JButton compareBtn = createStyledButton("Σύγκριση", LARGE_BUTTON_SIZE, BUTTON_FONT);
         
-        // Add action listeners
+        
         viewBtn.addActionListener(e -> handleAction("Προβολή"));
         editBtn.addActionListener(e -> handleAction("Επεξεργασία"));
         diagramBtn.addActionListener(e -> handleAction("Διαγράμματα"));
         compareBtn.addActionListener(e -> handleAction("Σύγκριση"));
         
-        // Apply rounded borders
+        
         for (JButton btn : new JButton[]{viewBtn, editBtn, diagramBtn, compareBtn}) {
             btn.setBorder(new RoundedBorder(30));
         }
         
-        // Layout buttons in grid
+        
         JPanel buttonsGrid = new JPanel(new GridBagLayout());
         buttonsGrid.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -233,13 +317,13 @@ public class GoverLensApp {
         gbc.gridx = 1;
         buttonsGrid.add(compareBtn, gbc);
         
-        // Center panel with better spacing
+        
         JPanel centerPanel = createTransparentVerticalPanel();
-        centerPanel.add(Box.createVerticalStrut(150)); // Fixed space from top
+        centerPanel.add(Box.createVerticalStrut(150)); 
         centerPanel.add(label);
         centerPanel.add(Box.createVerticalStrut(30));
         centerPanel.add(buttonsGrid);
-        centerPanel.add(Box.createVerticalGlue()); // Fill remaining space at bottom
+        centerPanel.add(Box.createVerticalGlue()); 
         
         panel.add(centerPanel, BorderLayout.CENTER);
         
@@ -249,7 +333,11 @@ public class GoverLensApp {
         return panel;
     }
     
-    // ========== HELPER METHODS ==========
+    /**
+ * Creates a panel with a background image and optionally draws a circular logo.
+ *
+ * @return the JPanel with background and logo
+ */
     
     private JPanel createLogoBackgroundPanel() {
         return new JPanel(new BorderLayout()) {
@@ -257,12 +345,12 @@ public class GoverLensApp {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 
-                // Draw background
+                
                 if (backgroundImage != null) {
                     g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
                 }
                 
-                // Draw circular logo
+                
                 if (logoImage != null) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -285,12 +373,26 @@ public class GoverLensApp {
         };
     }
     
+
+/**
+ * Creates a transparent vertical JPanel using BoxLayout.
+ *
+ * @return the transparent vertical JPanel
+ */
+    
     private JPanel createTransparentVerticalPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setOpaque(false);
         return panel;
     }
+
+
+    /**
+ * Creates a transparent horizontal JPanel using BoxLayout.
+ *
+ * @return the transparent horizontal JPanel
+ */
     
     private JPanel createTransparentHorizontalPanel() {
         JPanel panel = new JPanel();
@@ -299,9 +401,26 @@ public class GoverLensApp {
         return panel;
     }
     
+    /**
+ * Creates a centered JLabel with a specific font and default white color.
+ *
+ * @param text the text to display
+ * @param font the font to use
+ * @return the JLabel configured with text, font, and alignment
+ */
+
     private JLabel createCenteredLabel(String text, Font font) {
         return createCenteredLabel(text, font, TEXT_WHITE);
     }
+
+    /**
+ * Creates a centered JLabel with a specific font and color.
+ *
+ * @param text the text to display
+ * @param font the font to use
+ * @param color the text color
+ * @return the JLabel configured with text, font, color, and center alignment
+ */
     
     private JLabel createCenteredLabel(String text, Font font, Color color) {
         JLabel label = new JLabel(text);
@@ -310,6 +429,15 @@ public class GoverLensApp {
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         return label;
     }
+
+    /**
+ * Creates a styled JButton with rounded borders, specified size, font, and alignment.
+ *
+ * @param text the text to display on the button
+ * @param size the preferred button size
+ * @param font the font to use (optional, default BUTTON_FONT if null)
+ * @return the styled JButton
+ */
     
     private JButton createStyledButton(String text, Dimension size, Font font) {
         JButton button = new JButton(text);
@@ -326,6 +454,15 @@ public class GoverLensApp {
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         return button;
     }
+
+    /**
+ * Creates a navigation button with an action listener.
+ *
+ * @param text the text on the button
+ * @param action the ActionListener triggered when clicked
+ * @return the configured JButton
+ */
+
     
     private JButton createNavigationButton(String text, java.awt.event.ActionListener action) {
         JButton button = new JButton(text);
@@ -335,6 +472,13 @@ public class GoverLensApp {
         button.addActionListener(action);
         return button;
     }
+
+    /**
+ * Creates a panel aligned to the bottom left containing the specified button.
+ *
+ * @param button the JButton to add
+ * @return the bottom-left aligned JPanel
+ */
     
     private JPanel createBottomLeftPanel(JButton button) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -343,22 +487,44 @@ public class GoverLensApp {
         panel.add(button);
         return panel;
     }
+
+    /**
+ * Handles user action by displaying a message dialog.
+ *
+ * @param action the action string selected by the user
+ */
     
     private void handleAction(String action) {
         String message = String.format("Επιλέξατε: %s%nΈτος: %s", action, selectedYear);
         JOptionPane.showMessageDialog(null, message, "Ενέργεια", JOptionPane.INFORMATION_MESSAGE);
-        // Here you would implement actual functionality
+        
     }
     
-    // ========== INNER CLASSES ==========
+    /**
+ * A JPanel subclass that paints a background image stretched to fit the panel.
+ */
+   
     
     static class ImagePanel extends JPanel {
         private Image backgroundImage;
+
+        /**
+     * Constructs an ImagePanel with the specified background image.
+     *
+     * @param backgroundImage the Image to use as the panel's background
+     */
         
         public ImagePanel(Image backgroundImage) {
             this.backgroundImage = backgroundImage;
             setLayout(new BorderLayout());
         }
+
+        
+    /**
+     * Paints the background image onto the panel.
+     *
+     * @param g the Graphics context to use for painting
+     */
         
         @Override
         protected void paintComponent(Graphics g) {
@@ -368,13 +534,35 @@ public class GoverLensApp {
             }
         }
     }
+
+    /**
+ * A custom border with rounded corners for Swing components.
+ */
     
     static class RoundedBorder extends AbstractBorder {
         private int radius;
+
+         /**
+     * Constructs a RoundedBorder with the specified corner radius.
+     *
+     * @param radius the radius of the rounded corners
+     */
         
         public RoundedBorder(int radius) {
             this.radius = radius;
         }
+
+        
+    /**
+     * Paints the rounded border around the specified component.
+     *
+     * @param c the component for which this border is being painted
+     * @param g the Graphics context to use for painting
+     * @param x the x position of the border
+     * @param y the y position of the border
+     * @param width the width of the border
+     * @param height the height of the border
+     */
         
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {

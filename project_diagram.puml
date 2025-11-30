@@ -4,154 +4,203 @@ skinparam roundcorner 0
 skinparam shadowing false
 skinparam ArrowColor #34495E
 skinparam ArrowThickness 1.2
-skinparam classFontSize 16
+skinparam classFontSize 14
 skinparam defaultFontSize 14
 skinparam classAttributeIconSize 0
 skinparam tightVSpacing true
 skinparam linetype ortho
 
-' ===== ΠΟΛΥ ΜΙΚΡΟ MENU ΠΑΝΩ ΠΑΝΩ =====
-skinparam padding 1
-skinparam packagePadding 1
-skinparam packageMargin 1
-rectangle "menus" #FAD7A0 {
+' ===== MENUS =====
+package "menus" #FAD7A0 {
+
     class UserIo {
-        • getString(prompt)
-        • getInt(prompt)
-        • showMessage(message)
-        • exit()
-    }
-    class ConsoleIo {
-        • getString(message)
-        • getInt(message)
-        • showMessage(message)
-        • exit()
-    }
-    class Menu {
-        • showMenu(message, optionsCount)
-        • handleChoice(choice)
-    }
-    class MainMenu {
-        • show()
-        • handleChoice(choice)
-    }
-    class YearMenu {
-        • show()
-        • handleChoice(option)
+        + getString(prompt)
+        + getInt(prompt)
+        + showMessage(message)
+        + exit()
     }
 
-    ' Κοντά μεταξύ τους
-    UserIo -[hidden]-> ConsoleIo
-    ConsoleIo -[hidden]-> Menu
-    Menu -[hidden]-> MainMenu
-    MainMenu -[hidden]-> YearMenu
+    class ConsoleIo {
+        + getString(message)
+        + getInt(message)
+        + showMessage(message)
+        + exit()
+    }
+
+    ConsoleIo ..|> UserIo
+
+    abstract class Menu {
+        + showMenu(message, optionsCount)
+        + handleChoice(choice)
+    }
+
+    class MainMenu {
+        + show()
+        + handleChoice(choice)
+    }
+
+    class YearMenu {
+        + show()
+        + handleChoice(choice)
+    }
+
+    class ActionsMenu {
+        + show()
+        + handleChoice(choice)
+    }
+
+    MainMenu --|> Menu
+    YearMenu --|> Menu
+    ActionsMenu --|> Menu
 }
 
 ' ===== GUI =====
-skinparam padding 5
-skinparam packagePadding 10
-skinparam packageMargin 10
 package "GUI" #AED6F1 {
-    class GoverLensApp {
-        • createAndShowGUI()
-        • createWelcomePanel()
-        • createProjectSelectionPanel()
-        • createYearSelectionPanel()
-        • createActionSelectionPanel()
-    }
+    skinparam classPadding 20
+    skinparam classFontSize 14
 
-    class ImagePanelHelper as " " {
-        • GoverLensLogo.jpg
-        • BackroundPhoto.jpg
+    class GoverLensApp {
+        + createAndShowGUI()
+        + createWelcomePanel()
+        + createProjectSelectionPanel()
+        + createYearSelectionPanel()
+        + createActionSelectionPanel()
+        + handleAction(action)
     }
 }
 
 ' ===== DAO =====
 package "DAO" #F9E79F {
+
     class CashFlow {
-        • getId()
-        • setId()
-        • getAmount()
-        • setAmount()
+        + getId()
+        + setId()
+        + getAmount()
+        + setAmount()
+        + getYear_id()
+        + setYear_id()
+        + getType()
+        + setType()
+        + getName()
+        + setName()
     }
 
     class CashFlowDao {
-        • selectCashFlow()
-        • addCashFlow()
-        • updateCashFlow()
-        • deleteCashFlow()
+        + selectAllCashFlows()
+        + addCashFlow()
+        + updateCashFlow()
+        + deleteCashFlow()
     }
 
     class Foreis {
-        • getId()
-        • setId()
-        • getTotal()
-        • setTotal()
+        + getId()
+        + setId()
+        + getTotal()
+        + setTotal()
+        + getYear_id()
+        + setYear_id()
+        + getName()
+        + setName()
     }
 
     class ForeisDao {
-        • selectForeis()
-        • addForeis()
-        • updateForeis()
-        • deleteForeis()
+        + selectAllForeis()
+        + addForeis()
+        + updateForeis()
+        + deleteForeis()
     }
+
+    CashFlowDao --> CashFlow
+    ForeisDao --> Foreis
 }
 
-' ===== Database =====
+' ===== DATABASE =====
 package "Database" #A9DFBF {
+
     class DatabaseSetup {
-        • setURL()
-        • setDatabase()
-        • resetTables()
-        • cleanTables()
-        • getConnection(): Connection
+        + setURL(url)
+        + setDatabase()
+        + cleanTables()
+        + resetTables()
+        + getConnection()
     }
 
     class DataImporter {
-        • setURL()
-        • importer()
-        • insertForeisFromCsv()
-        • insertCashflowsFromCsv()
+        + setURL(url)
+        + importer()
+        + insertForeisFromCsv(filename)
+        + insertCashflowsFromCsv(filename, type)
     }
+
+    CashFlowDao --> DatabaseSetup
+    ForeisDao --> DatabaseSetup
+    DataImporter --> DatabaseSetup
 }
 
 ' ===== TESTS =====
 package "Tests" #D2B4DE {
+
     class CashFlowTest {
-        • testSomething()
+        + testConstructorAndGetters()
+        + testSetters()
+        + testToString()
     }
+
     class CashFlowDaoTest {
-        • testDaoMethods()
+        + setupDatabase()
+        + init()
+        + testAddAndSelectCashFlow()
+        + testUpdateCashFlow()
+        + testDeleteCashFlow()
+        + restoreDatabaseURL()
     }
+
     class ForeisTest {
-        • testSomething()
+        + testConstructorAndGetters()
+        + testSettersAndGetters()
+        + testToString()
     }
+
     class ForeisDaoTest {
-        • testDaoMethods()
+        + setupDatabase()
+        + init()
+        + testAddAndSelectForeis()
+        + testUpdateForeis()
+        + testDeleteForeis()
+        + restoreDatabaseURL()
     }
+
     class DataImporterTest {
-        • testImport()
+        + setupTestUrl()
+        + restoreRealUrl()
+        + setupDatabaseSchema()
+        + insertForeisFromCsv_ShouldInsertValidRowsAndSkipInvalid()
+        + insertCashflowsFromCsv_ShouldInsertValidRowsAndSkipInvalid()
+        + insertForeisFromCsv_ShouldThrowFileNotFoundException()
     }
+
     class DatabaseSetupTest {
-        • testSetup()
+        + setup()
+        + cleanTables()
+        + teardownClass()
+        + testSetDatabase_CreatesTables()
+        + testCleanTables_DeletesTables()
+        + testResetTables_RecreatesTables()
     }
+
+    ' Dependencies (tests depend on classes)
+    CashFlowTest ..> CashFlow
+    CashFlowDaoTest ..> CashFlowDao
+    ForeisTest ..> Foreis
+    ForeisDaoTest ..> ForeisDao
+    DataImporterTest ..> DataImporter
+    DatabaseSetupTest ..> DatabaseSetup
 }
 
-' ===== ΟΜΑΔΟΠΟΙΗΣΗ ΓΙΑ COMPACT =====
-CashFlowTest -[hidden]-> CashFlowDaoTest
-ForeisTest -[hidden]-> ForeisDaoTest
-DataImporterTest -[hidden]-> DatabaseSetupTest
-
-' ===== ΣΥΝΔΕΣΕΙΣ =====
-Menu --> GUI
-GoverLensApp --> DAO
-GoverLensApp --> Database
-
-CashFlowTest --> CashFlow
-CashFlowDaoTest --> CashFlowDao
-ForeisTest --> Foreis
-ForeisDaoTest --> ForeisDao
-DataImporterTest --> DataImporter
-DatabaseSetupTest --> DatabaseSetup
+' ===== CONNECTIONS =====
+Menu --> UserIo
+GoverLensApp --> CashFlowDao
+GoverLensApp --> ForeisDao
+GoverLensApp --> DatabaseSetup
 
 @enduml
