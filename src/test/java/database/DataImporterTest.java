@@ -5,10 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
-//import java.nio.file.Paths;
-//import java.nio.file.Files;
-//import database.DatabaseSetup;
-//import database.DataImporter;
 
 import java.sql.*;
 
