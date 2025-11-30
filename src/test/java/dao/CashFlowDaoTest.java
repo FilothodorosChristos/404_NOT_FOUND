@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class για την CashFlowDao.
- * Χρησιμοποιεί test database (testdbtemp.db)
+ * Χρησιμοποιεί test database (test_db_temp.db)
  * ώστε να μην πειράξει την κανονική βάση.
  */
 public class CashFlowDaoTest {
