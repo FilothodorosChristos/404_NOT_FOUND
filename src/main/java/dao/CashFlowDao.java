@@ -39,7 +39,8 @@ public class CashFlowDao {
    */
   public List<CashFlow> selectCashFlow(int year, String type) {
     List<CashFlow> cashflows = new ArrayList<>();
-    final String SQL = "SELECT * FROM cashflows WHERE year_id = ? AND type = ?";
+    final String SQL = "SELECT * FROM cashflows WHERE year_id = ? AND type = ? "
+                     + "ORDER BY year_id ASC, type ASC, name ASC;";
     try (Connection connection = DatabaseSetup.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL)) {
 
