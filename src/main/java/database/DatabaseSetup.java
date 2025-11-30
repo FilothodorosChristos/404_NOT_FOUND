@@ -180,19 +180,19 @@ public class DatabaseSetup {
     try (Connection conn = DriverManager.getConnection(URL);
         Statement stmt = conn.createStatement()) {
 
-      stmt.execute("PRAGMA foreign_keys = OFF;");
-      stmt.executeUpdate("DROP TABLE IF EXISTS cashflows;");
-      stmt.executeUpdate("DROP TABLE IF EXISTS foreis;");
-      stmt.executeUpdate("DROP TABLE IF EXISTS log;");
-      
-      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_insert_foreis;");
-      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_update_foreis;");
-      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_delete_foreis;");
+          stmt.execute("PRAGMA foreign_keys = OFF;");
 
-      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_insert_cashflows;");
-      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_update_cashflows;");
-      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_delete_cashflows;");
+          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_insert_foreis;");
+          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_update_foreis;");
+          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_delete_foreis;");
 
+          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_insert_cashflows;");
+          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_update_cashflows;");
+          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_delete_cashflows;");
+
+          stmt.executeUpdate("DROP TABLE IF EXISTS cashflows;");
+          stmt.executeUpdate("DROP TABLE IF EXISTS foreis;");
+          stmt.executeUpdate("DROP TABLE IF EXISTS log;");
 
 
       stmt.execute("PRAGMA foreign_keys = ON;");
