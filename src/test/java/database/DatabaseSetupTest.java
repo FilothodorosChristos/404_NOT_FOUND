@@ -33,12 +33,13 @@ public class DatabaseSetupTest {
     }// Δημιουργεί πίνακες
 
     @BeforeEach
-    void cleanTables() throws SQLException {
-        try (Statement stmt = conn.createStatement()) {
-            stmt.execute("DELETE FROM foreis");
-            stmt.execute("DELETE FROM cashflows");
+        void resetDB() throws SQLException {
+            // Drop tables + triggers (όπως στην cleanTables())
+            DatabaseSetup.cleanTables();
+            // recreate από την αρχή (πίνακες + triggers)
+            DatabaseSetup.setDatabase();
         }
-    }
+
 
     @AfterAll
     static void teardownClass() throws Exception {
