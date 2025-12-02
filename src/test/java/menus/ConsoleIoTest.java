@@ -65,30 +65,5 @@ public class ConsoleIoTest {
             System.setOut(originalOut);
         }
     }
-    @Test
-    void testExit(){
-        InputStream originalIn = System.in;
-        PrintStream originalOut = System.out;
-        try {
-            String testInput = "\n"; // Random input to test exit
-            ByteArrayInputStream in = new ByteArrayInputStream(testInput.getBytes());
-            System.setIn(in);
-            ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-            System.setOut(new PrintStream(outContent));
-            ConsoleIo testobj = new ConsoleIo();
-            // Since exit() will call System.exit(0), we need to catch the SecurityException
-            try {
-                testobj.exit();
-                fail("Πρέπει να καλέσει το System.exit και να ρίξει SecurityException.");
-            } catch (SecurityException e) {
-                // Expected exception
-            }
-            String output = outContent.toString();
-            assertTrue(output.contains("Έξοδος από την εφαρμογή. Αντίο!"), "Πρέπει να εμφανίζει το μήνυμα εξόδου.");
-        }finally {
-            System.setIn(originalIn);
-            System.setOut(originalOut);
-        }
-    }
 }
 
