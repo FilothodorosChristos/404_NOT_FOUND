@@ -13,12 +13,12 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class για την CashFlowDao.
- * Χρησιμοποιεί test database (testdbtemp.db)
+ * Χρησιμοποιεί test database (test_db_temp.db)
  * ώστε να μην πειράξει την κανονική βάση.
  */
 public class CashFlowDaoTest {
 
-  private static final String TEST_DB_URL = "jdbc:sqlite:testdbtemp.db";
+  private static final String TEST_DB_URL = "jdbc:sqlite:test_db_temp.db";
   private static final String REAL_DB_URL = "jdbc:sqlite:budgetDB.db";
 
   private CashFlowDao dao;
@@ -52,8 +52,8 @@ public class CashFlowDaoTest {
     CashFlow c = new CashFlow(
                 0,
                 2023,
-                "Test Income",
                 "income",
+                "Test Income",
                 500.0
         );
 
@@ -76,8 +76,8 @@ public class CashFlowDaoTest {
     CashFlow c = new CashFlow(
                 0,
                 2023,
-                "Old Name",
                 "expense",
+                "Old Name",
                 200.0
         );
 
@@ -102,8 +102,8 @@ public class CashFlowDaoTest {
     CashFlow c = new CashFlow(
                 0,
                 2023,
-                "To Delete",
                 "income",
+                "To Delete",
                 100.0
         );
 
