@@ -23,7 +23,7 @@ public class LogDao {
     );
   }
     
-    public List<Log> selectLog(int year, String type) {
+    public List<Log> selectLog() {
     List<Log> log = new ArrayList<>();
     final String SQL = "SELECT * FROM log";
     try (Connection connection = DatabaseSetup.getConnection();
@@ -36,7 +36,7 @@ public class LogDao {
       }
 
     } catch (SQLException e) {
-      throw new RuntimeException("Σφάλμα στη βάση (selectCashFlow): " + e.getMessage(), e);
+      throw new RuntimeException("Σφάλμα στη βάση (selectLog): " + e.getMessage(), e);
     }
 
     return log;
