@@ -32,6 +32,8 @@ public class ActionSelectionPanel extends JPanel {
         setLayout(new BorderLayout());
         createUI();
     }
+
+
     
     /**
      * Creates and initializes the user interface components.
@@ -137,10 +139,31 @@ public class ActionSelectionPanel extends JPanel {
      * @param action the action string selected by the user
      */
     private void handleAction(String action) {
+    if (action.equals("Διαγράμματα")) {
+        String selectedYear = mainFrame.getSelectedYear();
+        if (selectedYear == null || selectedYear.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Παρακαλώ επιλέξτε πρώτα έτος.", "Σφάλμα", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Δημιουργούμε το FinanceChartPanel για το επιλεγμένο έτος
+        FinanceChartPanel chartPanel = new FinanceChartPanel(selectedYear);
+        
+        // Νέο JFrame για να εμφανίσουμε το γράφημα
+        JFrame chartFrame = new JFrame("Διαγράμματα Έτους " + selectedYear);
+        chartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        chartFrame.setSize(900, 700);
+        chartFrame.setLocationRelativeTo(null);
+        chartFrame.add(chartPanel);
+        chartFrame.setVisible(true);
+    } else {
+        // Για τα άλλα κουμπιά, μπορείς να αφήσεις το JOptionPane
         String selectedYear = mainFrame.getSelectedYear();
         String message = String.format("Επιλέξατε: %s%nΈτος: %s", action, selectedYear);
         JOptionPane.showMessageDialog(null, message, "Ενέργεια", JOptionPane.INFORMATION_MESSAGE);
     }
+}
+
     
     /**
      * A custom border with rounded corners for Swing components.

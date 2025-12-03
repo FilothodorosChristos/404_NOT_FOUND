@@ -40,6 +40,8 @@ public class MainFrame extends JFrame {
     
     /** Panel name constant for action selection screen. */
     public static final String ACTION_SELECTION = "actionSelection";
+
+    public static final String FINANCE_CHART = "financeChart";
     
     /**
      * Private constructor for Singleton pattern.
@@ -93,6 +95,16 @@ public class MainFrame extends JFrame {
         add(mainPanel);
     }
     
+    public void showFinanceChart() {
+    if (selectedYear == null) {
+        JOptionPane.showMessageDialog(this, "Πρέπει να επιλέξετε πρώτα έτος.", "Προειδοποίηση", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    FinanceChartPanel chartPanel = new FinanceChartPanel(selectedYear);
+    mainPanel.add(chartPanel, "financeChart");
+    showPanel("financeChart");
+    }
+
     /**
      * Initializes and adds all panel instances to the CardLayout.
      * Each panel is registered with its corresponding name constant.
