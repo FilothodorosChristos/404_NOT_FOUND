@@ -54,7 +54,7 @@ public class YearSelectionPanel extends JPanel {
             }
         };
         
-        // Center panel
+       /**center panel */
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setOpaque(false);
@@ -67,7 +67,7 @@ public class YearSelectionPanel extends JPanel {
         centerPanel.add(titleLabel);
         centerPanel.add(Box.createVerticalStrut(30));
         
-        // Year buttons
+        /** year buttons */
         String[] years = {"2023", "2024", "2025"};
         for (String year : years) {
             JButton yearBtn = createYearButton(year);
@@ -78,7 +78,7 @@ public class YearSelectionPanel extends JPanel {
         centerPanel.add(Box.createVerticalGlue());
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
         
-        // Previous button
+        /** previous button */
         JButton prevButton = new JButton("< Προηγούμενο");
         prevButton.setPreferredSize(new Dimension(150, 40));
         prevButton.addActionListener(e -> mainFrame.showPanel(MainFrame.PROJECT_SELECTION));

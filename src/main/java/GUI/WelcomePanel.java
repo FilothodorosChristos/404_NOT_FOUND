@@ -48,12 +48,12 @@ public class WelcomePanel extends JPanel {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 
-                // Background
+                /**Background */
                 if (mainFrame.getBackgroundImage() != null) {
                     g.drawImage(mainFrame.getBackgroundImage(), 0, 0, getWidth(), getHeight(), this);
                 }
                 
-                // Circular logo
+                /**circular logo */
                 if (mainFrame.getLogoImage() != null) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -75,7 +75,7 @@ public class WelcomePanel extends JPanel {
             }
         };
         
-        // Center panel
+        /** center panel */
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setOpaque(false);
@@ -84,7 +84,7 @@ public class WelcomePanel extends JPanel {
         
         logoBackgroundPanel.add(centerPanel, BorderLayout.CENTER);
         
-        // Bottom section
+        /**bottom section */
         JPanel bottomSection = new JPanel();
         bottomSection.setLayout(new BoxLayout(bottomSection, BoxLayout.Y_AXIS));
         bottomSection.setOpaque(false);

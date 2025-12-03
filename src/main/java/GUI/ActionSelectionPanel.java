@@ -38,7 +38,7 @@ public class ActionSelectionPanel extends JPanel {
      * Sets up the background, title, action buttons, and navigation.
      */
     private void createUI() {
-        // Background panel
+        /** Background panel */
         JPanel backgroundPanel = new JPanel(new BorderLayout()) {
             /**
              * Paints the background image.
@@ -54,13 +54,13 @@ public class ActionSelectionPanel extends JPanel {
             }
         };
         
-        // Title
+        /**Title*/
         JLabel titleLabel = new JLabel("Παρακαλώ επιλέξτε διαδικασία:");
         titleLabel.setFont(SECTION_TITLE_FONT);
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        // Action buttons
+        /**Acyion buttons */
         JButton viewBtn = createStyledButton("Προβολή");
         JButton editBtn = createStyledButton("Επεξεργασία");
         JButton diagramBtn = createStyledButton("Διαγράμματα");
@@ -71,7 +71,7 @@ public class ActionSelectionPanel extends JPanel {
         diagramBtn.addActionListener(e -> handleAction("Διαγράμματα"));
         compareBtn.addActionListener(e -> handleAction("Σύγκριση"));
         
-        // Button grid
+        /** Button grid */
         JPanel buttonsGrid = new JPanel(new GridBagLayout());
         buttonsGrid.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -86,7 +86,7 @@ public class ActionSelectionPanel extends JPanel {
         gbc.gridx = 1;
         buttonsGrid.add(compareBtn, gbc);
         
-        // Center panel
+        /** center panel */
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setOpaque(false);
@@ -98,7 +98,7 @@ public class ActionSelectionPanel extends JPanel {
         
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
         
-        // Previous button
+        /**pervious button */
         JButton prevButton = new JButton("< Προηγούμενο");
         prevButton.setPreferredSize(new Dimension(150, 40));
         prevButton.addActionListener(e -> mainFrame.showPanel(MainFrame.YEAR_SELECTION));

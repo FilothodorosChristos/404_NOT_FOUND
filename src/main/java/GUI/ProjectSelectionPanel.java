@@ -52,12 +52,12 @@ public class ProjectSelectionPanel extends JPanel {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 
-                // Background
+                /**Background image */
                 if (mainFrame.getBackgroundImage() != null) {
                     g.drawImage(mainFrame.getBackgroundImage(), 0, 0, getWidth(), getHeight(), this);
                 }
                 
-                // Circular logo
+                /** Circular logo */
                 if (mainFrame.getLogoImage() != null) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -79,7 +79,7 @@ public class ProjectSelectionPanel extends JPanel {
             }
         };
         
-        // Title
+        /**Title */
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setOpaque(false);
@@ -93,7 +93,7 @@ public class ProjectSelectionPanel extends JPanel {
         
         logoBackgroundPanel.add(titlePanel, BorderLayout.CENTER);
         
-        // Buttons
+        /**Buttons */
         JButton oldProjectBtn = createStyledButton("Συνέχεια Προσομοίωσης");
         JButton newProjectBtn = createStyledButton("Καινούργια Προσομοίωση");
         
@@ -109,7 +109,7 @@ public class ProjectSelectionPanel extends JPanel {
         buttonsPanel.add(newProjectBtn);
         buttonsPanel.add(Box.createHorizontalGlue());
         
-        // Previous button
+        /**previous button */
         JButton prevButton = new JButton("< Προηγούμενο");
         prevButton.setPreferredSize(new Dimension(150, 40));
         prevButton.addActionListener(e -> mainFrame.showPanel(MainFrame.WELCOME));
