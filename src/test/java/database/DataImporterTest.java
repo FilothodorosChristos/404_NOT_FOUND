@@ -43,11 +43,7 @@ public class DataImporterTest {
     databaseSetupUrlField.set(null, REAL_URL);
     }
     // Πριν από κάθε test, δημιουργούμε το σχήμα της βάσης δεδομένων
-    // throws error ....
-    // @BeforeEach
-    // void deleteTestDbFile() throws Exception {
-    //     Files.deleteIfExists(Paths.get("test_db_temp.db"));
-    // }
+   
     @BeforeEach
     void setupDatabaseSchema() {
     
