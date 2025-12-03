@@ -54,20 +54,64 @@ package "menus" #FAD7A0 {
     ActionsMenu --|> Menu
 }
 
-' ===== GUI =====
 package "GUI" #AED6F1 {
-    skinparam classPadding 20
-    skinparam classFontSize 14
+    skinparam classPadding 10       ' Μικρότερο padding μέσα στις κλάσεις
+    skinparam classFontSize 12
+    skinparam classAttributeIconSize 0
+    skinparam shadowing false
+    skinparam roundcorner 5
 
-    class GoverLensApp {
-        + createAndShowGUI()
-        + createWelcomePanel()
-        + createProjectSelectionPanel()
-        + createYearSelectionPanel()
-        + createActionSelectionPanel()
-        + handleAction(action)
+    class MainFrame {
+        - cardLayout : CardLayout
+        - mainPanel : JPanel
+        - selectedYear : String
+        - logoImage : Image
+        - backgroundImage : Image
+        + showPanel(panelName : String)
+        + getSelectedYear() : String
+        + setSelectedYear(year : String)
+        + getLogoImage() : Image
+        + getBackgroundImage() : Image
+        + main(args : String[])
     }
+
+    class WelcomePanel {
+        + createUI()
+        + createLabel(text : String, font : Font)
+    }
+
+    class ProjectSelectionPanel {
+        + createUI()
+        + createStyledButton(text : String)
+        + RoundedBorder
+    }
+
+    class YearSelectionPanel {
+        + createUI()
+        + createYearButton(year : String)
+        + RoundedBorder
+    }
+
+    class ActionSelectionPanel {
+        + createUI()
+        + createStyledButton(text : String)
+        + handleAction(action : String)
+        + RoundedBorder
+    }
+
+    ' Relations
+    MainFrame *-- WelcomePanel
+    MainFrame *-- ProjectSelectionPanel
+    MainFrame *-- YearSelectionPanel
+    MainFrame *-- ActionSelectionPanel
+
+    WelcomePanel --> MainFrame
+    ProjectSelectionPanel --> MainFrame
+    YearSelectionPanel --> MainFrame
+    ActionSelectionPanel --> MainFrame
 }
+
+
 
 ' ===== DAO =====
 package "DAO" #F9E79F {
@@ -140,6 +184,16 @@ package "Database" #A9DFBF {
 ' ===== TESTS =====
 package "Tests" #D2B4DE {
 
+        class ConsoleIoTest {
+        + testGetString()
+        + testGetInt_validInvalidInput()
+        + testShowMessage()
+    }
+
+    ' Dependencies
+    ConsoleIoTest ..> ConsoleIo
+
+
     class CashFlowTest {
         + testConstructorAndGetters()
         + testSetters()
@@ -199,8 +253,8 @@ package "Tests" #D2B4DE {
 
 ' ===== CONNECTIONS =====
 Menu --> UserIo
-GoverLensApp --> CashFlowDao
-GoverLensApp --> ForeisDao
-GoverLensApp --> DatabaseSetup
+GUI  --> CashFlowDao
+GUI  --> ForeisDao
+GUI  --> DatabaseSetup
 
 @enduml
