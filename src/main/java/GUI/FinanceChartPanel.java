@@ -3,6 +3,7 @@ package GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets; 
 import java.util.*;
 import java.util.List;
 
@@ -92,7 +93,8 @@ public class FinanceChartPanel extends JPanel {
         for (File file : files) {
             String fileName = file.getName().toLowerCase();
             
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            // Χρήση UTF-8 και IOException για διόρθωση SpotBugs σφαλμάτων
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
                 /** Skip header */
                 br.readLine(); 
                 String line;
@@ -142,7 +144,8 @@ public class FinanceChartPanel extends JPanel {
                         }
                     }
                 }
-            } catch (Exception e) {
+            // Διόρθωση REC_CATCH_EXCEPTION (Πιάνουμε συγκεκριμένη εξαίρεση)
+            } catch (IOException e) { 
                 System.err.println("Error reading file " + fileName + ": " + e.getMessage());
                 e.printStackTrace();
             }
@@ -181,8 +184,7 @@ public class FinanceChartPanel extends JPanel {
                 super.paintComponent(g);
 
                 int width = getWidth();
-                // **ΔΙΟΡΘΩΣΗ: Αφαίρεση της αχρησιμοποίητης μεταβλητής 'height'**
-                // int height = getHeight(); 
+                // Αφαιρέθηκε η αχρησιμοποίητη μεταβλητή height
                 int paddingX = 80; 
                 int paddingY = 20;
                 int graphWidth = width - 2 * paddingX;
@@ -196,7 +198,6 @@ public class FinanceChartPanel extends JPanel {
                 
                 g2.setColor(Color.WHITE); 
                 /** Vertical axis (Zero line) */
-                // Χρήση της getHeight() απευθείας:
                 g2.drawLine(paddingX, paddingY, paddingX, getHeight() - paddingY); 
                 
                 int currentY = paddingY;
@@ -362,8 +363,7 @@ public class FinanceChartPanel extends JPanel {
                 super.paintComponent(g);
 
                 int width = getWidth();
-                // **ΔΙΟΡΘΩΣΗ: Αφαίρεση της αχρησιμοποίητης μεταβλητής 'height'**
-                // int height = getHeight(); 
+                // Αφαιρέθηκε η αχρησιμοποίητη μεταβλητή height
                 int paddingX = 20; 
                 int paddingY = 20;
                 int graphWidth = width - 2 * paddingX;
