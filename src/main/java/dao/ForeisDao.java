@@ -37,7 +37,8 @@ public class ForeisDao {
    */
   public List<Foreis> selectForeis(int year, String type) {
     List<Foreis> foreisList = new ArrayList<>();
-    final String SQL = "SELECT * FROM foreis WHERE year_id = ? AND type = ?";
+    final String SQL = "SELECT * FROM foreis WHERE year_id = ? AND type = ? "
+                     + "ORDER BY foreas_id ASC, type ASC, name ASC";
 
     try (Connection connection = DatabaseSetup.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL)) {

@@ -74,6 +74,9 @@ public class DataImporter {
         }
 
       try {
+
+          System.out.println("Προσθήκη: foreas_id=" + parts[0].trim() + ", year_id=" + parts[1].trim());
+
           pstmt.setInt(1, Integer.parseInt(parts[0].trim()));
           pstmt.setInt(2, Integer.parseInt(parts[1].trim()));
           pstmt.setString(3, parts[2].trim());
