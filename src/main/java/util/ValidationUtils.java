@@ -32,12 +32,12 @@ public class ValidationUtils {
       throw new IllegalArgumentException("Επιτρέπονται μόνο έτη 2023–2025");
     }
   }
-   /**
-    * Έλεγχος τύπου cashflow (μόνο income ή expense).
-    *
-    * @param type τύπος cashflow
-    * @throws IllegalArgumentException αν ο τύπος δεν είναι αποδεκτός
-    */
+  /**
+   * Έλεγχος τύπου cashflow (μόνο income ή expense).
+   *
+   * @param type τύπος cashflow
+   * @throws IllegalArgumentException αν ο τύπος δεν είναι αποδεκτός
+   */
 
   public static void validateCashflowType(String type) {
     if (!"income".equals(type) && !"expense".equals(type)) {
@@ -54,6 +54,17 @@ public class ValidationUtils {
   public static void validateNonNegative(double amount) {
     if (amount < 0) {
       throw new IllegalArgumentException("Το ποσό δεν μπορεί να είναι αρνητικό: " + amount);
+    }
+  }
+  /**
+   * 
+   * @param id να μην ειναι αρνητικο
+   * @throws IllegalArgumentException αν ειναι αρνητικο
+   */
+
+  public static void validatePositiveId(int id, String fieldName) {
+    if (id <= 0) {
+      throw new IllegalArgumentException(fieldName + " πρέπει να είναι θετικό (id: " + id + ")");
     }
   }
 
