@@ -44,5 +44,17 @@ public class ValidationUtils {
       throw new IllegalArgumentException("Μη έγκυρος τύπος cashflow: " + type);
     }
   }
+  /**
+   * Έλεγχος μη αρνητικών ποσών.
+   *
+   * @param amount ποσό προς έλεγχο
+   * @throws IllegalArgumentException αν το ποσό είναι αρνητικό
+   */
+
+  public static void validateNonNegative(double amount) {
+    if (amount < 0) {
+      throw new IllegalArgumentException("Το ποσό δεν μπορεί να είναι αρνητικό: " + amount);
+    }
+  }
 
 }
