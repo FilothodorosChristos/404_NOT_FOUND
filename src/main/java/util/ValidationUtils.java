@@ -2,22 +2,23 @@ package util;
 
 public class ValidationUtils {
 
+  private static final double MAXPERCENTCHANGE = 45.0; // μεγιστη δυνατοτητα αλλαγης ποσου
   /**
    * Ελέγχει ότι η αλλαγή ενός αριθμητικού πεδίου δεν ξεπερνάει το ποσοστό που ορίζεται.
    *
    * @param oldAmount παλιό ποσό
    * @param newAmount νέο ποσό
-   * @param maxPercent μέγιστο επιτρεπόμενο ποσοστό αλλαγής (π.χ. 20)
    * @throws IllegalArgumentException αν η αλλαγή ξεπερνάει το όριο
    */
-  public static void validateAmountChange(double oldAmount, double newAmount, double maxPercent) {
+
+  public static void validateAmountChange(double oldAmount, double newAmount) {
     if (oldAmount == 0) { 
       return; // αποφυγη διαιρεσης με το μηδεν
     } 
     double changePercent = Math.abs(newAmount - oldAmount) / oldAmount * 100;
-    if (changePercent > maxPercent) {
+    if (changePercent > MAXPERCENTCHANGE) {
       throw new IllegalArgumentException(
-     "Cannot change amount by more than " + maxPercent 
+     "Cannot change amount by more than " + MAXPERCENTCHANGE 
       + "% (old: " + oldAmount + ", new: " + newAmount + ")"
             );
     }
@@ -31,4 +32,5 @@ public class ValidationUtils {
       throw new IllegalArgumentException("Επιτρέπονται μόνο έτη 2023–2025");
     }
   }
+  
 }
