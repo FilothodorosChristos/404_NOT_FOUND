@@ -32,5 +32,17 @@ public class ValidationUtils {
       throw new IllegalArgumentException("Επιτρέπονται μόνο έτη 2023–2025");
     }
   }
-  
+   /**
+    * Έλεγχος τύπου cashflow (μόνο income ή expense).
+    *
+    * @param type τύπος cashflow
+    * @throws IllegalArgumentException αν ο τύπος δεν είναι αποδεκτός
+    */
+
+  public static void validateCashflowType(String type) {
+    if (!"income".equals(type) && !"expense".equals(type)) {
+      throw new IllegalArgumentException("Μη έγκυρος τύπος cashflow: " + type);
+    }
+  }
+
 }
