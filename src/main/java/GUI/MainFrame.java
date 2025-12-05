@@ -125,7 +125,7 @@ public class MainFrame extends JFrame {
             return;
         }
         
-        FinanceChartPanel chartPanel = new FinanceChartPanel(selectedYear);
+        FinanceChartPanel chartPanel = FinanceChartPanel.createPanel(selectedYear);
         
         mainPanel.add(chartPanel, FINANCE_CHART); 
         showPanel(FINANCE_CHART);

@@ -147,7 +147,7 @@ public class ActionSelectionPanel extends JPanel {
 		}
 		
 		
-		FinanceChartPanel chartPanel = new FinanceChartPanel(selectedYear);
+		FinanceChartPanel chartPanel = FinanceChartPanel.createPanel(selectedYear);
 		
 		
 		JFrame chartFrame = new JFrame("Διαγράμματα Έτους " + selectedYear);
