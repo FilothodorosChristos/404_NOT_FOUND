@@ -1,6 +1,7 @@
 package util;
 
 import dao.CashFlow;
+import dao.CashFlowType;
 import java.util.List;
 
 public class ValidationUtils {
@@ -36,18 +37,6 @@ public class ValidationUtils {
     }
   }
   /**
-   * Έλεγχος τύπου cashflow (μόνο income ή expense).
-   *
-   * @param type τύπος cashflow
-   * @throws IllegalArgumentException αν ο τύπος δεν είναι αποδεκτός
-   */
-
-  public static void validateCashflowType(String type) {
-    if (!"income".equals(type) && !"expense".equals(type)) {
-      throw new IllegalArgumentException("Μη έγκυρος τύπος cashflow: " + type);
-    }
-  }
-  /**
    * Έλεγχος μη αρνητικών ποσών.
    *
    * @param amount ποσό προς έλεγχο
@@ -60,7 +49,7 @@ public class ValidationUtils {
     }
   }
   /**
-   * 
+   *  
    * @param id να μην ειναι αρνητικο
    * @throws IllegalArgumentException αν ειναι αρνητικο
    */
@@ -104,12 +93,12 @@ public class ValidationUtils {
   public static void validateFinalTotals(List<CashFlow> cashflows, int year) {
     // Υπολογισμός αθροισμάτων ξεχωριστά
     double incomeSum = cashflows.stream()
-                                    .filter(cf -> "income".equals(cf.getType()))
+                                    .filter(cf -> CashFlowType.INCOME.equals(cf.getType()))
                                     .mapToDouble(CashFlow::getAmount)
                                     .sum();
 
     double expenseSum = cashflows.stream()
-                                     .filter(cf -> "expense".equals(cf.getType()))
+                                     .filter(cf -> CashFlowType.EXPENSE.equals(cf.getType()))
                                      .mapToDouble(CashFlow::getAmount)
                                      .sum();
 
