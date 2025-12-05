@@ -31,7 +31,7 @@ public class FinanceChartPanel extends JPanel {
 
     /**
      * Constructor for FinanceChartPanel.
-     * Loads financial data and sets up the user interface.
+     * Loads financial data and then sets up the user interface.
      *
      * @param year The year for which financial data will be displayed.
      */
@@ -40,7 +40,13 @@ public class FinanceChartPanel extends JPanel {
         
         setLayout(new BorderLayout());
         loadData();
-
+        initializeUI(); 
+    }
+    
+    /**
+     * Sets up the user interface components (JTabbedPane, charts, etc.).
+     */
+    private void initializeUI() {
         JPanel contentPanel = createContentPanel();
         
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -93,7 +99,7 @@ public class FinanceChartPanel extends JPanel {
         for (File file : files) {
             String fileName = file.getName().toLowerCase();
             
-            // Χρήση UTF-8 και IOException για διόρθωση SpotBugs σφαλμάτων
+            
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
                 /** Skip header */
                 br.readLine(); 
@@ -130,7 +136,7 @@ public class FinanceChartPanel extends JPanel {
                         if (parts.length >= 7) { 
                             try {
                                 /** Use Index 3 (Name) and Index 6 (Total) */
-                                String name = parts[3].trim();     
+                                String name = parts[3].trim(); 	
                                 double amount = Double.parseDouble(parts[6].trim()); 
                                 
                                 if (amount > 0) {
@@ -144,7 +150,7 @@ public class FinanceChartPanel extends JPanel {
                         }
                     }
                 }
-            // Διόρθωση REC_CATCH_EXCEPTION (Πιάνουμε συγκεκριμένη εξαίρεση)
+            
             } catch (IOException e) { 
                 System.err.println("Error reading file " + fileName + ": " + e.getMessage());
                 e.printStackTrace();
@@ -184,7 +190,6 @@ public class FinanceChartPanel extends JPanel {
                 super.paintComponent(g);
 
                 int width = getWidth();
-                // Αφαιρέθηκε η αχρησιμοποίητη μεταβλητή height
                 int paddingX = 80; 
                 int paddingY = 20;
                 int graphWidth = width - 2 * paddingX;
@@ -237,8 +242,8 @@ public class FinanceChartPanel extends JPanel {
                     
                     /** Numbering left of the axis */
                     g2.drawString(numberStr, 
-                                     paddingX - g2.getFontMetrics().stringWidth(numberStr) - 5, 
-                                     currentY + BAR_HEIGHT - 8);
+                                    paddingX - g2.getFontMetrics().stringWidth(numberStr) - 5, 
+                                    currentY + BAR_HEIGHT - 8);
                     
                     String valueStr = String.format("%,.0f €", item.amount); 
                     
@@ -363,7 +368,6 @@ public class FinanceChartPanel extends JPanel {
                 super.paintComponent(g);
 
                 int width = getWidth();
-                // Αφαιρέθηκε η αχρησιμοποίητη μεταβλητή height
                 int paddingX = 20; 
                 int paddingY = 20;
                 int graphWidth = width - 2 * paddingX;
@@ -392,10 +396,10 @@ public class FinanceChartPanel extends JPanel {
 
                 /** Find max amount in the log scale range (0 to THRESHOLD_AMOUNT) */
                 double maxLogAmount = agencies.stream()
-                                                .mapToDouble(d -> d.amount)
-                                                .filter(amount -> amount < THRESHOLD_AMOUNT)
-                                                .max()
-                                                .orElse(0); 
+                                             .mapToDouble(d -> d.amount)
+                                             .filter(amount -> amount < THRESHOLD_AMOUNT)
+                                             .max()
+                                             .orElse(0); 
 
                 
                 for (int i = 0; i < agencies.size(); i++) {

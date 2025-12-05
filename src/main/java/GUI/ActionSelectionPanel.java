@@ -146,10 +146,10 @@ public class ActionSelectionPanel extends JPanel {
             return;
         }
         
-        // Δημιουργούμε το FinanceChartPanel για το επιλεγμένο έτος
+        
         FinanceChartPanel chartPanel = new FinanceChartPanel(selectedYear);
         
-        // Νέο JFrame για να εμφανίσουμε το γράφημα
+        
         JFrame chartFrame = new JFrame("Διαγράμματα Έτους " + selectedYear);
         chartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         chartFrame.setSize(900, 700);
@@ -157,7 +157,7 @@ public class ActionSelectionPanel extends JPanel {
         chartFrame.add(chartPanel);
         chartFrame.setVisible(true);
     } else {
-        // Για τα άλλα κουμπιά, μπορείς να αφήσεις το JOptionPane
+        
         String selectedYear = mainFrame.getSelectedYear();
         String message = String.format("Επιλέξατε: %s%nΈτος: %s", action, selectedYear);
         JOptionPane.showMessageDialog(null, message, "Ενέργεια", JOptionPane.INFORMATION_MESSAGE);
