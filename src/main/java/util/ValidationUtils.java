@@ -5,7 +5,8 @@ import dao.CashFlowType;
 import java.util.List;
 
 public class ValidationUtils {
-
+  private ValidationUtils() {}
+  
   private static final double MAXPERCENTCHANGE = 45.0; // μεγιστη δυνατοτητα αλλαγης ποσου
   /**
    * Ελέγχει ότι η αλλαγή ενός αριθμητικού πεδίου δεν ξεπερνάει το ποσοστό που ορίζεται.
