@@ -7,7 +7,7 @@ import java.util.List;
 public class ValidationUtils {
   private ValidationUtils() {}
   
-  private static final double MAXPERCENTCHANGE = 45.0; // μεγιστη δυνατοτητα αλλαγης ποσου
+  private static final double MAX_PERCENT_CHANGE = 45.0; // μεγιστη δυνατοτητα αλλαγης ποσου
   /**
    * Ελέγχει ότι η αλλαγή ενός αριθμητικού πεδίου δεν ξεπερνάει το ποσοστό που ορίζεται.
    *
@@ -21,9 +21,9 @@ public class ValidationUtils {
       return; // αποφυγη διαιρεσης με το μηδεν
     } 
     double changePercent = Math.abs(newAmount - oldAmount) / oldAmount * 100;
-    if (changePercent > MAXPERCENTCHANGE) {
+    if (changePercent > MAX_PERCENT_CHANGE) {
       throw new IllegalArgumentException(
-     "Cannot change amount by more than " + MAXPERCENTCHANGE 
+     "Cannot change amount by more than " + MAX_PERCENT_CHANGE 
       + "% (old: " + oldAmount + ", new: " + newAmount + ")"
             );
     }
@@ -94,12 +94,12 @@ public class ValidationUtils {
   public static void validateFinalTotals(List<CashFlow> cashflows, int year) {
     // Υπολογισμός αθροισμάτων ξεχωριστά
     double incomeSum = cashflows.stream()
-                                    .filter(cf -> CashFlowType.INCOME.equals(cf.getType()))
+                                    .filter(cf -> CashFlowType.INCOME == cf.getType())
                                     .mapToDouble(CashFlow::getAmount)
                                     .sum();
 
     double expenseSum = cashflows.stream()
-                                     .filter(cf -> CashFlowType.EXPENSE.equals(cf.getType()))
+                                     .filter(cf -> CashFlowType.EXPENSE == cf.getType())
                                      .mapToDouble(CashFlow::getAmount)
                                      .sum();
 
