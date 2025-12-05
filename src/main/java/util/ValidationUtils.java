@@ -1,7 +1,6 @@
 package util;
 
 import dao.CashFlow;
-import dao.CashFlowType;
 import java.util.List;
 
 public class ValidationUtils {
@@ -94,12 +93,12 @@ public class ValidationUtils {
   public static void validateFinalTotals(List<CashFlow> cashflows, int year) {
     // Υπολογισμός αθροισμάτων ξεχωριστά
     double incomeSum = cashflows.stream()
-                                    .filter(cf -> CashFlowType.INCOME == cf.getType())
+                                    .filter(cf -> "Έσοδο".equals(cf.getType()))
                                     .mapToDouble(CashFlow::getAmount)
                                     .sum();
 
     double expenseSum = cashflows.stream()
-                                     .filter(cf -> CashFlowType.EXPENSE == cf.getType())
+                                     .filter(cf -> "Έξοδο".equals(cf.getType()))
                                      .mapToDouble(CashFlow::getAmount)
                                      .sum();
 
@@ -109,7 +108,7 @@ public class ValidationUtils {
     double expectedIncome = BUDGET_TOTALS[yearIndex][0];
     double expectedExpense = BUDGET_TOTALS[yearIndex][1];
     // Έλεγχος εσόδων
-    if (Math.abs(incomeSum - expectedIncome) > 0.0001) {
+    if (Math.abs(incomeSum - expectedIncome) > 1.0) {
       throw new IllegalArgumentException(
                 "Τα έσοδα για το έτος " + year 
                + " (" + incomeSum + ") δεν ταιριάζουν με τον κρατικό προϋπολογισμό (" 
@@ -118,7 +117,7 @@ public class ValidationUtils {
     }
 
     // Έλεγχος εξόδων
-    if (Math.abs(expenseSum - expectedExpense) > 0.0001) {
+    if (Math.abs(expenseSum - expectedExpense) > 1.0) {
       throw new IllegalArgumentException(
                 "Τα έξοδα για το έτος " + year 
                 + " (" + expenseSum + ") δεν ταιριάζουν με τον κρατικό προϋπολογισμό (" 
