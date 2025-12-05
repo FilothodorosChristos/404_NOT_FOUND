@@ -80,7 +80,9 @@ public class FinanceChartPanel extends JPanel {
      * Data is filtered by file name and the specified year.
      */
     private void loadData() {
-        File folder = new File("src/main/resources/data"); 
+        String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "data";
+        File folder = new File(path);
+        
         File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".csv"));
         if (files == null) return;
         
@@ -126,7 +128,7 @@ public class FinanceChartPanel extends JPanel {
                         if (parts.length >= 7) { 
                             try {
                                 /** Use Index 3 (Name) and Index 6 (Total) */
-                                String name = parts[3].trim();      
+                                String name = parts[3].trim();     
                                 double amount = Double.parseDouble(parts[6].trim()); 
                                 
                                 if (amount > 0) {
@@ -176,9 +178,11 @@ public class FinanceChartPanel extends JPanel {
                 if (allItems.isEmpty()) return;
 
                 /** The background is drawn by the parent component (createContentPanel) */
+                super.paintComponent(g);
 
                 int width = getWidth();
-                int height = getHeight();
+                // **ΔΙΟΡΘΩΣΗ: Αφαίρεση της αχρησιμοποίητης μεταβλητής 'height'**
+                // int height = getHeight(); 
                 int paddingX = 80; 
                 int paddingY = 20;
                 int graphWidth = width - 2 * paddingX;
@@ -192,7 +196,8 @@ public class FinanceChartPanel extends JPanel {
                 
                 g2.setColor(Color.WHITE); 
                 /** Vertical axis (Zero line) */
-                g2.drawLine(paddingX, paddingY, paddingX, height - paddingY); 
+                // Χρήση της getHeight() απευθείας:
+                g2.drawLine(paddingX, paddingY, paddingX, getHeight() - paddingY); 
                 
                 int currentY = paddingY;
                 /** Minimum visible bar width (10 PIXELS) */
@@ -231,8 +236,8 @@ public class FinanceChartPanel extends JPanel {
                     
                     /** Numbering left of the axis */
                     g2.drawString(numberStr, 
-                                  paddingX - g2.getFontMetrics().stringWidth(numberStr) - 5, 
-                                  currentY + BAR_HEIGHT - 8);
+                                     paddingX - g2.getFontMetrics().stringWidth(numberStr) - 5, 
+                                     currentY + BAR_HEIGHT - 8);
                     
                     String valueStr = String.format("%,.0f €", item.amount); 
                     
@@ -354,9 +359,11 @@ public class FinanceChartPanel extends JPanel {
                 if (agencies.isEmpty()) return;
                 
                 /** The background is drawn by the parent component (createContentPanel) */
+                super.paintComponent(g);
 
                 int width = getWidth();
-                int height = getHeight();
+                // **ΔΙΟΡΘΩΣΗ: Αφαίρεση της αχρησιμοποίητης μεταβλητής 'height'**
+                // int height = getHeight(); 
                 int paddingX = 20; 
                 int paddingY = 20;
                 int graphWidth = width - 2 * paddingX;
@@ -385,10 +392,10 @@ public class FinanceChartPanel extends JPanel {
 
                 /** Find max amount in the log scale range (0 to THRESHOLD_AMOUNT) */
                 double maxLogAmount = agencies.stream()
-                                            .mapToDouble(d -> d.amount)
-                                            .filter(amount -> amount < THRESHOLD_AMOUNT)
-                                            .max()
-                                            .orElse(0); 
+                                                .mapToDouble(d -> d.amount)
+                                                .filter(amount -> amount < THRESHOLD_AMOUNT)
+                                                .max()
+                                                .orElse(0); 
 
                 
                 for (int i = 0; i < agencies.size(); i++) {
