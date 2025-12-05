@@ -104,10 +104,10 @@ public class ValidationUtils {
                                      .sum();
 
     // Εύρεση αναμενόμενων ποσών από τον πίνακα
+    validateYear(year);
     int yearIndex = year - 2023; // 2023->0, 2024->1, 2025->2
     double expectedIncome = BUDGET_TOTALS[yearIndex][0];
     double expectedExpense = BUDGET_TOTALS[yearIndex][1];
-
     // Έλεγχος εσόδων
     if (Math.abs(incomeSum - expectedIncome) > 0.0001) {
       throw new IllegalArgumentException(
