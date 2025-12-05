@@ -12,7 +12,7 @@ import java.awt.geom.Ellipse2D;
 public class ProjectSelectionPanel extends JPanel {
     
     /** Reference to the main application frame. */
-    private MainFrame mainFrame;
+    private final  MainFrame mainFrame;
     
     /** Navy-blue color used in UI. */
     private static final Color NAVY_BLUE = new Color(0, 0, 128);

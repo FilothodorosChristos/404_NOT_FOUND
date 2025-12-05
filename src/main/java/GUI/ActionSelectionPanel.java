@@ -10,8 +10,8 @@ import java.awt.*;
  */
 public class ActionSelectionPanel extends JPanel {
     
-    /** Reference to the main application frame. */
-    private MainFrame mainFrame;
+    /** Reference to the main application frame (declared as final to fix EI_EXPOSE_REP2). */
+    private final MainFrame mainFrame;
     
     /** Navy-blue color used in UI. */
     private static final Color NAVY_BLUE = new Color(0, 0, 128);

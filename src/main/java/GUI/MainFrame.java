@@ -11,8 +11,8 @@ import java.awt.*;
  */
 public class MainFrame extends JFrame {
     
-    /** Singleton instance of MainFrame. */
-    private static MainFrame instance;
+    /** Singleton instance of MainFrame (volatile for thread safety). */
+    private static volatile MainFrame instance;
     
     /** CardLayout for managing panel switching. */
     private CardLayout cardLayout;
@@ -23,11 +23,11 @@ public class MainFrame extends JFrame {
     /** Selected budget year by the user. */
     private String selectedYear;
     
-    /** Cached logo image. */
-    private Image logoImage;
+    /** Cached logo image (Final for encapsulation). */
+    private final Image logoImage;
     
-    /** Cached background image. */
-    private Image backgroundImage;
+    /** Cached background image (Final for encapsulation). */
+    private final Image backgroundImage;
     
     /** Panel name constant for welcome screen. */
     public static final String WELCOME = "welcome";
@@ -48,35 +48,47 @@ public class MainFrame extends JFrame {
      * Initializes images, frame settings, and all panels.
      */
     private MainFrame() {
-        loadImages();
+        // Τα πεδία final πρέπει να αρχικοποιηθούν εδώ
+        Image tempLogo = null;
+        Image tempBackground = null;
+        try {
+            tempLogo = new ImageIcon("GoverLensLogo.jpg").getImage();
+            tempBackground = new ImageIcon("BackroundPhoto.jpg").getImage();
+        } catch (Exception e) {
+            System.err.println("Error loading images: " + e.getMessage());
+        }
+        this.logoImage = tempLogo;
+        this.backgroundImage = tempBackground;
+        
         setupFrame();
         initializePanels();
     }
     
     /**
      * Returns the singleton instance of MainFrame.
-     * Creates a new instance if one does not exist.
+     * Creates a new instance if one does not exist (Thread-safe using DCL).
      *
      * @return the singleton MainFrame instance
      */
     public static MainFrame getInstance() {
         if (instance == null) {
-            instance = new MainFrame();
+            // Double-Checked Locking (DCL)
+            synchronized (MainFrame.class) {
+                if (instance == null) {
+                    instance = new MainFrame();
+                }
+            }
         }
         return instance;
     }
     
     /**
-     * Loads the logo and background images from disk.
-     * Prints an error message if loading fails.
+     * Dummy method to replace the old loadImages(). Images are loaded directly in the constructor.
      */
     private void loadImages() {
-        try {
-            logoImage = new ImageIcon("GoverLensLogo.jpg").getImage();
-            backgroundImage = new ImageIcon("BackroundPhoto.jpg").getImage();
-        } catch (Exception e) {
-            System.err.println("Error loading images: " + e.getMessage());
-        }
+        // Αυτή η μέθοδος δεν χρειάζεται πλέον, καθώς οι εικόνες φορτώνονται στον constructor.
+        // Την αφήνουμε κενή για συμβατότητα, αν καλείται κάπου αλλού, αλλά ο κώδικας
+        // του constructor πλέον διαχειρίζεται το φόρτωμα.
     }
     
     /**
@@ -100,9 +112,11 @@ public class MainFrame extends JFrame {
         JOptionPane.showMessageDialog(this, "Πρέπει να επιλέξετε πρώτα έτος.", "Προειδοποίηση", JOptionPane.WARNING_MESSAGE);
         return;
     }
+    // Δημιουργία νέου panel και προσθήκη του στο CardLayout
     FinanceChartPanel chartPanel = new FinanceChartPanel(selectedYear);
-    mainPanel.add(chartPanel, "financeChart");
-    showPanel("financeChart");
+    // Χρησιμοποιούμε την σταθερά για το όνομα
+    mainPanel.add(chartPanel, FINANCE_CHART); 
+    showPanel(FINANCE_CHART);
     }
 
     /**
@@ -110,6 +124,9 @@ public class MainFrame extends JFrame {
      * Each panel is registered with its corresponding name constant.
      */
     private void initializePanels() {
+        // ΣΗΜΑΝΤΙΚΗ ΣΗΜΕΙΩΣΗ: Για να διορθωθεί το σφάλμα EI_EXPOSE_REP2 στα panels,
+        // τα πεδία 'mainFrame' μέσα στις κλάσεις WelcomePanel, ProjectSelectionPanel,
+        // YearSelectionPanel και ActionSelectionPanel ΠΡΕΠΕΙ να δηλωθούν ως 'private final'.
         mainPanel.add(new WelcomePanel(this), WELCOME);
         mainPanel.add(new ProjectSelectionPanel(this), PROJECT_SELECTION);
         mainPanel.add(new YearSelectionPanel(this), YEAR_SELECTION);
@@ -161,6 +178,15 @@ public class MainFrame extends JFrame {
     public void setSelectedYear(String year) {
         this.selectedYear = year;
         System.out.println("Selected year: " + selectedYear);
+    }
+    
+    /**
+     * Called during deserialization to replace the object being deserialized
+     * with the existing singleton instance, preventing the creation of new instances.
+     * @return The existing singleton instance.
+     */
+    protected Object readResolve() {
+        return getInstance();
     }
     
     /**

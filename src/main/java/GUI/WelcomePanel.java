@@ -11,7 +11,7 @@ import java.awt.geom.Ellipse2D;
 public class WelcomePanel extends JPanel {
     
     /** Reference to the main application frame. */
-    private MainFrame mainFrame;
+    private final MainFrame mainFrame;
     
     /** White color for text. */
     private static final Color TEXT_WHITE = Color.WHITE;
