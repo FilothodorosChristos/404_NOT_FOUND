@@ -2,7 +2,7 @@ package menus;
 import java.util.Scanner;
 
 public class ConsoleIo implements UserIo {
-    private Scanner scanner = new Scanner(System.in, "UTF-8");
+    private final canner scanner = new Scanner(System.in, "UTF-8");
 
     @Override
     public String getString(String message) {
@@ -35,3 +35,4 @@ public class ConsoleIo implements UserIo {
 }
 
  
+
