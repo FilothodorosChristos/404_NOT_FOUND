@@ -50,6 +50,8 @@ public class MainFrame extends JFrame {
     public static final String ACTION_SELECTION = "actionSelection";
 
     public static final String FINANCE_CHART = "financeChart";
+
+    public static final String BUDGET_VIEW = "budgetView";
     
     /**
      * Private constructor for Singleton pattern.
@@ -141,6 +143,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(new ProjectSelectionPanel(this), PROJECT_SELECTION);
         mainPanel.add(new YearSelectionPanel(this), YEAR_SELECTION);
         mainPanel.add(new ActionSelectionPanel(this), ACTION_SELECTION);
+        mainPanel.add(new BudgetViewPanel(this), BUDGET_VIEW);
     }
     
     /**
