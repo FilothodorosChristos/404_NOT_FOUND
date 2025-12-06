@@ -115,6 +115,26 @@ public class CashFlowDaoTest {
     List<CashFlow> remaining = dao.selectCashFlow(2023, "income");
     assertTrue(remaining.isEmpty());
   }
+  /**
+   * Ελέγχει την αναζήτηση cashflow με βάση το ID.
+   */
+
+  @Test
+public void testSelectCashFlowById() {
+    CashFlow c = new CashFlow(0, 2023, "income", "ById Test", 300.0);
+    dao.addCashFlow(c);
+
+    CashFlow stored = dao.selectCashFlow(2023, "income").get(0);
+    CashFlow found = dao.selectCashFlowById(stored.getId());
+
+    assertEquals(stored.getId(), found.getId());
+    assertEquals("ById Test", found.getName());
+    assertEquals(300.0, found.getAmount());
+
+    // Έλεγχος για μη υπαρκτό ID
+    CashFlow notFound = dao.selectCashFlowById(9999);
+    assertEquals(null, notFound);
+  }
 
   /**
    * Εκτελείται μία φορά στο τέλος όλων των tests.
@@ -124,5 +144,6 @@ public class CashFlowDaoTest {
     public static void restoreDatabaseURL() {
     DatabaseSetup.setURL(REAL_DB_URL);
   }
+ 
 }
 

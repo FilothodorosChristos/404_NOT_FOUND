@@ -116,6 +116,28 @@ public class ForeisDaoTest {
     List<Foreis> remaining = dao.selectForeis(2023, "TYPE_Z");
     assertTrue(remaining.isEmpty());
   }
+  /**
+   * Ελέγχει την αναζήτηση foreis με βάση το ID.
+   */
+
+  @Test
+public void testSelectForeisById() {
+    Foreis f = new Foreis(0, 200, 2023, "TYPE_TEST", "ById Foreas", 100.0, 50.0, 150.0);
+    dao.addForeis(f);
+
+    Foreis stored = dao.selectForeis(2023, "TYPE_TEST").get(0);
+    Foreis found = dao.selectForeisById(stored.getId());
+
+    assertEquals(stored.getId(), found.getId());
+    assertEquals("ById Foreas", found.getName());
+    assertEquals(150.0, found.getTotal());
+
+    // Έλεγχος για μη υπαρκτό ID
+    Foreis notFound = dao.selectForeisById(9999);
+    assertEquals(null, notFound);
+  }
+
+
 
   /**
    * Εκτελείται μία φορά στο τέλος όλων των tests.
