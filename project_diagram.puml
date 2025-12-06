@@ -10,7 +10,7 @@ skinparam classAttributeIconSize 0
 skinparam tightVSpacing true
 skinparam linetype ortho
 
-' Αλλαγή κατεύθυνσης σε οριζόντια (left to right)
+
 left to right direction
 skinparam nodesep 10
 skinparam ranksep 15
@@ -98,7 +98,7 @@ package "GUI" #AED6F1 {
         - pastelRed(i : int, total : int) : Color
     }
 
-    ' GUI Relations
+    
     WelcomePanel --> MainFrame
     ProjectSelectionPanel --> MainFrame
     MainFrame *-- WelcomePanel
@@ -146,6 +146,22 @@ package `DAO` #F9E79F {
         + setName(name : String) : void
     }
 
+    class Log {
+        + Log(id, tableName, operation, rowId, oldData, newData, timestamp)
+        + getId() : int
+        + getTableName() : String
+        + getOperation() : String
+        + getRowId() : Integer
+        + getOldData() : String
+        + getNewData() : String
+        + getTimestamp() : String
+    }
+    
+    class LogDao {
+        - mapRow(rs : ResultSet) : Log
+        + selectLog() : List<Log>
+    }
+
     class CashFlowDao {
         + selectAllCashFlows() : List<CashFlow>
         + addCashFlow() : void
@@ -170,7 +186,7 @@ package `DAO` #F9E79F {
         + updateForeis() : void
         + deleteForeis() : void
     }
-    
+    LogDao --> Log
     CashFlowDao --> CashFlow
     ForeisDao --> Foreis
 }
@@ -190,7 +206,8 @@ package "Database" #A9DFBF {
         + insertForeisFromCsv(filename : String) : void
         + insertCashflowsFromCsv(filename : String, type : String) : void
     }
-
+    
+  
     DatabaseSetup <-- CashFlowDao
     DatabaseSetup <-- ForeisDao
     DatabaseSetup <-- DataImporter
