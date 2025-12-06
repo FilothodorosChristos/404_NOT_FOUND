@@ -128,6 +128,34 @@ public class ForeisDao {
       throw new RuntimeException("Σφάλμα στη βάση (deleteForeis): " + e.getMessage(), e);
     }
   }
+  /**
+   * Αναζητά και επιστρέφει ένα αντικείμενο Foreis από τη βάση δεδομένων
+   * με βάση το μοναδικό αναγνωριστικό (ID).
+   *
+   * @param id το μοναδικό αναγνωριστικό της εγγραφής foreis
+   * @return το αντικείμενο Foreis αν βρεθεί, αλλιώς null
+   * @throws RuntimeException αν προκύψει σφάλμα κατά την επικοινωνία με τη βάση
+   */
+
+  public Foreis selectForeisById(int id) {
+    final String SQL = "SELECT * FROM foreis WHERE id = ?";
+    try (Connection connection = DatabaseSetup.getConnection();
+         PreparedStatement statement = connection.prepareStatement(SQL)) {
+
+      statement.setInt(1, id);
+
+      try (ResultSet rs = statement.executeQuery()) {
+        if (rs.next()) {
+          return mapRow(rs);
+        }
+      }
+
+    } catch (SQLException e) {
+      throw new RuntimeException("Σφάλμα στη βάση (selectForeisById): " + e.getMessage(), e);
+    }
+    return null;
+  }
+
 }
 
 

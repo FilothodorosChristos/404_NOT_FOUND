@@ -123,5 +123,30 @@ public class CashFlowDao {
       throw new RuntimeException("Σφάλμα στη βάση (deleteCashFlow): " + e.getMessage(), e);
     }
   }
+  /**
+   * Αναζητά και επιστρέφει ένα αντικείμενο CashFlow από τη βάση δεδομένων
+   * με βάση το μοναδικό αναγνωριστικό (ID).
+   *
+   * @param id το μοναδικό αναγνωριστικό της εγγραφής cashflow
+   * @return το αντικείμενο CashFlow αν βρεθεί, αλλιώς null
+   * @throws RuntimeException αν προκύψει σφάλμα κατά την επικοινωνία με τη βάση
+   */
+  
+  public CashFlow selectCashFlowById(int id) {
+    final String SQL = "SELECT * FROM cashflows WHERE id = ?";
+    try (Connection connection = DatabaseSetup.getConnection();
+         PreparedStatement statement = connection.prepareStatement(SQL)) {
+      statement.setInt(1, id);
+      try (ResultSet rs = statement.executeQuery()) {
+        if (rs.next()) {
+          return mapRow(rs);
+        }
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException("Σφάλμα στη βάση (selectCashFlowById): " + e.getMessage(), e);
+    }
+    return null;
+  }
+
 }
 
