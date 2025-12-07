@@ -46,6 +46,7 @@ public class DataImporterTest {
         // Καταστροφή των πινάκων από προηγούμενα tests ΠΡΙΝ τη δημιουργία νέων πινάκων
         stmt.execute("DROP TABLE IF EXISTS foreis"); 
         stmt.execute("DROP TABLE IF EXISTS cashflows"); 
+        stmt.execute("DROP TABLE IF EXISTS log"); // Andrew's addition for log table
 
         // Ορισμός των Strings των πινάκων 
         String createForeisTable = "CREATE TABLE IF NOT EXISTS foreis (" +
@@ -55,10 +56,13 @@ public class DataImporterTest {
         String createCashflowsTable = "CREATE TABLE IF NOT EXISTS cashflows (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, year_id INTEGER, " +
                     "type TEXT, name TEXT, amount REAL)";
-        
+        String createLogTable = "CREATE TABLE IF NOT EXISTS log (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, table_name TEXT, " +
+                    "operation TEXT, row_id INTEGER, details TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)"; // Andrew's addition for log table
         // Δημιουργία των καθαρών πινάκων για το current test
         stmt.execute(createForeisTable);
         stmt.execute(createCashflowsTable);
+        stmt.execute(createLogTable); // Andrew's addition for log table
         
         } catch (SQLException e) {
             e.printStackTrace();
