@@ -25,7 +25,7 @@ public class LogDao {
     
     public List<Log> selectLog() {
     List<Log> log = new ArrayList<>();
-    final String SQL = "SELECT * FROM log";
+    final String SQL = "SELECT * FROM log WHERE id > 168";
     try (Connection connection = DatabaseSetup.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL)) {
 
