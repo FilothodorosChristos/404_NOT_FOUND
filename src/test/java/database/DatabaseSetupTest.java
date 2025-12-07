@@ -72,6 +72,7 @@ public class DatabaseSetupTest {
 
         assertTrue(tableExists("foreis"), "Ο πίνακας 'foreis' πρέπει να έχει δημιουργηθεί.");
         assertTrue(tableExists("cashflows"), "Ο πίνακας 'cashflows' πρέπει να έχει δημιουργηθεί.");
+        assertTrue(tableExists("log"), "Ο πίνακας 'log' πρέπει να έχει δημιουργηθεί.");// Andrew's addition for log table
     }
 
     @Test
@@ -81,6 +82,7 @@ public class DatabaseSetupTest {
 
         assertFalse(tableExists("foreis"), "Ο πίνακας 'foreis' πρέπει να έχει διαγραφεί.");
         assertFalse(tableExists("cashflows"), "Ο πίνακας 'cashflows' πρέπει να έχει διαγραφεί.");
+        assertFalse(tableExists("log"), "Ο πίνακας 'log' πρέπει να έχει διαγραφεί.");// Andrew's addition for log table
     }
 
     @Test
@@ -90,6 +92,7 @@ public class DatabaseSetupTest {
 
         assertTrue(tableExists("foreis"), "Ο πίνακας 'foreis' πρέπει να υπάρχει μετά το reset.");
         assertTrue(tableExists("cashflows"), "Ο πίνακας 'cashflows' πρέπει να υπάρχει μετά το reset.");
+        assertTrue(tableExists("log"), "Ο πίνακας 'log' πρέπει να υπάρχει μετά το reset.");// Andrew's addition for log table
     }
 
     @Test
