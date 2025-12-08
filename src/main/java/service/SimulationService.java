@@ -8,7 +8,7 @@ public class SimulationService {
     /**
      * Κανονική μέθοδος για να ξεκινήσει νέα προσομοίωση
      */
-    public void startNewSimulation() {
+    public static void startNewSimulation() {
         DataImporter.importer();
     }
 
@@ -16,7 +16,7 @@ public class SimulationService {
      * Καλείται στην εκκίνηση της εφαρμογής.
      * Αν ΔΕΝ υπάρχει το budgetDB.db, τότε το δημιουργεί ξανά.
      */
-    public void startIfDatabaseMissing() {
+    public static void startIfDatabaseMissing() {
         if (!DbExistsChecker.databaseExists()) {
             startNewSimulation();
         }
