@@ -3,23 +3,19 @@ package GUI;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.util.List;
+
 import service.CashFlowService;
 import service.ForeisService;
-import dao.CashFlow;
-import dao.Foreis;
 
-/**
- * BudgetViewPanel displays budget data in two tables:
- * one for CashFlow and one for Foreis.
- * Data is filtered by year and type selected by the user.
- */
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+
 public class BudgetViewPanel extends JPanel {
     
     private final MainFrame mainFrame;
-    private final CashFlowService cashFlowService;
-    private final ForeisService foreisService;
     
     private static final Color NAVY_BLUE = new Color(0, 0, 128);
     private static final Color LIGHT_BLUE = new Color(173, 216, 230);
@@ -32,21 +28,13 @@ public class BudgetViewPanel extends JPanel {
     private JTable foreisTable;
     private DefaultTableModel cashFlowTableModel;
     private DefaultTableModel foreisTableModel;
-    
-    /**
-     * Constructs a BudgetViewPanel with the specified MainFrame reference.
-     *
-     * @param mainFrame the main application frame
-     */
+
     public BudgetViewPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        this.cashFlowService = new CashFlowService();
-        this.foreisService = new ForeisService();
         setLayout(new BorderLayout());
         createUI();
         loadData();
     }
-    
     /**
      * Creates the user interface components.
      */
@@ -243,103 +231,147 @@ public class BudgetViewPanel extends JPanel {
         header.setBackground(NAVY_BLUE);
         header.setForeground(Color.WHITE);
     }
-    
-    /**
-     * Loads data for both tables with default type "income".
-     */
+     /** NEW: Load CashFlow data directly from CSV files */
+    private List<Object[]> loadCashFlowDataFromCSV(int year, String type) {
+        List<Object[]> data = new ArrayList<>();
+        String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + 
+                     "main" + File.separator + "resources" + File.separator + "data";
+        File folder = new File(path);
+        File[] files = folder.listFiles((dir, name) -> 
+            name.toLowerCase().endsWith(".csv") && 
+            (name.contains("esoda") || name.contains("exoda") || 
+             name.contains("esodatest") || name.contains("exodatest")));
+        
+        if (files == null) return data;
+        
+        String yearStr = Integer.toString(year);
+        String yearSuffix = yearStr.substring(2);
+        String yearPrefix = "b" + yearSuffix;
+
+        for (File file : files) {
+            String fileName = file.getName().toLowerCase();
+            if (!fileName.contains(yearPrefix)) continue;
+
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+                
+                br.readLine(); // Skip header
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split("[;,]");
+                    if (parts.length >= 4 && parts[0].trim().equals(yearStr)) {
+                        String rowType = parts[1].trim();
+                        if (!rowType.equalsIgnoreCase(type)) continue;
+                        
+                        String name = parts[2].trim();
+                        double amount;
+                        try {
+                            amount = Double.parseDouble(parts[3].trim());
+                            if (amount == 0) continue;
+                            
+                            // Add row directly to table data
+                            data.add(new Object[]{
+                                data.size() + 1,  // ID
+                                year,             // Year ID
+                                rowType,          // Type
+                                name,             // Name
+                                String.format("%.2f", amount)  // Amount
+                            });
+                        } catch (NumberFormatException ignored) {}
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error reading " + fileName + ": " + e.getMessage());
+            }
+        }
+        return data;
+    }
+
+    /** NEW: Load Foreis data directly from CSV files */
+    private List<Object[]> loadForeisDataFromCSV(int year, String type) {
+        List<Object[]> data = new ArrayList<>();
+        String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + 
+                     "main" + File.separator + "resources" + File.separator + "data";
+        File folder = new File(path);
+        File[] files = folder.listFiles((dir, name) -> 
+            name.toLowerCase().contains("foreis.csv"));
+        
+        if (files == null) return data;
+        
+        String yearStr = Integer.toString(year);
+        String yearSuffix = yearStr.substring(2);
+        String yearPrefix = "b" + yearSuffix;
+
+        for (File file : files) {
+            String fileName = file.getName().toLowerCase();
+            if (!fileName.contains(yearPrefix)) continue;
+
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+                
+                br.readLine(); // Skip header
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split("[;,]");
+                    if (parts.length >= 7) {
+                        try {
+                            String name = parts[3].trim();
+                            double total = Double.parseDouble(parts[6].trim());
+                            if (total > 0) {
+                                data.add(new Object[]{
+                                    data.size() + 1,     // ID
+                                    data.size() + 1,     // Foreas ID
+                                    year,                // Year ID
+                                    type,                // Type
+                                    name,                // Name
+                                    "0.00",              // Regular Budget (placeholder)
+                                    "0.00",              // Public Inv Budget (placeholder)
+                                    String.format("%.2f", total)  // Total
+                                });
+                            }
+                        } catch (NumberFormatException ignored) {}
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error reading " + fileName + ": " + e.getMessage());
+            }
+        }
+        return data;
+    }
+
+    /** UPDATED: Now uses direct CSV loading */
     private void loadData() {
         loadDataByType("income");
     }
-    
-    /**
-     * Loads data for both tables based on selected type.
-     */
+
     private void loadDataByType(String type) {
         try {
-            String yearStr = mainFrame.getSelectedYear();
-            if (yearStr == null) {
-                JOptionPane.showMessageDialog(this, 
-                    "Δεν έχει επιλεγεί έτος!", 
-                    "Σφάλμα", 
-                    JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            int year = Integer.parseInt(mainFrame.getSelectedYear());
             
-            int year = Integer.parseInt(yearStr);
+            System.out.println("=== LOADING DATA ===");
+            System.out.println("Year: " + year + ", Type: " + type);
+            
+            // Clear tables
+            cashFlowTableModel.setRowCount(0);
+            foreisTableModel.setRowCount(0);
             
             // Load CashFlow data
-            loadCashFlowData(year, type);
+            List<Object[]> cashFlowData = loadCashFlowDataFromCSV(year, type);
+            for (Object[] row : cashFlowData) {
+                cashFlowTableModel.addRow(row);
+            }
+            System.out.println("CashFlow rows loaded: " + cashFlowData.size());
             
             // Load Foreis data
-            loadForeisData(year, type);
+            List<Object[]> foreisData = loadForeisDataFromCSV(year, type);
+            for (Object[] row : foreisData) {
+                foreisTableModel.addRow(row);
+            }
+            System.out.println("Foreis rows loaded: " + foreisData.size());
             
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, 
-                "Μη έγκυρο έτος: " + mainFrame.getSelectedYear(), 
-                "Σφάλμα", 
-                JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Σφάλμα κατά τη φόρτωση δεδομένων: " + e.getMessage(), 
-                "Σφάλμα", 
-                JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    /**
-     * Loads CashFlow data into the table.
-     */
-    private void loadCashFlowData(int year, String type) {
-        cashFlowTableModel.setRowCount(0); // Clear existing data
-        
-        List<CashFlow> cashFlows = cashFlowService.getCashflows(year, type);
-        
-        for (CashFlow cf : cashFlows) {
-            Object[] row = {
-                cf.getId(),
-                cf.getYearId(),
-                cf.getType(),
-                cf.getName(),
-                String.format("%.2f", cf.getAmount())
-            };
-            cashFlowTableModel.addRow(row);
-        }
-        
-        if (cashFlows.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Δεν βρέθηκαν δεδομένα CashFlow για έτος " + year + " και τύπο " + type, 
-                "Πληροφορία", 
-                JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-    
-    /**
-     * Loads Foreis data into the table.
-     */
-    private void loadForeisData(int year, String type) {
-        foreisTableModel.setRowCount(0); // Clear existing data
-        
-        List<Foreis> foreisList = foreisService.getForeisByYearAndType(year, type);
-        
-        for (Foreis f : foreisList) {
-            Object[] row = {
-                f.getId(),
-                f.getForeasId(),
-                f.getYearId(),
-                f.getType(),
-                f.getName(),
-                String.format("%.2f", f.getRegularBudget()),
-                String.format("%.2f", f.getPublicInvBudget()),
-                String.format("%.2f", f.getTotal())
-            };
-            foreisTableModel.addRow(row);
-        }
-        
-        if (foreisList.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Δεν βρέθηκαν δεδομένα Foreis για έτος " + year + " και τύπο " + type, 
-                "Πληροφορία", 
-                JOptionPane.INFORMATION_MESSAGE);
+            System.err.println("Error loading data: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

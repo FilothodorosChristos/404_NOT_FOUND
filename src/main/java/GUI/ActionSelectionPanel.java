@@ -139,32 +139,22 @@ public class ActionSelectionPanel extends JPanel {
 	 * @param action the action string selected by the user
 	 */
 	private void handleAction(String action) {
-	if (action.equals("Διαγράμματα")) {
-		String selectedYear = mainFrame.getSelectedYear();
-		if (selectedYear == null || selectedYear.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Παρακαλώ επιλέξτε πρώτα έτος.", "Σφάλμα", JOptionPane.ERROR_MESSAGE);
-			return;
+    String selectedYear = mainFrame.getSelectedYear();
+    
+    if (action.equals("Διαγράμματα")) {
+        FinanceChartPanel chartPanel = FinanceChartPanel.createPanel(selectedYear);
+        
+        JFrame chartFrame = new JFrame("Διαγράμματα Έτους " + selectedYear);
+        chartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        chartFrame.setSize(900, 700);
+        chartFrame.setLocationRelativeTo(null);
+        chartFrame.add(chartPanel);
+        chartFrame.setVisible(true);
+        
+   		} else if (action.equals("Προβολή")) {
+    	mainFrame.showBudgetView();  // ← Αλλαγή από showPanel
 		}
-		
-		
-		FinanceChartPanel chartPanel = FinanceChartPanel.createPanel(selectedYear);
-		
-		
-		JFrame chartFrame = new JFrame("Διαγράμματα Έτους " + selectedYear);
-		chartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		chartFrame.setSize(900, 700);
-		chartFrame.setLocationRelativeTo(null);
-		chartFrame.add(chartPanel);
-		chartFrame.setVisible(true);
-	} else {
-		
-		String selectedYear = mainFrame.getSelectedYear();
-		String message = String.format("Επιλέξατε: %s%nΈτος: %s", action, selectedYear);
-		JOptionPane.showMessageDialog(null, message, "Ενέργεια", JOptionPane.INFORMATION_MESSAGE);
-	}
-}
-
-	
+    }  	
 	/**
 	 * A custom border with rounded corners for Swing components.
 	 */

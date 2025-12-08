@@ -143,9 +143,29 @@ public class MainFrame extends JFrame {
         mainPanel.add(new ProjectSelectionPanel(this), PROJECT_SELECTION);
         mainPanel.add(new YearSelectionPanel(this), YEAR_SELECTION);
         mainPanel.add(new ActionSelectionPanel(this), ACTION_SELECTION);
-        mainPanel.add(new BudgetViewPanel(this), BUDGET_VIEW);
     }
     
+    public void showBudgetView() {
+    if (selectedYear == null) {
+        System.err.println("Error: No year selected!");
+        return;
+    }
+    
+    // Δημιούργησε ΝΕΟ panel κάθε φορά
+    BudgetViewPanel budgetPanel = new BudgetViewPanel(this);
+    
+    // Αφαίρεσε το παλιό αν υπάρχει
+    for (Component comp : mainPanel.getComponents()) {
+        if (comp instanceof BudgetViewPanel) {
+            mainPanel.remove(comp);
+            break;
+        }
+    }
+    
+    // Πρόσθεσε το νέο
+    mainPanel.add(budgetPanel, BUDGET_VIEW);
+    showPanel(BUDGET_VIEW);
+}
     /**
      * Navigates to the specified panel using CardLayout.
      *
