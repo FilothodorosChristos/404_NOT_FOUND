@@ -1,20 +1,24 @@
 package service;
 
 import database.DataImporter;
-import util.FirstRunChecker;
+import util.DbExistsChecker;
 
 public class SimulationService {
 
-    // Κανονική μέθοδος για να ξεκινά προσομοίωση
+    /**
+     * Κανονική μέθοδος για να ξεκινήσει νέα προσομοίωση
+     */
     public void startNewSimulation() {
         DataImporter.importer();
     }
 
-    // Μέθοδος που καλείται κατά την εκκίνηση
-    public void startIfFirstRun() {
-        if (FirstRunChecker.isFirstRun()) {
+    /**
+     * Καλείται στην εκκίνηση της εφαρμογής.
+     * Αν ΔΕΝ υπάρχει το budgetDB.db, τότε το δημιουργεί ξανά.
+     */
+    public void startIfDatabaseMissing() {
+        if (!DbExistsChecker.databaseExists()) {
             startNewSimulation();
-            FirstRunChecker.markAsRun();
         }
     }
 }
