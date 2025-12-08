@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
  */
 public class CashFlowDaoTest {
 
-  private static final String TEST_DB_URL = "jdbc:sqlite:test_db.db";
+  private static final String TEST_DB_URL = "jdbc:sqlite:test_db_temp.db";
   private static final String REAL_DB_URL = "jdbc:sqlite:budgetDB.db";
 
   private CashFlowDao dao;
