@@ -88,6 +88,23 @@ package "GUI" #AED6F1 {
         + handleAction(action : String) : void
     }
 
+    class BudgetViewPanel {
+   
+
+    - createUI() : void
+    - createFilterPanel() : JPanel
+    - createTableSection(title : String, tableScrollPane : JScrollPane) : JPanel
+    - createCashFlowTable() : JScrollPane
+    - createForeisTable() : JScrollPane
+    - styleTable(table : JTable) : void
+    
+    - loadCashFlowDataFromCSV(year : int, type : String) : List<Object[]>
+    - loadForeisDataFromCSV(year : int, type : String) : List<Object[]>
+
+    - loadData() : void
+    - loadDataByType(type : String) : void
+}
+
     class FinanceChartPanel {
         + FinanceChartPanel(year : String)
         - loadData() : void
