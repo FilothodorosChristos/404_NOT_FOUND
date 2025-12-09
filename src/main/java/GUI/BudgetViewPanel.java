@@ -3,38 +3,51 @@ package GUI;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-
+import java.awt.*;
+import java.util.List;
 import service.CashFlowService;
 import service.ForeisService;
+import dao.CashFlow;
+import dao.Foreis;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-
+/**
+ * BudgetViewPanel displays budget data in a single table.
+ * User can select between "Φορείς", "Έσοδα", or "Έξοδα".
+ * Data is filtered by year and selection.
+ */
 public class BudgetViewPanel extends JPanel {
-    
+
     private final MainFrame mainFrame;
-    
+    private final CashFlowService cashFlowService;
+    private final ForeisService foreisService;
+
     private static final Color NAVY_BLUE = new Color(0, 0, 128);
     private static final Color LIGHT_BLUE = new Color(173, 216, 230);
     private static final Font TITLE_FONT = new Font("Tahoma", Font.BOLD, 24);
     private static final Font SECTION_FONT = new Font("Tahoma", Font.BOLD, 18);
     private static final Font TABLE_HEADER_FONT = new Font("Tahoma", Font.BOLD, 12);
     private static final Font TABLE_FONT = new Font("Tahoma", Font.PLAIN, 11);
-    
-    private JTable cashFlowTable;
-    private JTable foreisTable;
-    private DefaultTableModel cashFlowTableModel;
-    private DefaultTableModel foreisTableModel;
 
+    private JTable dataTable;
+    private DefaultTableModel tableModel;
+    private JPanel tableSection;
+    private JLabel sectionLabel;
+    private JComboBox<String> typeCombo;
+
+    /**
+     * Constructs a BudgetViewPanel with the specified MainFrame reference.
+     *
+     * @param mainFrame the main application frame
+     */
     public BudgetViewPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+        this.cashFlowService = new CashFlowService();
+        this.foreisService = new ForeisService();
         setLayout(new BorderLayout());
         createUI();
         loadData();
     }
+
     /**
      * Creates the user interface components.
      */
@@ -49,13 +62,13 @@ public class BudgetViewPanel extends JPanel {
                 }
             }
         };
-        
+
         // Main content panel with white background
         JPanel contentPanel = new JPanel(new BorderLayout(10, 10));
         contentPanel.setOpaque(true);
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
-        
+
         // Title panel
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         titlePanel.setOpaque(false);
@@ -63,159 +76,126 @@ public class BudgetViewPanel extends JPanel {
         titleLabel.setFont(TITLE_FONT);
         titleLabel.setForeground(NAVY_BLUE);
         titlePanel.add(titleLabel);
-        
+
         // Filter panel
         JPanel filterPanel = createFilterPanel();
-        
-        // Tables panel (split into two sections)
-        JPanel tablesPanel = new JPanel(new GridLayout(2, 1, 10, 10));
-        tablesPanel.setOpaque(false);
-        
-        // CashFlow table section
-        JPanel cashFlowSection = createTableSection("Ταμειακές Ροές (CashFlow)", createCashFlowTable());
-        tablesPanel.add(cashFlowSection);
-        
-        // Foreis table section
-        JPanel foreisSection = createTableSection("Φορείς (Foreis)", createForeisTable());
-        tablesPanel.add(foreisSection);
-        
+
+        // Table section (initially empty, will be populated on selection)
+        tableSection = new JPanel(new BorderLayout(5, 5));
+        tableSection.setOpaque(false);
+        tableSection.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(NAVY_BLUE, 2),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
+        sectionLabel = new JLabel("Επιλέξτε κατηγορία");
+        sectionLabel.setFont(SECTION_FONT);
+        sectionLabel.setForeground(NAVY_BLUE);
+        tableSection.add(sectionLabel, BorderLayout.NORTH);
+
         // Add components to content panel
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
         topPanel.add(titlePanel, BorderLayout.NORTH);
         topPanel.add(filterPanel, BorderLayout.CENTER);
-        
+
         contentPanel.add(topPanel, BorderLayout.NORTH);
-        contentPanel.add(tablesPanel, BorderLayout.CENTER);
-        
+        contentPanel.add(tableSection, BorderLayout.CENTER);
+
         // Previous button
         JButton prevButton = new JButton("< Προηγούμενο");
         prevButton.setPreferredSize(new Dimension(150, 40));
         prevButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
         prevButton.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
-        
+
         JPanel prevButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         prevButtonPanel.setOpaque(false);
         prevButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         prevButtonPanel.add(prevButton);
-        
+
         contentPanel.add(prevButtonPanel, BorderLayout.SOUTH);
-        
+
         backgroundPanel.add(contentPanel, BorderLayout.CENTER);
         add(backgroundPanel);
     }
-    
+
     /**
-     * Creates the filter panel with type selection combo boxes.
+     * Creates the filter panel with type selection combo box.
      */
     private JPanel createFilterPanel() {
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         filterPanel.setOpaque(false);
-        
-        JLabel typeLabel = new JLabel("Τύπος:");
+
+        JLabel typeLabel = new JLabel("Κατηγορία:");
         typeLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
-        
-        JComboBox<String> typeCombo = new JComboBox<>(new String[]{"income", "expense"});
+
+        typeCombo = new JComboBox<>(new String[] { "Φορείς", "Έσοδα", "Έξοδα" });
         typeCombo.setFont(new Font("Tahoma", Font.PLAIN, 14));
         typeCombo.setPreferredSize(new Dimension(150, 30));
-        
+
         JButton loadButton = new JButton("Φόρτωση Δεδομένων");
         loadButton.setFont(new Font("Tahoma", Font.BOLD, 14));
         loadButton.setBackground(NAVY_BLUE);
         loadButton.setForeground(Color.WHITE);
         loadButton.setFocusPainted(false);
-        
+
         loadButton.addActionListener(e -> {
             String selectedType = (String) typeCombo.getSelectedItem();
-            loadDataByType(selectedType);
+            loadDataBySelection(selectedType);
         });
-        
+
         filterPanel.add(typeLabel);
         filterPanel.add(typeCombo);
         filterPanel.add(loadButton);
-        
+
         return filterPanel;
     }
-    
+
     /**
-     * Creates a table section with title and scrollable table.
+     * Creates and configures a table based on the selection.
      */
-    private JPanel createTableSection(String title, JScrollPane tableScrollPane) {
-        JPanel section = new JPanel(new BorderLayout(5, 5));
-        section.setOpaque(false);
-        section.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(NAVY_BLUE, 2),
-            BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
-        
-        JLabel sectionLabel = new JLabel(title);
-        sectionLabel.setFont(SECTION_FONT);
-        sectionLabel.setForeground(NAVY_BLUE);
-        
-        section.add(sectionLabel, BorderLayout.NORTH);
-        section.add(tableScrollPane, BorderLayout.CENTER);
-        
-        return section;
-    }
-    
-    /**
-     * Creates and configures the CashFlow table.
-     */
-    private JScrollPane createCashFlowTable() {
-        String[] columnNames = {"ID", "Year ID", "Type", "Name", "Amount (€)"};
-        cashFlowTableModel = new DefaultTableModel(columnNames, 0) {
+    private JScrollPane createTable(String selection) {
+        String[] columnNames;
+
+        if (selection.equals("Φορείς")) {
+            columnNames = new String[] { "ID", "Foreas ID", "Year ID", "Type", "Name",
+                    "Regular Budget (€)", "Public Inv Budget (€)", "Total (€)" };
+        } else {
+            columnNames = new String[] { "ID", "Year ID", "Type", "Name", "Amount (€)" };
+        }
+
+        tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; // Make table read-only
             }
         };
-        
-        cashFlowTable = new JTable(cashFlowTableModel);
-        styleTable(cashFlowTable);
-        
-        // Set column widths
-        cashFlowTable.getColumnModel().getColumn(0).setPreferredWidth(50);
-        cashFlowTable.getColumnModel().getColumn(1).setPreferredWidth(70);
-        cashFlowTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-        cashFlowTable.getColumnModel().getColumn(3).setPreferredWidth(300);
-        cashFlowTable.getColumnModel().getColumn(4).setPreferredWidth(120);
-        
-        JScrollPane scrollPane = new JScrollPane(cashFlowTable);
-        scrollPane.setPreferredSize(new Dimension(0, 200));
+
+        dataTable = new JTable(tableModel);
+        styleTable(dataTable);
+
+        // Set column widths based on selection
+        if (selection.equals("Φορείς")) {
+            dataTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+            dataTable.getColumnModel().getColumn(1).setPreferredWidth(70);
+            dataTable.getColumnModel().getColumn(2).setPreferredWidth(70);
+            dataTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+            dataTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+            dataTable.getColumnModel().getColumn(5).setPreferredWidth(130);
+            dataTable.getColumnModel().getColumn(6).setPreferredWidth(150);
+            dataTable.getColumnModel().getColumn(7).setPreferredWidth(110);
+        } else {
+            dataTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+            dataTable.getColumnModel().getColumn(1).setPreferredWidth(70);
+            dataTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+            dataTable.getColumnModel().getColumn(3).setPreferredWidth(300);
+            dataTable.getColumnModel().getColumn(4).setPreferredWidth(120);
+        }
+
+        JScrollPane scrollPane = new JScrollPane(dataTable);
+        scrollPane.setPreferredSize(new Dimension(0, 400));
         return scrollPane;
     }
-    
-    /**
-     * Creates and configures the Foreis table.
-     */
-    private JScrollPane createForeisTable() {
-        String[] columnNames = {"ID", "Foreas ID", "Year ID", "Type", "Name", 
-                                "Regular Budget (€)", "Public Inv Budget (€)", "Total (€)"};
-        foreisTableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Make table read-only
-            }
-        };
-        
-        foreisTable = new JTable(foreisTableModel);
-        styleTable(foreisTable);
-        
-        // Set column widths
-        foreisTable.getColumnModel().getColumn(0).setPreferredWidth(40);
-        foreisTable.getColumnModel().getColumn(1).setPreferredWidth(70);
-        foreisTable.getColumnModel().getColumn(2).setPreferredWidth(70);
-        foreisTable.getColumnModel().getColumn(3).setPreferredWidth(80);
-        foreisTable.getColumnModel().getColumn(4).setPreferredWidth(200);
-        foreisTable.getColumnModel().getColumn(5).setPreferredWidth(130);
-        foreisTable.getColumnModel().getColumn(6).setPreferredWidth(150);
-        foreisTable.getColumnModel().getColumn(7).setPreferredWidth(110);
-        
-        JScrollPane scrollPane = new JScrollPane(foreisTable);
-        scrollPane.setPreferredSize(new Dimension(0, 200));
-        return scrollPane;
-    }
-    
+
     /**
      * Applies consistent styling to a table.
      */
@@ -225,153 +205,147 @@ public class BudgetViewPanel extends JPanel {
         table.setGridColor(LIGHT_BLUE);
         table.setSelectionBackground(LIGHT_BLUE);
         table.setSelectionForeground(NAVY_BLUE);
-        
+
         JTableHeader header = table.getTableHeader();
         header.setFont(TABLE_HEADER_FONT);
         header.setBackground(NAVY_BLUE);
         header.setForeground(Color.WHITE);
     }
-     /** NEW: Load CashFlow data directly from CSV files */
-    private List<Object[]> loadCashFlowDataFromCSV(int year, String type) {
-        List<Object[]> data = new ArrayList<>();
-        String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + 
-                     "main" + File.separator + "resources" + File.separator + "data";
-        File folder = new File(path);
-        File[] files = folder.listFiles((dir, name) -> 
-            name.toLowerCase().endsWith(".csv") && 
-            (name.contains("esoda") || name.contains("exoda") || 
-             name.contains("esodatest") || name.contains("exodatest")));
-        
-        if (files == null) return data;
-        
-        String yearStr = Integer.toString(year);
-        String yearSuffix = yearStr.substring(2);
-        String yearPrefix = "b" + yearSuffix;
 
-        for (File file : files) {
-            String fileName = file.getName().toLowerCase();
-            if (!fileName.contains(yearPrefix)) continue;
-
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-                
-                br.readLine(); // Skip header
-                String line;
-                while ((line = br.readLine()) != null) {
-                    String[] parts = line.split("[;,]");
-                    if (parts.length >= 4 && parts[0].trim().equals(yearStr)) {
-                        String rowType = parts[1].trim();
-                        if (!rowType.equalsIgnoreCase(type)) continue;
-                        
-                        String name = parts[2].trim();
-                        double amount;
-                        try {
-                            amount = Double.parseDouble(parts[3].trim());
-                            if (amount == 0) continue;
-                            
-                            // Add row directly to table data
-                            data.add(new Object[]{
-                                data.size() + 1,  // ID
-                                year,             // Year ID
-                                rowType,          // Type
-                                name,             // Name
-                                String.format("%.2f", amount)  // Amount
-                            });
-                        } catch (NumberFormatException ignored) {}
-                    }
-                }
-            } catch (IOException e) {
-                System.err.println("Error reading " + fileName + ": " + e.getMessage());
-            }
-        }
-        return data;
-    }
-
-    /** NEW: Load Foreis data directly from CSV files */
-    private List<Object[]> loadForeisDataFromCSV(int year, String type) {
-        List<Object[]> data = new ArrayList<>();
-        String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + 
-                     "main" + File.separator + "resources" + File.separator + "data";
-        File folder = new File(path);
-        File[] files = folder.listFiles((dir, name) -> 
-            name.toLowerCase().contains("foreis.csv"));
-        
-        if (files == null) return data;
-        
-        String yearStr = Integer.toString(year);
-        String yearSuffix = yearStr.substring(2);
-        String yearPrefix = "b" + yearSuffix;
-
-        for (File file : files) {
-            String fileName = file.getName().toLowerCase();
-            if (!fileName.contains(yearPrefix)) continue;
-
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-                
-                br.readLine(); // Skip header
-                String line;
-                while ((line = br.readLine()) != null) {
-                    String[] parts = line.split("[;,]");
-                    if (parts.length >= 7) {
-                        try {
-                            String name = parts[3].trim();
-                            double total = Double.parseDouble(parts[6].trim());
-                            if (total > 0) {
-                                data.add(new Object[]{
-                                    data.size() + 1,     // ID
-                                    data.size() + 1,     // Foreas ID
-                                    year,                // Year ID
-                                    type,                // Type
-                                    name,                // Name
-                                    "0.00",              // Regular Budget (placeholder)
-                                    "0.00",              // Public Inv Budget (placeholder)
-                                    String.format("%.2f", total)  // Total
-                                });
-                            }
-                        } catch (NumberFormatException ignored) {}
-                    }
-                }
-            } catch (IOException e) {
-                System.err.println("Error reading " + fileName + ": " + e.getMessage());
-            }
-        }
-        return data;
-    }
-
-    /** UPDATED: Now uses direct CSV loading */
+    /**
+     * Loads data with default selection "Φορείς".
+     */
     private void loadData() {
-        loadDataByType("income");
+        loadDataBySelection("Φορείς");
     }
 
-    private void loadDataByType(String type) {
+    /**
+     * Loads data based on user selection.
+     */
+    private void loadDataBySelection(String selection) {
         try {
-            int year = Integer.parseInt(mainFrame.getSelectedYear());
-            
-            System.out.println("=== LOADING DATA ===");
-            System.out.println("Year: " + year + ", Type: " + type);
-            
-            // Clear tables
-            cashFlowTableModel.setRowCount(0);
-            foreisTableModel.setRowCount(0);
-            
-            // Load CashFlow data
-            List<Object[]> cashFlowData = loadCashFlowDataFromCSV(year, type);
-            for (Object[] row : cashFlowData) {
-                cashFlowTableModel.addRow(row);
+            // Παίρνουμε το έτος ως int (π.χ. 2023)
+            String yearStr = mainFrame.getSelectedYear();
+            int year = Integer.parseInt(yearStr);
+
+            System.out.println("=== DEBUG INFO ===");
+            System.out.println("Selected Year String: " + yearStr);
+            System.out.println("Selected Year Int: " + year);
+            System.out.println("Selected Category: " + selection);
+
+            // Update section label
+            sectionLabel.setText(selection);
+
+            // Remove old table if exists
+            if (tableSection.getComponentCount() > 1) {
+                tableSection.remove(1);
             }
-            System.out.println("CashFlow rows loaded: " + cashFlowData.size());
-            
-            // Load Foreis data
-            List<Object[]> foreisData = loadForeisDataFromCSV(year, type);
-            for (Object[] row : foreisData) {
-                foreisTableModel.addRow(row);
+
+            // Create new table based on selection
+            JScrollPane scrollPane = createTable(selection);
+            tableSection.add(scrollPane, BorderLayout.CENTER);
+
+            // Load appropriate data
+            if (selection.equals("Φορείς")) {
+                loadForeisData(year);
+            } else if (selection.equals("Έσοδα")) {
+                loadCashFlowData(year, "Έσοδο");
+            } else if (selection.equals("Έξοδα")) {
+                loadCashFlowData(year, "Έξοδο");
             }
-            System.out.println("Foreis rows loaded: " + foreisData.size());
-            
+
+            // Refresh the panel
+            tableSection.revalidate();
+            tableSection.repaint();
+
         } catch (Exception e) {
-            System.err.println("Error loading data: " + e.getMessage());
+            System.err.println("Σφάλμα κατά τη φόρτωση δεδομένων: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads CashFlow data into the table.
+     */
+    private void loadCashFlowData(int year, String type) {
+        tableModel.setRowCount(0); // Clear existing data
+
+        List<CashFlow> cashFlows = cashFlowService.getCashflows(year, type);
+
+        System.out.println("CashFlow results (" + type + "): " + cashFlows.size() + " rows");
+
+        for (CashFlow cf : cashFlows) {
+            System.out.println("  - ID: " + cf.getId() + ", Name: " + cf.getName() + ", Amount: " + cf.getAmount());
+            Object[] row = {
+                    cf.getId(),
+                    cf.getYearId(),
+                    cf.getType(),
+                    cf.getName(),
+                    String.format("%.2f", cf.getAmount())
+            };
+            tableModel.addRow(row);
+        }
+    }
+
+    /**
+     * Loads Foreis data into the table (all types).
+     */
+    private void loadForeisData(int year) {
+        tableModel.setRowCount(0); // Clear existing data
+
+        // Φορτώνουμε όλους τους φορείς (Κεντρική Διοίκηση, Υπουργείο, Αποκεντρωμένη
+        // Διοίκηση)
+        List<Foreis> foreisListCentered = foreisService.getForeisByYearAndType(year, "Κεντρική Διοίκηση");
+        List<Foreis> foreisListDepartment = foreisService.getForeisByYearAndType(year, "Υπουργείο");
+        List<Foreis> foreisListDecentered = foreisService.getForeisByYearAndType(year, "Αποκεντρωμένη Διοίκηση");
+
+        System.out.println("Foreis results (Κεντρική Διοίκηση): " + foreisListCentered.size() + " rows");
+        System.out.println("Foreis results (Υπουργείο): " + foreisListDepartment.size() + " rows");
+        System.out.println("Foreis results (Αποκεντρωμένη Διοίκηση): " + foreisListDecentered.size() + " rows");
+
+        // Προσθήκη όλων των φορέων
+        for (Foreis f : foreisListCentered) {
+            System.out.println("  - ID: " + f.getId() + ", Name: " + f.getName() + ", Total: " + f.getTotal());
+            Object[] row = {
+                    f.getId(),
+                    f.getForeasId(),
+                    f.getYearId(),
+                    f.getType(),
+                    f.getName(),
+                    String.format("%.2f", f.getRegularBudget()),
+                    String.format("%.2f", f.getPublicInvBudget()),
+                    String.format("%.2f", f.getTotal())
+            };
+            tableModel.addRow(row);
+        }
+
+        for (Foreis f : foreisListDepartment) {
+            System.out.println("  - ID: " + f.getId() + ", Name: " + f.getName() + ", Total: " + f.getTotal());
+            Object[] row = {
+                    f.getId(),
+                    f.getForeasId(),
+                    f.getYearId(),
+                    f.getType(),
+                    f.getName(),
+                    String.format("%.2f", f.getRegularBudget()),
+                    String.format("%.2f", f.getPublicInvBudget()),
+                    String.format("%.2f", f.getTotal())
+            };
+            tableModel.addRow(row);
+        }
+        for (Foreis f : foreisListDecentered) {
+            System.out.println("  - ID: " + f.getId() + ", Name: " + f.getName() + ", Total: " + f.getTotal());
+            Object[] row = {
+                    f.getId(),
+                    f.getForeasId(),
+                    f.getYearId(),
+                    f.getType(),
+                    f.getName(),
+                    String.format("%.2f", f.getRegularBudget()),
+                    String.format("%.2f", f.getPublicInvBudget()),
+                    String.format("%.2f", f.getTotal())
+            };
+            tableModel.addRow(row);
         }
     }
 }
