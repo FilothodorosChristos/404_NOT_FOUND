@@ -31,7 +31,6 @@ public class CashFlowDaoTest {
     public static void setupDatabase() {
     DatabaseSetup.setURL(TEST_DB_URL);
     DataImporter.setURL(TEST_DB_URL);
-    //DatabaseSetup.setDatabase();
     DataImporter.importer();
   }
 
