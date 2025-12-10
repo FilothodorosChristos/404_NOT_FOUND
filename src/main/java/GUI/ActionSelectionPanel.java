@@ -154,6 +154,13 @@ public class ActionSelectionPanel extends JPanel {
    		} else if (action.equals("Προβολή")) {
     	mainFrame.showBudgetView();  // ← Αλλαγή από showPanel
 		}
+else if (action.equals("Επεξεργασία")) {
+    // Π.χ. dataType = "cashflow"
+    DataEditorWindow2 editorWindow = new DataEditorWindow2(
+        Integer.parseInt(mainFrame.getSelectedYear()), "cashflow"
+    );
+    editorWindow.setVisible(true);
+}
     }  	
 	/**
 	 * A custom border with rounded corners for Swing components.
