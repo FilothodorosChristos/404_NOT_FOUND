@@ -5,18 +5,23 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * Class with methods to set up and delete database tables.
- */
+
 public class DatabaseSetup {
 
   private static String URL = "jdbc:sqlite:budgetDB.db";
 
+  /** 
+   * @param url
+   */
   //setter για τα τεστ
   public static void setURL(String url) {
     URL = url;
   }
-
+  /** 
+     * Δημιουργεί τους πίνακες foreis και cashflows στη βάση δεδομένων.
+     * Eάν οι πίνακες υπάρχουν ήδη, δεν γίνονται αλλαγές.
+     * Eνεργοποιεί τους foreign keys.
+     */
   public static void setDatabase() {
     try (Connection conn = DriverManager.getConnection(URL);
       Statement stmt = conn.createStatement()) {
@@ -69,9 +74,152 @@ public class DatabaseSetup {
         CREATE TRIGGER IF NOT EXISTS log_insert_foreis
         AFTER INSERT ON foreis
         BEGIN
+      /** 
+       * @param table_name
+       * @param operation
+       * @param row_id
+       * @param new_data)VALUES('foreis'
+       * @param 'INSERT'
+       * @param NEW.id
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param log(table_name
+       * @param operation
+       * @param row_id
+       * @param old_data
+       * @param new_data)VALUES('foreis'
+       * @param 'UPDATE'
+       * @param OLD.id
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param OLD.total
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param log(table_name
+       * @param operation
+       * @param row_id
+       * @param old_data)VALUES('foreis'
+       * @param 'DELETE'
+       * @param OLD.id
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param '
+       * @param log(table_name
+       * @param operation
+       * @param row_id
+       * @param new_data)VALUES('cashflows'
+       * @param 'INSERT'
+       * @param NEW.id
+       * @param '
+       * @param '
+       * @param '
+       * @param log(table_name
+       * @param operation
+       * @param row_id
+       * @param old_data
+       * @param new_data)VALUES('cashflows'
+       * @param 'UPDATE'
+       * @param OLD.id
+       * @param '
+       * @param '
+       * @param '
+       * @param OLD.amount
+       * @param '
+       * @param '
+       * @param '
+       * @param log(table_name
+       * @param operation
+       * @param row_id
+       * @param old_data)VALUES('cashflows'
+       * @param 'DELETE'
+       * @param OLD.id
+       * @param '
+       * @param '
+       * @param '
+       * @param e
+       */
             INSERT INTO log(table_name, operation, row_id, new_data)
             VALUES('foreis', 'INSERT', NEW.id,
-                  'foreas_id=' || NEW.foreas_id || ', year_id=' || NEW.year_id
+                  'foreas_id=' || NEW.foreas_id || ', year_id/** 
+                   * @param table_name
+                   * @param operation
+                   * @param row_id
+                   * @param old_data
+                   * @param new_data)VALUES('foreis'
+                   * @param 'UPDATE'
+                   * @param OLD.id
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param OLD.total
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param log(table_name
+                   * @param operation
+                   * @param row_id
+                   * @param old_data)VALUES('foreis'
+                   * @param 'DELETE'
+                   * @param OLD.id
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param log(table_name
+                   * @param operation
+                   * @param row_id
+                   * @param new_data)VALUES('cashflows'
+                   * @param 'INSERT'
+                   * @param NEW.id
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param log(table_name
+                   * @param operation
+                   * @param row_id
+                   * @param old_data
+                   * @param new_data)VALUES('cashflows'
+                   * @param 'UPDATE'
+                   * @param OLD.id
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param OLD.amount
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param log(table_name
+                   * @param operation
+                   * @param row_id
+                   * @param old_data)VALUES('cashflows'
+                   * @param 'DELETE'
+                   * @param OLD.id
+                   * @param '
+                   * @param '
+                   * @param '
+                   * @param e
+                   */
+                  =' || NEW.year_id
                   || ', type=' || NEW.type || ', name=' || NEW.name
                   || ', regular_budget=' || NEW.regular_budget
                   || ', public_inv_budget=' || NEW.public_inv_budget
@@ -87,7 +235,55 @@ public class DatabaseSetup {
             INSERT INTO log(table_name, operation, row_id, old_data, new_data)
             VALUES('foreis', 'UPDATE', OLD.id,
                    'foreas_id=' || OLD.foreas_id || ', year_id=' || OLD.year_id
-                   || ', type=' || OLD.type || ', name=' || OLD.name
+                   || ', /** 
+                    * @param table_name
+                    * @param operation
+                    * @param row_id
+                    * @param old_data)VALUES('foreis'
+                    * @param 'DELETE'
+                    * @param OLD.id
+                    * @param '
+                    * @param '
+                    * @param '
+                    * @param '
+                    * @param '
+                    * @param '
+                    * @param log(table_name
+                    * @param operation
+                    * @param row_id
+                    * @param new_data)VALUES('cashflows'
+                    * @param 'INSERT'
+                    * @param NEW.id
+                    * @param '
+                    * @param '
+                    * @param '
+                    * @param log(table_name
+                    * @param operation
+                    * @param row_id
+                    * @param old_data
+                    * @param new_data)VALUES('cashflows'
+                    * @param 'UPDATE'
+                    * @param OLD.id
+                    * @param '
+                    * @param '
+                    * @param '
+                    * @param OLD.amount
+                    * @param '
+                    * @param '
+                    * @param '
+                    * @param log(table_name
+                    * @param operation
+                    * @param row_id
+                    * @param old_data)VALUES('cashflows'
+                    * @param 'DELETE'
+                    * @param OLD.id
+                    * @param '
+                    * @param '
+                    * @param '
+                    * @param e
+                    * @return Connection
+                    */
+                   type=' || OLD.type || ', name=' || OLD.name
                    || ', regular_budget=' || OLD.regular_budget
                    || ', public_inv_budget=' || OLD.public_inv_budget
                    || ', total=' || OLD.total,
@@ -172,12 +368,17 @@ public class DatabaseSetup {
       //throw new RuntimeException("Σφάλμα κατά τη δημιουργία των πινάκων", e);
     }
 }
-
+  /** 
+   * Επαναφέρει τη βάση δεδομένων στην αρχική της κατάσταση.
+   * Διαγράφει τους πίνακες foreis και cashflows και τους δημιουργεί ξανά.
+   */
   public static void resetTables() {
     cleanTables();
     setDatabase();
 }
-
+  /** 
+   * Διαγράφει τους πίνακες foreis και cashflows από τη βάση δεδομένων.
+   */
   public static void cleanTables() {
     try (Connection conn = DriverManager.getConnection(URL);
         Statement stmt = conn.createStatement()) {
@@ -206,6 +407,10 @@ public class DatabaseSetup {
     }
   }
 
+  /** 
+   * @return Connection
+   * @throws SQLException
+   */
   public static Connection getConnection() throws SQLException {
     return DriverManager.getConnection(URL);
   }
