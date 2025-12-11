@@ -29,6 +29,8 @@ class DbExistsCheckerTest {
     @AfterAll
     static void restoreDbFile() {
         DbExistsChecker.setDbFile(ORIGINAL_DB);
+        File f = new File(TEST_DB);
+        if (f.exists()) f.delete();
     }
 
     /**
@@ -47,8 +49,6 @@ class DbExistsCheckerTest {
             assertTrue(DbExistsChecker.databaseExists(), "Η μέθοδος πρέπει να επιστρέφει true αν υπάρχει το αρχείο");
         } catch (Exception e) {
             fail("Σφάλμα κατά τη δημιουργία του test αρχείου: " + e.getMessage());
-        } finally {
-            file.delete();
         }
     }
 
