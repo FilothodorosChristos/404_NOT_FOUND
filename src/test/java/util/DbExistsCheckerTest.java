@@ -29,6 +29,8 @@ class DbExistsCheckerTest {
     @AfterAll
     static void restoreDbFile() {
         DbExistsChecker.setDbFile(ORIGINAL_DB);
+        File f = new File(TEST_DB);
+        if (f.exists()) f.delete();
     }
 
     /**
