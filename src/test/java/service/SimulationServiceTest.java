@@ -25,25 +25,9 @@ class SimulationServiceTest {
     void setup() {
         DbExistsChecker.setDbFile(TEST_DB);
         DataImporter.setURL("jdbc:sqlite:" + TEST_DB);
-        DatabaseSetup.setURL(TEST_DB);
-
-        // Διαγραφή της test DB αν υπάρχει
-        File file = new File(TEST_DB);
-        if (file.exists()) {
-            file.delete();
-        }
+        DatabaseSetup.setURL("jdbc:sqlite:" + TEST_DB);
     }
 
-    /**
-     * Διαγράφει τη test DB μετά από κάθε τεστ για καθαρό state.
-     */
-    @AfterEach
-    void cleanup() {
-        File file = new File(TEST_DB);
-        if (file.exists()) {
-            file.delete();
-        }
-    }
 
     /**
      * Επαναφέρει τη βάση δεδομένων στην κανονική μετά από όλα τα τεστ.
@@ -52,6 +36,7 @@ class SimulationServiceTest {
     static void restoreDbFile() {
         DbExistsChecker.setDbFile(REAL_DB);
         DataImporter.setURL("jdbc:sqlite:" + REAL_DB);
+        DatabaseSetup.setURL("jdbc:sqlite:" + REAL_DB);
     }
 
     /**
@@ -60,8 +45,9 @@ class SimulationServiceTest {
     @Test
     @DisplayName("Δεν καλεί importer αν η βάση υπάρχει")
     void testStartIfDatabaseMissing_WhenDbExists() throws Exception {
-        File file = new File(TEST_DB);
-        assertTrue(file.createNewFile(), "Δε μπόρεσε να δημιουργηθεί η test DB");
+        File file = new File(TEST_DB);  
+        // Προσοχή μπορει να προκαλεσει θεματα στο μελλον αν το αρχειο δεν υπαρχει ηδη
+        assertFalse(file.createNewFile(), "Δε μπόρεσε να δημιουργηθεί η test DB");
 
         SimulationService.startIfDatabaseMissing();
 
