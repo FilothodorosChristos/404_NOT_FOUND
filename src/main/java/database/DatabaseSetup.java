@@ -11,12 +11,16 @@ import java.sql.Statement;
 public class DatabaseSetup {
 
   private static String URL = "jdbc:sqlite:budgetDB.db";
-
+  /** 
+   * @param url
+   */
   //setter για τα τεστ
   public static void setURL(String url) {
     URL = url;
   }
-
+  /** 
+   * Δημιουργεί τους πίνακες της βάσης δεδομένων μαζί με τα triggers για το log.
+   */
   public static void setDatabase() {
     try (Connection conn = DriverManager.getConnection(URL);
       Statement stmt = conn.createStatement()) {
@@ -172,12 +176,18 @@ public class DatabaseSetup {
       //throw new RuntimeException("Σφάλμα κατά τη δημιουργία των πινάκων", e);
     }
 }
-
+  /** 
+   * Επαναφέρει τη βάση δεδομένων διαγράφοντας και δημιουργώντας ξανά τους πίνακες.
+   */
   public static void resetTables() {
     cleanTables();
     setDatabase();
 }
-
+  /** 
+   * Διαγράφει τους πίνακες foreis, cashflows και log από τη βάση δεδομένων.
+   * Διαγράφει επίσης τα αντίστοιχα triggers.
+   * Απενεργοποιεί προσωρινά τους foreign keys για την αποφυγή σφαλμάτων.
+   */
   public static void cleanTables() {
     try (Connection conn = DriverManager.getConnection(URL);
         Statement stmt = conn.createStatement()) {
@@ -205,7 +215,10 @@ public class DatabaseSetup {
       System.err.println("Σφάλμα κατά τη διαγραφή των πινάκων: " + e.getMessage());
     }
   }
-
+  /** 
+   * @return Connection
+   * @throws SQLException
+   */
   public static Connection getConnection() throws SQLException {
     return DriverManager.getConnection(URL);
   }
