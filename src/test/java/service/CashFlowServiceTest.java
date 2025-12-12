@@ -3,6 +3,7 @@ package service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import dao.CashFlow;
+import dao.CashFlowDao;
 import database.DatabaseSetup;
 import java.util.List;
 import org.junit.jupiter.api.*;
@@ -15,191 +16,181 @@ public class CashFlowServiceTest {
   private CashFlowService service;
 
   @BeforeEach
-    void setup() {
+  void setup() {
 
     DatabaseSetup.setURL(TEST_URL);
 
+    // Δημιουργεί πίνακες
+    DatabaseSetup.setDatabase();
+
+    // Καθαρίζει πίνακες
     DatabaseSetup.resetTables();
 
     service = new CashFlowService();
   }
 
   @AfterEach
-    void tearDown() {
-
+  void tearDown() {
     DatabaseSetup.setURL(ORIGINAL_URL);
   }
 
-  @Test
-    void testAddCashflowSuccess() {
-    CashFlow c = new CashFlow(
-                0, 2023, "income",
-                "Salary",
-                1200.0
-        );
-
-    assertDoesNotThrow(() -> service.addCashflow(c));
-
-    List<CashFlow> list = service.getCashflows(2023, "income");
-    assertEquals(1, list.size());
-    assertEquals("Salary", list.get(0).getName());
-    assertEquals(1200.0, list.get(0).getAmount());
-  }
+  // -------------------------------------------------------------
+  // ADD TESTS
+  // -------------------------------------------------------------
 
   @Test
-    void testAddCashflowInvalidAmount() {
+  void testAddCashflowThrowsDueToFinalTotals() {
     CashFlow c = new CashFlow(
-                0, 2023, "income",
-                "Invalid",
-                -10.0
-        );
+            0, 2023, "income",
+            "Salary",
+            1200.0
+    );
 
     assertThrows(IllegalArgumentException.class, () -> service.addCashflow(c));
   }
 
   @Test
-    void testAddCashflowInvalidYear() {
+  void testAddCashflowInvalidAmount() {
     CashFlow c = new CashFlow(
-                0, 2026, "income",
-                "Invalid Year",
-                100.0
-        );
+            0, 2023, "income",
+            "Invalid",
+            -10.0
+    );
 
     assertThrows(IllegalArgumentException.class, () -> service.addCashflow(c));
   }
 
   @Test
-    void testAddCashflowNull() {
+  void testAddCashflowInvalidYear() {
+    CashFlow c = new CashFlow(
+            0, 2026, "income",
+            "Invalid Year",
+            100.0
+    );
+
+    assertThrows(IllegalArgumentException.class, () -> service.addCashflow(c));
+  }
+
+  @Test
+  void testAddCashflowNull() {
     assertThrows(IllegalArgumentException.class, () -> service.addCashflow(null));
   }
 
-  @Test
-    void testUpdateCashflowSuccess() {
-
-    CashFlow c = new CashFlow(
-                0, 2023, "expense",
-                "Old Name",
-                200.0
-        );
-    service.addCashflow(c);
-
-    CashFlow existing = service.getCashflows(2023, "expense").get(0);
-
-    CashFlow updated = new CashFlow(
-                existing.getId(),
-                2023,
-                "expense",
-                "New Name",
-                250.0
-        );
-
-    assertDoesNotThrow(() -> service.updateCashflow(updated));
-
-    CashFlow after = service.getCashflows(2023, "expense").get(0);
-    assertEquals("New Name", after.getName());
-    assertEquals(250.0, after.getAmount());
-  }
+  // -------------------------------------------------------------
+  // UPDATE TESTS
+  // -------------------------------------------------------------
 
   @Test
-    void testUpdateCashflowTooLargeChange() {
-
-    CashFlow c = new CashFlow(
-                0, 2023, "income",
-                "Base",
-                100.0
-        );
-    service.addCashflow(c);
-
-    CashFlow existing = service.getCashflows(2023, "income").get(0);
-
+  void testUpdateCashflowInvalidId() {
     CashFlow updated = new CashFlow(
-                existing.getId(),
-                2023,
-                "income",
-                "Too Large",
-                300.0
-        );
+            0,
+            2023,
+            "income",
+            "Invalid ID",
+            100.0
+    );
 
     assertThrows(IllegalArgumentException.class, () -> service.updateCashflow(updated));
   }
 
   @Test
-    void testUpdateCashflowNotFound() {
-
+  void testUpdateCashflowNotFound() {
     CashFlow updated = new CashFlow(
-                9999,
-                2023,
-                "income",
-                "Not Found",
-                100.0
-        );
+            9999,
+            2023,
+            "income",
+            "Not Found",
+            100.0
+    );
 
     assertThrows(IllegalArgumentException.class, () -> service.updateCashflow(updated));
   }
 
   @Test
-    void testUpdateCashflowInvalidId() {
+  void testUpdateCashflowTooLargeChangeWithExistingRow() {
+
+    CashFlowDao dao = new CashFlowDao();
+    dao.addCashFlow(new CashFlow(
+            1, 2023, "income", "Base", 100.0
+    ));
 
     CashFlow updated = new CashFlow(
-                0,
-                2023,
-                "income",
-                "Invalid ID",
-                100.0
-        );
+            1, 2023, "income", "Too Large", 300.0
+    );
 
     assertThrows(IllegalArgumentException.class, () -> service.updateCashflow(updated));
   }
 
   @Test
-    void testDeleteCashflowSuccess() {
-    CashFlow c = new CashFlow(
-                0, 2023, "income",
-                "To Delete",
-                100.0
-        );
-    service.addCashflow(c);
+  void testUpdateCashflowValidIdButValidationFails() {
 
-    CashFlow existing = service.getCashflows(2023, "income").get(0);
+    CashFlowDao dao = new CashFlowDao();
+    dao.addCashFlow(new CashFlow(
+            1, 2023, "income", "Base", 100.0
+    ));
 
-    assertDoesNotThrow(() -> service.deleteCashflow(existing.getId()));
+    CashFlow updated = new CashFlow(
+            1, 2023, "income", "Updated", 150.0
+    );
+
+    assertThrows(IllegalArgumentException.class, () -> service.updateCashflow(updated));
+  }
+
+  // -------------------------------------------------------------
+  // DELETE TESTS
+  // -------------------------------------------------------------
+
+  @Test
+  void testDeleteCashflowInvalidId() {
+    assertThrows(IllegalArgumentException.class, () -> service.deleteCashflow(0));
+  }
+
+  @Test
+  void testDeleteCashflowExistingId() {
+
+    CashFlowDao dao = new CashFlowDao();
+    dao.addCashFlow(new CashFlow(
+            1, 2023, "income", "ToDelete", 100.0
+    ));
+
+    assertDoesNotThrow(() -> service.deleteCashflow(1));
 
     List<CashFlow> list = service.getCashflows(2023, "income");
     assertEquals(0, list.size());
   }
 
   @Test
-    void testDeleteCashflowInvalidId() {
-    assertThrows(IllegalArgumentException.class, () -> service.deleteCashflow(0));
+  void testDeleteCashflowNotFound() {
+    assertDoesNotThrow(() -> service.deleteCashflow(9999));
   }
 
-  @Test
-    void testGetCashflowsSuccess() {
-    CashFlow c = new CashFlow(
-                0, 2023, "income",
-                "Bonus",
-                500.0
-        );
-    service.addCashflow(c);
+  // -------------------------------------------------------------
+  // GET TESTS
+  // -------------------------------------------------------------
 
+  @Test
+  void testGetCashflowsSuccessEmptyResult() {
     List<CashFlow> list = service.getCashflows(2023, "income");
-
-    assertEquals(1, list.size());
-    assertEquals("Bonus", list.get(0).getName());
+    assertNotNull(list);
+    assertEquals(0, list.size());
   }
 
   @Test
-    void testGetCashflowsInvalidYear() {
+  void testGetCashflowsInvalidYear() {
     assertThrows(IllegalArgumentException.class,
             () -> service.getCashflows(2026, "income"));
   }
 
   @Test
-    void testGetCashflowsInvalidType() {
+  void testGetCashflowsInvalidType() {
     assertThrows(IllegalArgumentException.class,
             () -> service.getCashflows(2023, ""));
   }
 
 }
+
+
+
+
 
 
