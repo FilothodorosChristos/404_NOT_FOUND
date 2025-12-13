@@ -11,7 +11,8 @@ import java.util.stream.Stream;
 /**
  * The FinanceChartPanel class is a JPanel that displays financial data 
  * (Revenues, Expenses, Agencies) using bar charts, loaded from CSV files.
- * It uses a JTabbedPane to switch between 'Revenues/Expenses' and 'Agencies' charts.
+ * It uses a JTabbedPane to switch between 'Revenues/Expenses' and 'Agencies' charts, both using Logarithmic Scale 
+ * to handle large discrepancies in data magnitude.
  */
 public class FinanceChartPanel extends JPanel {
     
@@ -30,6 +31,12 @@ public class FinanceChartPanel extends JPanel {
     
     /** Constant color for the background (Navy Blue). */
     private static final Color NAVY_BLUE = new Color(0, 0, 128); 
+    
+    private static final Color DARK_BACKGROUND = NAVY_BLUE; 
+    private static final Color ACCENT_COLOR = new Color(255, 180, 0); 
+    
+    private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 18);
+    private static final Font DETAIL_FONT = new Font("Arial", Font.PLAIN, 12);
 
     /**
      * Private constructor for FinanceChartPanel.
@@ -62,8 +69,17 @@ public class FinanceChartPanel extends JPanel {
     private void initializeUI() {
         JPanel contentPanel = createContentPanel();
         
+        
+        JLabel mainHeader = new JLabel("Προϋπολογισμός (" + year + ")", SwingConstants.CENTER);
+        mainHeader.setFont(new Font("Arial", Font.BOLD, 28));
+        mainHeader.setForeground(ACCENT_COLOR);
+        mainHeader.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
+        contentPanel.add(mainHeader, BorderLayout.NORTH);
+        
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setOpaque(false);
+        tabbedPane.setForeground(Color.WHITE); 
+        tabbedPane.setBackground(DARK_BACKGROUND);
         
         
         
@@ -87,7 +103,7 @@ public class FinanceChartPanel extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.setColor(NAVY_BLUE); 
+                g.setColor(DARK_BACKGROUND); 
                 g.fillRect(0, 0, getWidth(), getHeight());
             }
         };
@@ -171,16 +187,40 @@ public class FinanceChartPanel extends JPanel {
     
     /**
      * Creates the JPanel for Revenues and Expenses chart. 
-     * Uses LINEAR scaling with a minimum visible bar width of 10 pixels.
+     * The data is sorted within groups (Revenues, then Expenses) and displayed using logarithmic scaling.
      *
-     * @return The JPanel containing the Revenue/Expense...
+     * @return The JPanel containing the Revenue/Expense chart.
      */
     private JPanel createRevenueExpensePanel() {
-        List<DataItem> allItems = Stream.concat(revenues.stream(), expenses.stream()).toList();
+        
+        /** 1. Sort Revenues separately (descending)*/
+        List<DataItem> sortedRevenues = revenues.stream()
+                                             .sorted(Comparator.comparingDouble((DataItem d) -> d.amount).reversed()) 
+                                             .toList();
+        
+        /**2. Sort Expenses separately (descending)*/
+        List<DataItem> sortedExpenses = expenses.stream()
+                                             .sorted(Comparator.comparingDouble((DataItem d) -> d.amount).reversed()) 
+                                             .toList();
+        
+        /**3. Combine: Revenues (sorted) + Expenses (sorted). This list determines the bar order*/
+        List<DataItem> allItems = Stream.concat(sortedRevenues.stream(), sortedExpenses.stream())
+                                             .toList();
+
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
 
+        /**Calculate Logarithmic boundaries (using the combined list)*/
+        double minAmount = allItems.stream().mapToDouble(d -> d.amount).filter(a -> a > 0).min().orElse(1.0);
+        double maxAmount = allItems.stream().mapToDouble(d -> d.amount).max().orElse(1.0);
+        
+        
+        final double LOG_MIN = Math.log10(Math.max(1.0, minAmount));
+        final double LOG_MAX = Math.log10(Math.max(1.0, maxAmount));
+        final double LOG_RANGE = LOG_MAX - LOG_MIN;
+
+        
         final int BAR_HEIGHT = 25;
         final int BAR_SPACING = 5;
         int preferredHeight = allItems.size() * (BAR_HEIGHT + BAR_SPACING) + 60; 
@@ -188,7 +228,8 @@ public class FinanceChartPanel extends JPanel {
         JPanel barPanel = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension(700, preferredHeight); 
+               
+                return new Dimension(700, preferredHeight + 25); 
             }
             
             @Override
@@ -199,35 +240,59 @@ public class FinanceChartPanel extends JPanel {
                 super.paintComponent(g);
 
                 int width = getWidth();
-                int paddingX = 80; 
-                int paddingY = 20;
-                int graphWidth = width - 2 * paddingX;
+                final int paddingY = 20;
+                final int paddingX = 80;
+                final int axisMarginBottom = 30; 
                 
                 
-                double max = allItems.stream().mapToDouble(d -> d.amount).max().orElse(1.0); 
+                int graphWidth = width - paddingX - 20; 
+                
                 
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setFont(new Font("Arial", Font.PLAIN, 12));
+                g2.setFont(DETAIL_FONT);
                 
                 g2.setColor(Color.WHITE); 
                 
-                g2.drawLine(paddingX, paddingY, paddingX, getHeight() - paddingY); 
+                int chartBottomY = getHeight() - axisMarginBottom;
+
                 
+                g2.setColor(new Color(100, 100, 100)); 
+                g2.drawLine(paddingX, chartBottomY, width - 20, chartBottomY);
+                
+                
+                g2.setColor(Color.LIGHT_GRAY);
+                
+                for (double logVal = Math.ceil(LOG_MIN); logVal <= LOG_MAX; logVal++) {
+                    
+                    double ratio = (logVal - LOG_MIN) / LOG_RANGE;
+                    int x = paddingX + (int) (ratio * graphWidth);
+                    
+                    if (x > paddingX) { 
+                        double value = Math.pow(10, logVal);
+                        String label = formatValueForAxis(value); 
+
+                        
+                        g2.drawLine(x, chartBottomY, x, chartBottomY + 5);
+                        
+                        
+                        g2.drawString(label, x - g2.getFontMetrics().stringWidth(label) / 2, chartBottomY + 20);
+                    }
+                }
+
                 int currentY = paddingY;
+                final int MIN_VISIBLE_BAR_WIDTH = 5; 
                 
-                final int MIN_VISIBLE_BAR_WIDTH = 10; 
                 
                 for (int i = 0; i < allItems.size(); i++) {
                     DataItem item = allItems.get(i);
                     
-                    
-                    
-                    
-                    int barWidth = (int) ((item.amount / max) * graphWidth);
-                    
-                    
-                    
+                    int barWidth = 0;
+                    if (item.amount > 0) {
+                        double logValue = Math.log10(item.amount);
+                        double ratio = (logValue - LOG_MIN) / LOG_RANGE;
+                        barWidth = (int) (ratio * graphWidth);
+                    }
                     
                     
                     if (item.amount > 0 && barWidth < MIN_VISIBLE_BAR_WIDTH) { 
@@ -235,37 +300,41 @@ public class FinanceChartPanel extends JPanel {
                     }
 
                     
+                    
+                    int originalIndex;
+                    int totalListSize;
+                    
                     if (item.type.equals("Revenue")) {
-                        int revenueIndex = revenues.indexOf(item); 
-                        g2.setColor(pastelGreen(revenueIndex, revenues.size()));
-                    } else if (item.type.equals("Expense")) {
-                        int expenseIndex = expenses.indexOf(item); 
-                        g2.setColor(pastelRed(expenseIndex, expenses.size()));
+                        originalIndex = sortedRevenues.indexOf(item); 
+                        totalListSize = sortedRevenues.size();
+                        g2.setColor(pastelGreen(originalIndex, totalListSize));
+                    } else { 
+                        originalIndex = sortedExpenses.indexOf(item); 
+                        totalListSize = sortedExpenses.size();
+                        g2.setColor(pastelRed(originalIndex, totalListSize));
                     }
-                    
-                    
                     
                     
                     g2.fillRect(paddingX, currentY, barWidth, BAR_HEIGHT);
 
                     
-                    g2.setColor(Color.WHITE);
+                    g2.setColor(new Color(255, 255, 255, 150)); 
                     g2.drawRect(paddingX, currentY, barWidth, BAR_HEIGHT); 
                     
                     
                     
                     
                     
+                    
                     g2.setColor(Color.WHITE); 
+                    
                     String numberStr = String.valueOf(i + 1);
-                    
-                    
-                    
                     
                     
                     g2.drawString(numberStr, 
                             paddingX - g2.getFontMetrics().stringWidth(numberStr) - 5, 
                             currentY + BAR_HEIGHT - 8);
+                    
                     
                     String valueStr = String.format("%,.0f €", item.amount); 
                     
@@ -273,12 +342,14 @@ public class FinanceChartPanel extends JPanel {
                     
                     
                     
-                    if (barWidth > g2.getFontMetrics().stringWidth(valueStr) + 5 && barWidth > MIN_VISIBLE_BAR_WIDTH + 1) {
-                        g2.setColor(Color.WHITE); 
+                    if (barWidth > g2.getFontMetrics().stringWidth(valueStr) + 5) {
+                        g2.setColor(DARK_BACKGROUND); 
                         g2.drawString(valueStr, paddingX + 5, currentY + BAR_HEIGHT - 8);
                     } else {
                         g2.setColor(Color.WHITE); 
-                        g2.drawString(valueStr, paddingX + barWidth + 5, currentY + BAR_HEIGHT - 8);
+                        if (barWidth > 0) {
+                             g2.drawString(valueStr, paddingX + barWidth + 5, currentY + BAR_HEIGHT - 8);
+                        }
                     }
                     
                     currentY += BAR_HEIGHT + BAR_SPACING;
@@ -287,85 +358,136 @@ public class FinanceChartPanel extends JPanel {
         };
         
         
-        // ΔΙΟΡΘΩΣΗ: Κάνουμε το barPanel αδιαφανές και ορίζουμε ρητά το χρώμα
         barPanel.setOpaque(true); 
-        barPanel.setBackground(NAVY_BLUE); 
+        barPanel.setBackground(DARK_BACKGROUND);
         
         JScrollPane scrollPane = new JScrollPane(barPanel);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER); 
         
-        // ΔΙΟΡΘΩΣΗ: Κάνουμε το JScrollPane και το Viewport αδιαφανή και ορίζουμε ρητά το χρώμα
         scrollPane.setOpaque(true); 
         scrollPane.getViewport().setOpaque(true); 
-        scrollPane.getViewport().setBackground(NAVY_BLUE);
-        scrollPane.setBackground(NAVY_BLUE);
+        scrollPane.getViewport().setBackground(DARK_BACKGROUND); 
+        scrollPane.setBackground(DARK_BACKGROUND); 
         
         panel.add(scrollPane, BorderLayout.CENTER);
         
-        JPanel legendPanel = createLegendPanel(revenues, expenses);
+        
+        JPanel legendPanel = createLegendPanel(sortedRevenues, sortedExpenses);
         
         
         legendPanel.setOpaque(true); 
-        legendPanel.setBackground(NAVY_BLUE); 
+        legendPanel.setBackground(DARK_BACKGROUND); 
         
         JScrollPane legendScrollPane = new JScrollPane(legendPanel);
         
         legendScrollPane.setOpaque(true);
         legendScrollPane.getViewport().setOpaque(true);
-        legendScrollPane.setBackground(NAVY_BLUE); 
-        legendScrollPane.getViewport().setBackground(NAVY_BLUE); 
+        legendScrollPane.setBackground(DARK_BACKGROUND);
+        legendScrollPane.getViewport().setBackground(DARK_BACKGROUND); 
         
         panel.add(legendScrollPane, BorderLayout.EAST);
         return panel;
     }
     
     /**
-     * Creates the legend panel showing the index, name, and total for each Revenue and Expense item.
+     * Helper method to format large monetary values for the logarithmic axis.
      */
-    private JPanel createLegendPanel(List<DataItem> revenues, List<DataItem> expenses) {
+    private String formatValueForAxis(double value) {
+        if (value >= 1_000_000_000_000.0) {
+            return String.format("%,.0f Τρισ. €", value / 1_000_000_000_000.0);
+        } else if (value >= 1_000_000_000.0) {
+            return String.format("%,.0f Δισ. €", value / 1_000_000_000.0);
+        } else if (value >= 1_000_000.0) {
+            return String.format("%,.0f Εκατ. €", value / 1_000_000.0);
+        } else if (value >= 1_000.0) {
+            return String.format("%,.0f Χιλ. €", value / 1_000.0);
+        } else {
+            return String.format("%,.0f €", value);
+        }
+    }
+
+
+    /**
+     * Creates the legend panel showing the index, name, and total for each Revenue and Expense item.
+     * It displays all Revenues first (sorted) and then all Expenses (sorted), matching the chart order.
+     */
+    private JPanel createLegendPanel(List<DataItem> sortedRevenues, List<DataItem> sortedExpenses) {
         JPanel legendPanel = new JPanel();
         legendPanel.setLayout(new BoxLayout(legendPanel, BoxLayout.Y_AXIS));
-        legendPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-
-        int currentNumber = 1;
+        legendPanel.setBorder(BorderFactory.createEmptyBorder(20, 15, 20, 15));
+        legendPanel.setBackground(DARK_BACKGROUND);
 
         
-        JLabel revenueTitle = new JLabel("<html><font color='white'><b>Revenues (€" + String.format("%,.0f", revenues.stream().mapToDouble(d -> d.amount).sum()) + ")</b></font></html>");
+        double totalRevenue = revenues.stream().mapToDouble(d -> d.amount).sum();
+        double totalExpense = expenses.stream().mapToDouble(d -> d.amount).sum();
+
+       
+        JLabel mainTitle = new JLabel("<html><font color='#" + Integer.toHexString(ACCENT_COLOR.getRGB()).substring(2) + "'><b>ΣΥΝΟΛΙΚΑ ΑΠΟΤΕΛΕΣΜΑΤΑ</b></font></html>");
+        mainTitle.setFont(TITLE_FONT);
+        mainTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        legendPanel.add(mainTitle);
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        
+        
+        JLabel revenueTitle = new JLabel("<html><font color='white'>▶ Revenues: <b>€" + String.format("%,.0f", totalRevenue) + "</b></font></html>");
+        revenueTitle.setFont(DETAIL_FONT);
         revenueTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         legendPanel.add(revenueTitle);
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-
         
-        for (int i = 0; i < revenues.size(); i++) {
-            DataItem item = revenues.get(i);
-            JLabel label = new JLabel((currentNumber++) + ": " + item.name + " (" + String.format("%,.0f €", item.amount) + ")");
-            label.setForeground(pastelGreen(i, revenues.size())); 
-            label.setAlignmentX(Component.LEFT_ALIGNMENT);
-            legendPanel.add(label);
-        }
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-
-        
-        JLabel expenseTitle = new JLabel("<html><font color='white'><b>Expenses (€" + String.format("%,.0f", expenses.stream().mapToDouble(d -> d.amount).sum()) + ")</b></font></html>");
+        JLabel expenseTitle = new JLabel("<html><font color='white'>▶ Expenses: <b>€" + String.format("%,.0f", totalExpense) + "</b></font></html>");
+        expenseTitle.setFont(DETAIL_FONT);
         expenseTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         legendPanel.add(expenseTitle);
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         
-        for (int i = 0; i < expenses.size(); i++) {
-            DataItem item = expenses.get(i);
-            JLabel label = new JLabel((currentNumber++) + ": " + item.name + " (" + String.format("%,.0f €", item.amount) + ")");
-            label.setForeground(pastelRed(i, expenses.size())); 
+        JLabel revenueGroupTitle = new JLabel("<html><font color='#90EE90'><b>I. Έσοδα (Revenues)</b></font></html>");
+        revenueGroupTitle.setFont(DETAIL_FONT);
+        revenueGroupTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        legendPanel.add(revenueGroupTitle);
+        
+        for (int i = 0; i < sortedRevenues.size(); i++) {
+            DataItem item = sortedRevenues.get(i);
+            Color itemColor = pastelGreen(i, sortedRevenues.size());
+
+            
+            JLabel label = new JLabel((i + 1) + ". " + item.name + " (" + String.format("%,.0f €", item.amount) + ")");
+            label.setForeground(itemColor); 
+            label.setFont(DETAIL_FONT);
             label.setAlignmentX(Component.LEFT_ALIGNMENT);
             legendPanel.add(label);
         }
+        
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        
+       
+        JLabel expenseGroupTitle = new JLabel("<html><font color='#FF8C8C'><b>II. Έξοδα (Expenses)</b></font></html>");
+        expenseGroupTitle.setFont(DETAIL_FONT);
+        expenseGroupTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        legendPanel.add(expenseGroupTitle);
+
+        int offset = sortedRevenues.size(); 
+        
+        for (int i = 0; i < sortedExpenses.size(); i++) {
+            DataItem item = sortedExpenses.get(i);
+            Color itemColor = pastelRed(i, sortedExpenses.size()); 
+
+            
+            JLabel label = new JLabel((i + offset + 1) + ". " + item.name + " (" + String.format("%,.0f €", item.amount) + ")");
+            label.setForeground(itemColor); 
+            label.setFont(DETAIL_FONT);
+            label.setAlignmentX(Component.LEFT_ALIGNMENT);
+            legendPanel.add(label);
+        }
+        
         return legendPanel;
     }
     
+    
     /**
      * Creates the Agencies panel as a horizontal bar chart. 
-     * Uses a HYBRID scaling approach (Linear for high values, Logarithmic for low values)
-     * to show better differentiation in small amounts while preserving overall proportionality.
+     * Uses LOGARITHMIC scaling for datasets spanning multiple orders of magnitude.
      */
     private JPanel createAgencyPanel() {
         if (agencies.isEmpty()) {
@@ -383,11 +505,21 @@ public class FinanceChartPanel extends JPanel {
         final int BAR_SPACING = 5;
         int preferredHeight = agencies.size() * (BAR_HEIGHT + BAR_SPACING) + 60; 
 
+        
+        double minAmount = agencies.stream().mapToDouble(d -> d.amount).filter(a -> a > 0).min().orElse(1.0);
+        double maxAmount = agencies.stream().mapToDouble(d -> d.amount).max().orElse(1.0);
+        
+     
+        final double LOG_MIN = Math.log10(Math.max(1.0, minAmount));
+        final double LOG_MAX = Math.log10(Math.max(1.0, maxAmount));
+        final double LOG_RANGE = LOG_MAX - LOG_MIN;
+
+
         JPanel barPanel = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
                 
-                return new Dimension(700, preferredHeight); 
+                return new Dimension(700, preferredHeight + 25); 
             }
             
             @Override
@@ -398,79 +530,72 @@ public class FinanceChartPanel extends JPanel {
                 super.paintComponent(g);
 
                 int width = getWidth();
-                int paddingX = 20; 
-                int paddingY = 20;
-                int graphWidth = width - 2 * paddingX;
+                final int paddingX = 20; 
+                final int paddingY = 20;
+                final int axisMarginBottom = 30; 
                 
                 
-                double max = agencies.stream().mapToDouble(d -> d.amount).max().orElse(1.0);
+                int graphWidth = width - paddingX - 20; 
+                
                 
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setFont(new Font("Arial", Font.PLAIN, 12));
                 
                 int currentY = paddingY;
-                
-                
-                
-                
-                final double THRESHOLD_RATIO = 0.05; 
-                final double THRESHOLD_AMOUNT = max * THRESHOLD_RATIO; 
-                
-                
-                final double LOG_WIDTH_RATIO = 0.20; 
-                final int LOG_WIDTH = (int) (graphWidth * LOG_WIDTH_RATIO);
-                
-                
-                final int LINEAR_WIDTH = graphWidth - LOG_WIDTH;
-                
-                
-                double maxLogAmount = agencies.stream()
-                                             .mapToDouble(d -> d.amount)
-                                             .filter(amount -> amount < THRESHOLD_AMOUNT && amount > 0)
-                                             .max()
-                                             .orElse(0); 
 
-                final double LOG_BASE = Math.E;
-                final double LOG_MAX_PART = (maxLogAmount > 0) ? (Math.log(maxLogAmount + LOG_BASE) - Math.log(LOG_BASE)) : 1.0; 
+                int chartBottomY = getHeight() - axisMarginBottom;
+
+                
+                g2.setColor(Color.LIGHT_GRAY);
+                g2.drawLine(paddingX, chartBottomY, width - 20, chartBottomY);
                 
                 
+                g2.setColor(Color.WHITE);
+                
+                for (double logVal = Math.ceil(LOG_MIN); logVal <= LOG_MAX; logVal++) {
+                    
+                    double ratio = (logVal - LOG_MIN) / LOG_RANGE;
+                    int x = paddingX + (int) (ratio * graphWidth);
+                    
+                    if (x > paddingX) { 
+                        
+                        double value = Math.pow(10, logVal); 
+                        String label = formatValueForAxis(value);
+                        
+                        // Tick Mark
+                        g2.drawLine(x, chartBottomY, x, chartBottomY + 5);
+                        
+                        // Label
+                        g2.drawString(label, x - g2.getFontMetrics().stringWidth(label) / 2, chartBottomY + 20);
+                    }
+                }
+                
+                
+                final int MIN_VISIBLE_BAR_WIDTH = 5; 
+
                 for (int i = 0; i < agencies.size(); i++) {
                     DataItem item = agencies.get(i);
                     int barWidth = 0;
                     
                     if (item.amount > 0) {
-                        if (item.amount >= THRESHOLD_AMOUNT) {
-                            
-                            
-                            
-                            
-                            
-                            double linearPart = (item.amount - THRESHOLD_AMOUNT) / (max - THRESHOLD_AMOUNT);
-                            barWidth = (int) (LINEAR_WIDTH * linearPart) + LOG_WIDTH;
-                            
-                        } else {
-                            
-                            if (LOG_MAX_PART > 0) {
-                                
-                                
-                                double logPart = Math.log(item.amount + LOG_BASE) - Math.log(LOG_BASE);
-                                
-                                barWidth = (int) (LOG_WIDTH * (logPart / LOG_MAX_PART)); 
-                            } else {
-                                
-                                barWidth = 10;
-                            }
-                        }
+                        
+                        double logValue = Math.log10(item.amount);
+                        
+                        
+                        double ratio = (logValue - LOG_MIN) / LOG_RANGE;
+                        barWidth = (int) (ratio * graphWidth);
                     }
                     
                     
                     
                     
                     
-                    if (item.amount > 0 && barWidth < 10) { 
-                        barWidth = 10; 
+                    
+                    if (item.amount > 0 && barWidth < MIN_VISIBLE_BAR_WIDTH) { 
+                        barWidth = MIN_VISIBLE_BAR_WIDTH; 
                     }
+                    
                     
                     
                     
@@ -482,7 +607,9 @@ public class FinanceChartPanel extends JPanel {
                     
                     
                     
+                    
                     g2.fillRect(paddingX, currentY, barWidth, BAR_HEIGHT);
+                    
                     
                     
                     
@@ -490,6 +617,8 @@ public class FinanceChartPanel extends JPanel {
                     
                     g2.setColor(Color.WHITE);
                     g2.drawRect(paddingX, currentY, barWidth, BAR_HEIGHT);
+                    
+                    
                     
                     
                     
@@ -507,12 +636,13 @@ public class FinanceChartPanel extends JPanel {
                     
                     
                     
+                    /**  Display label: Inside the bar if it fits, otherwise to the right*/
                     if (barWidth > textWidth + 10) { 
-                        g2.setColor(Color.WHITE); 
+                        g2.setColor(NAVY_BLUE); /** Dark color inside the bar*/
                         g2.drawString(valueStr, paddingX + 5, currentY + BAR_HEIGHT - 8);
                     } else {
                         
-                        g2.setColor(Color.WHITE); 
+                        g2.setColor(Color.WHITE); /** White color outside the bar*/
                         g2.drawString(valueStr, paddingX + barWidth + 5, currentY + BAR_HEIGHT - 8);
                     }
                     
@@ -550,8 +680,8 @@ public class FinanceChartPanel extends JPanel {
      */
     private Color pastelGreen(int i, int total) {
         float hue = 0.33f; 
-        float saturation = 0.4f + 0.4f * i / Math.max(total - 1, 1); 
-        float brightness = 0.7f; 
+        float saturation = 0.5f + 0.3f * i / Math.max(total - 1, 1); 
+        float brightness = 0.85f; 
         return Color.getHSBColor(hue, saturation, brightness);
     }
     
@@ -564,8 +694,8 @@ public class FinanceChartPanel extends JPanel {
      */
     private Color pastelRed(int i, int total) {
         float hue = 0f; 
-        float saturation = 0.4f + 0.4f * i / Math.max(total - 1, 1); 
-        float brightness = 0.7f; 
+        float saturation = 0.5f + 0.3f * i / Math.max(total - 1, 1); 
+        float brightness = 0.85f; 
         return Color.getHSBColor(hue, saturation, brightness);
     }
 
@@ -590,6 +720,21 @@ public class FinanceChartPanel extends JPanel {
             this.name = name;
             this.amount = amount;
             this.type = type;
+        }
+        
+        
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DataItem dataItem = (DataItem) o;
+            /**Comparison for indexOf/identity purposes*/
+            return Double.compare(dataItem.amount, amount) == 0 && Objects.equals(name, dataItem.name) && Objects.equals(type, dataItem.type);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, amount, type);
         }
     }
 }
