@@ -49,9 +49,14 @@ public class MainFrame extends JFrame {
     /** Panel name constant for action selection screen. */
     public static final String ACTION_SELECTION = "actionSelection";
 
+    /** Panel name constant for finance chart screen. */
     public static final String FINANCE_CHART = "financeChart";
 
+    /** Panel name constant for budget view screen. */
     public static final String BUDGET_VIEW = "budgetView";
+
+    /** Panel name constant for data editor screen. */
+    public static final String DATA_EDITOR = "dataEditor";
     
     /**
      * Private constructor for Singleton pattern.
@@ -121,6 +126,9 @@ public class MainFrame extends JFrame {
         add(mainPanel);
     }
     
+    /**
+     * Shows the finance chart panel for the selected year.
+     */
     public void showFinanceChart() {
         if (selectedYear == null) {
             JOptionPane.showMessageDialog(this, "Πρέπει να επιλέξετε πρώτα έτος.", "Προειδοποίηση", JOptionPane.WARNING_MESSAGE);
@@ -145,27 +153,68 @@ public class MainFrame extends JFrame {
         mainPanel.add(new ActionSelectionPanel(this), ACTION_SELECTION);
     }
     
+    /**
+     * Shows the budget view panel for the selected year.
+     * Creates a new panel each time to ensure fresh data.
+     */
     public void showBudgetView() {
-    if (selectedYear == null) {
-        System.err.println("Error: No year selected!");
-        return;
-    }
-    
-    // Δημιούργησε ΝΕΟ panel κάθε φορά
-    BudgetViewPanel budgetPanel = new BudgetViewPanel(this);
-    
-    // Αφαίρεσε το παλιό αν υπάρχει
-    for (Component comp : mainPanel.getComponents()) {
-        if (comp instanceof BudgetViewPanel) {
-            mainPanel.remove(comp);
-            break;
+        if (selectedYear == null) {
+            System.err.println("Error: No year selected!");
+            return;
         }
+        
+        // Δημιούργησε ΝΕΟ panel κάθε φορά
+        BudgetViewPanel budgetPanel = new BudgetViewPanel(this);
+        
+        // Αφαίρεσε το παλιό αν υπάρχει
+        for (Component comp : mainPanel.getComponents()) {
+            if (comp instanceof BudgetViewPanel) {
+                mainPanel.remove(comp);
+                break;
+            }
+        }
+        
+        // Πρόσθεσε το νέο
+        mainPanel.add(budgetPanel, BUDGET_VIEW);
+        showPanel(BUDGET_VIEW);
+    }
+
+    /**
+     * Shows the data editor panel for editing cashflows or foreis.
+     * Creates a new panel each time to ensure fresh data.
+     *
+     * @param dataType the type of data to edit ("cashflow" or "foreis")
+     */
+    public void showDataEditor(String dataType) {
+        if (selectedYear == null) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "Πρέπει να επιλέξετε πρώτα έτος.", 
+                "Προειδοποίηση", 
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        
+        // Αφαίρεσε το παλιό panel αν υπάρχει
+        for (Component comp : mainPanel.getComponents()) {
+            if (comp instanceof DataEditorPanel) {
+                mainPanel.remove(comp);
+                break;
+            }
+        }
+        
+        // Δημιούργησε νέο panel
+        DataEditorPanel editorPanel = new DataEditorPanel(
+            this, 
+            Integer.parseInt(selectedYear), 
+            dataType
+        );
+        
+        mainPanel.add(editorPanel, DATA_EDITOR);
+        showPanel(DATA_EDITOR);
     }
     
-    // Πρόσθεσε το νέο
-    mainPanel.add(budgetPanel, BUDGET_VIEW);
-    showPanel(BUDGET_VIEW);
-}
     /**
      * Navigates to the specified panel using CardLayout.
      *

@@ -151,17 +151,22 @@ public class ActionSelectionPanel extends JPanel {
         chartFrame.add(chartPanel);
         chartFrame.setVisible(true);
         
-   		} else if (action.equals("Προβολή")) {
-    	mainFrame.showBudgetView();  // ← Αλλαγή από showPanel
-		}
-else if (action.equals("Επεξεργασία")) {
-    // Π.χ. dataType = "cashflow"
-    DataEditorWindow2 editorWindow = new DataEditorWindow2(
-        Integer.parseInt(mainFrame.getSelectedYear()), "cashflow"
-    );
-    editorWindow.setVisible(true);
+    } else if (action.equals("Προβολή")) {
+        mainFrame.showBudgetView();
+        
+    } else if (action.equals("Επεξεργασία")) {
+        // Εμφάνιση του DataEditorPanel μέσα στο MainFrame
+        mainFrame.showDataEditor("cashflow");
+        
+    } else if (action.equals("Σύγκριση")) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Η λειτουργία 'Σύγκριση' δεν έχει υλοποιηθεί ακόμα.",
+            "Υπό Κατασκευή",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+    }
 }
-    }  	
 	/**
 	 * A custom border with rounded corners for Swing components.
 	 */

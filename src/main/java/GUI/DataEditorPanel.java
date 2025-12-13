@@ -15,12 +15,11 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 /**
- * Παράθυρο για εμφάνιση και επεξεργασία δεδομένων από τη βάση.
+ * Panel για εμφάνιση και επεξεργασία δεδομένων από τη βάση.
  * Υποστηρίζει τόσο CashFlows όσο και Foreis με δύο πίνακες (Έσοδα/Έξοδα).
- * Όλες οι λειτουργίες γίνονται μέσω των Service κλάσεων.
- * Οι αλλαγές αποθηκεύονται αυτόματα κατά την επεξεργασία.
+ * Ενσωματώνεται στο MainFrame χωρίς να ανοίγει νέο παράθυρο.
  */
-public class DataEditorWindow2 extends JFrame {
+public class DataEditorPanel extends JPanel {
 
   private static final Color NAVY_BLUE = new Color(0, 0, 128);
   private static final Color LIGHT_BLUE = new Color(173, 216, 230);
@@ -33,8 +32,9 @@ public class DataEditorWindow2 extends JFrame {
   private JTable expenseTable;
   private DefaultTableModel incomeTableModel;
   private DefaultTableModel expenseTableModel;
-  private String dataType; // "cashflow" ή "foreis"
+  private String dataType;
   private int selectedYear;
+  private MainFrame mainFrame;
 
   private final CashFlowService cashFlowService;
   private final ForeisService foreisService;
@@ -65,12 +65,10 @@ public class DataEditorWindow2 extends JFrame {
   }
 
   /**
-   * Constructor - Δέχεται έτος και κατηγορία δεδομένων.
-   *
-   * @param year Το έτος που επέλεξε ο χρήστης (π.χ. 2023, 2024, 2025)
-   * @param dataType "cashflow" ή "foreis"
+   * Constructor - Δέχεται MainFrame, έτος και κατηγορία δεδομένων.
    */
-  public DataEditorWindow2(int year, String dataType) {
+  public DataEditorPanel(MainFrame mainFrame, int year, String dataType) {
+    this.mainFrame = mainFrame;
     this.selectedYear = year;
     this.dataType = dataType;
     this.cashFlowService = new CashFlowService();
@@ -86,7 +84,6 @@ public class DataEditorWindow2 extends JFrame {
    */
   private void loadBackgroundImage() {
     try {
-      // Προσπάθεια να βρει την εικόνα σε διάφορα paths
       String[] possiblePaths = {
         "BackroundPhoto.jpg",
         "src/BackroundPhoto.jpg",
@@ -115,18 +112,9 @@ public class DataEditorWindow2 extends JFrame {
    * Αρχικοποίηση του UI.
    */
   private void initializeUI() {
-    String windowTitle = "cashflow".equalsIgnoreCase(dataType)
-            ? "Επεξεργασία Ταμειακών Ροών"
-            : "Επεξεργασία Φορέων";
-
-    setTitle(windowTitle);
-    setSize(1400, 800);
-    setLocationRelativeTo(null);
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setLayout(new BorderLayout());
     
-    // Χρήση BackgroundPanel ως main panel
     BackgroundPanel mainPanel = new BackgroundPanel(backgroundImage);
-    setContentPane(mainPanel);
 
     // Header Panel
     JPanel headerPanel = createHeaderPanel();
@@ -139,9 +127,8 @@ public class DataEditorWindow2 extends JFrame {
     // Button Panel
     JPanel buttonPanel = createButtonPanel();
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-    // Info Panel
     
+    add(mainPanel);
   }
 
   /**
@@ -149,11 +136,10 @@ public class DataEditorWindow2 extends JFrame {
    */
   private JPanel createHeaderPanel() {
     JPanel panel = new JPanel(new BorderLayout());
-    panel.setBackground(new Color(0, 0, 128, 230)); // Semi-transparent
+    panel.setBackground(new Color(0, 0, 128, 230));
     panel.setPreferredSize(new Dimension(0, 80));
     panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-    // Τίτλος
     String title = "cashflow".equalsIgnoreCase(dataType)
             ? "Ταμειακές Ροές"
             : "Φορείς";
@@ -161,14 +147,12 @@ public class DataEditorWindow2 extends JFrame {
     titleLabel.setFont(new Font("Tahoma", Font.BOLD, 24));
     titleLabel.setForeground(Color.WHITE);
 
-    // Πληροφορίες
     String info = String.format("<html>Έτος: <b>%d</b> | Εμφάνιση: <b>Έσοδα & Έξοδα</b></html>",
             selectedYear);
     JLabel infoLabel = new JLabel(info);
     infoLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
     infoLabel.setForeground(LIGHT_BLUE);
 
-    // Layout
     JPanel textPanel = new JPanel(new GridLayout(2, 1, 5, 5));
     textPanel.setOpaque(false);
     textPanel.add(titleLabel);
@@ -183,10 +167,7 @@ public class DataEditorWindow2 extends JFrame {
    * Δημιουργία split panel με δύο πίνακες (Έσοδα & Έξοδα).
    */
   private JSplitPane createSplitTablePanel() {
-    // Πίνακας Εσόδων
     JPanel incomePanel = createTablePanel("Έσοδα", "Έσοδο", true);
-    
-    // Πίνακας Εξόδων
     JPanel expensePanel = createTablePanel("Έξοδα", "Έξοδο", false);
 
     JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, incomePanel, expensePanel);
@@ -213,7 +194,6 @@ public class DataEditorWindow2 extends JFrame {
             Color.WHITE
     ));
 
-    // Δημιουργία table model ανάλογα με τον τύπο δεδομένων
     DefaultTableModel tableModel;
     JTable table;
 
@@ -222,7 +202,6 @@ public class DataEditorWindow2 extends JFrame {
       tableModel = new DefaultTableModel(columnNames, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
-          // Μόνο το όνομα (3) και το ποσό (4) είναι επεξεργάσιμα
           return column == 3 || column == 4;
         }
 
@@ -269,7 +248,6 @@ public class DataEditorWindow2 extends JFrame {
     table.setShowGrid(true);
     table.setOpaque(true);
 
-    // Αυτόματη αποθήκευση κατά την επεξεργασία
     tableModel.addTableModelListener(e -> {
       if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
         int row = e.getFirstRow();
@@ -279,7 +257,6 @@ public class DataEditorWindow2 extends JFrame {
       }
     });
 
-    // Ρύθμιση πλάτους στηλών
     adjustColumnWidths(table);
 
     table.setSelectionBackground(new Color(184, 207, 229));
@@ -291,7 +268,6 @@ public class DataEditorWindow2 extends JFrame {
     scrollPane.getViewport().setOpaque(false);
     panel.add(scrollPane, BorderLayout.CENTER);
 
-    // Κουμπιά προσθήκης/διαγραφής για κάθε πίνακα
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
     buttonPanel.setOpaque(false);
 
@@ -305,7 +281,6 @@ public class DataEditorWindow2 extends JFrame {
     buttonPanel.add(deleteButton);
     panel.add(buttonPanel, BorderLayout.SOUTH);
 
-    // Αποθήκευση αναφορών
     if (isIncome) {
       incomeTable = table;
       incomeTableModel = tableModel;
@@ -324,49 +299,38 @@ public class DataEditorWindow2 extends JFrame {
     TableColumnModel columnModel = table.getColumnModel();
 
     if ("cashflow".equalsIgnoreCase(dataType)) {
-      columnModel.getColumn(0).setPreferredWidth(50);   // ID
-      columnModel.getColumn(1).setPreferredWidth(70);   // Έτος
-      columnModel.getColumn(2).setPreferredWidth(80);   // Τύπος
-      columnModel.getColumn(3).setPreferredWidth(250);  // Όνομα
-      columnModel.getColumn(4).setPreferredWidth(120);  // Ποσό
+      columnModel.getColumn(0).setPreferredWidth(50);
+      columnModel.getColumn(1).setPreferredWidth(70);
+      columnModel.getColumn(2).setPreferredWidth(80);
+      columnModel.getColumn(3).setPreferredWidth(250);
+      columnModel.getColumn(4).setPreferredWidth(120);
     } else {
-      columnModel.getColumn(0).setPreferredWidth(40);   // ID
-      columnModel.getColumn(1).setPreferredWidth(60);   // Foreas ID
-      columnModel.getColumn(2).setPreferredWidth(60);   // Έτος
-      columnModel.getColumn(3).setPreferredWidth(100);  // Τύπος
-      columnModel.getColumn(4).setPreferredWidth(180);  // Όνομα
-      columnModel.getColumn(5).setPreferredWidth(130);  // Τακτικός Π/Υ
-      columnModel.getColumn(6).setPreferredWidth(130);  // Δημόσιες Επενδύσεις
-      columnModel.getColumn(7).setPreferredWidth(130);  // Σύνολο
+      columnModel.getColumn(0).setPreferredWidth(40);
+      columnModel.getColumn(1).setPreferredWidth(60);
+      columnModel.getColumn(2).setPreferredWidth(60);
+      columnModel.getColumn(3).setPreferredWidth(100);
+      columnModel.getColumn(4).setPreferredWidth(180);
+      columnModel.getColumn(5).setPreferredWidth(130);
+      columnModel.getColumn(6).setPreferredWidth(130);
+      columnModel.getColumn(7).setPreferredWidth(130);
     }
   }
-
- 
 
   /**
    * Δημιουργία button panel με λειτουργίες.
    */
   private JPanel createButtonPanel() {
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
-    panel.setBackground(new Color(240, 240, 240, 220)); // Semi-transparent
+    panel.setBackground(new Color(240, 240, 240, 220));
     panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY));
 
-    JButton closeButton = createStyledButton("✖️ Κλείσιμο", new Color(96, 125, 139));
+    JButton backButton = createStyledButton("← Πίσω", new Color(96, 125, 139));
 
-    closeButton.addActionListener(e -> {
-      int result = JOptionPane.showConfirmDialog(
-              this,
-              "Είστε σίγουροι ότι θέλετε να κλείσετε;",
-              "Επιβεβαίωση Κλεισίματος",
-              JOptionPane.YES_NO_OPTION,
-              JOptionPane.QUESTION_MESSAGE
-      );
-      if (result == JOptionPane.YES_OPTION) {
-        dispose();
-      }
+    backButton.addActionListener(e -> {
+      mainFrame.showPanel(MainFrame.ACTION_SELECTION);
     });
 
-    panel.add(closeButton);
+    panel.add(backButton);
 
     return panel;
   }
@@ -387,7 +351,6 @@ public class DataEditorWindow2 extends JFrame {
     ));
     button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-    // Hover effect
     button.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mouseEntered(java.awt.event.MouseEvent evt) {
         button.setBackground(bgColor.brighter());
@@ -404,30 +367,17 @@ public class DataEditorWindow2 extends JFrame {
   /**
    * Δημιουργία mini button για τους πίνακες.
    */
- private JButton createMiniButton(String text, Color borderColor) {
+  private JButton createMiniButton(String text, Color borderColor) {
     JButton button = new JButton(text);
     button.setFont(new Font("Arial", Font.BOLD, 11));
     button.setPreferredSize(new Dimension(120, 30));
-
-    // ΔΙΑΦΑΝΟ ΛΕΥΚΟ BACKGROUND
     button.setBackground(new Color(255, 255, 255, 120));
     button.setOpaque(true);
-
-    // ΛΕΥΚΑ ΓΡΑΜΜΑΤΑ
     button.setForeground(new Color(0,0,128));
 
-   
-
-    // ΧΩΡΙΣ hover αλλαγές
-    button.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseEntered(java.awt.event.MouseEvent evt) {}
-        public void mouseExited(java.awt.event.MouseEvent evt) {}
-        public void mousePressed(java.awt.event.MouseEvent evt) {}
-        public void mouseReleased(java.awt.event.MouseEvent evt) {}
-    });
-
     return button;
-}
+  }
+
   /**
    * Φόρτωση δεδομένων από τη βάση μέσω των Service κλάσεων.
    */
@@ -492,33 +442,14 @@ public class DataEditorWindow2 extends JFrame {
   }
 
   /**
-   * Ενημέρωση στατιστικών.
+   * Ενημέρωση στατιστικών στο header.
    */
   private void updateStatistics() {
+    // Μπορείς να προσθέσεις ένα label στο header για να δείχνει στατιστικά
+    // Προς το παρόν απλά ενημερώνει το console
     int incomeCount = incomeTableModel.getRowCount();
     int expenseCount = expenseTableModel.getRowCount();
-    double incomeSum = 0.0;
-    double expenseSum = 0.0;
-
-    if ("cashflow".equalsIgnoreCase(dataType)) {
-      for (int i = 0; i < incomeCount; i++) {
-        incomeSum += Double.parseDouble(incomeTableModel.getValueAt(i, 4).toString());
-      }
-      for (int i = 0; i < expenseCount; i++) {
-        expenseSum += Double.parseDouble(expenseTableModel.getValueAt(i, 4).toString());
-      }
-    } else if ("foreis".equalsIgnoreCase(dataType)) {
-      for (int i = 0; i < incomeCount; i++) {
-        incomeSum += Double.parseDouble(incomeTableModel.getValueAt(i, 7).toString());
-      }
-      for (int i = 0; i < expenseCount; i++) {
-        expenseSum += Double.parseDouble(expenseTableModel.getValueAt(i, 7).toString());
-      }
-    }
-
-    String title = String.format("Επεξεργασία - Έσοδα: %d (%.2f €) | Έξοδα: %d (%.2f €)",
-            incomeCount, incomeSum, expenseCount, expenseSum);
-    setTitle(title);
+    System.out.println("Stats updated - Income: " + incomeCount + ", Expense: " + expenseCount);
   }
 
   /**
@@ -534,7 +465,7 @@ public class DataEditorWindow2 extends JFrame {
       updateStatistics();
     } catch (Exception e) {
       showError("Σφάλμα αυτόματης αποθήκευσης: " + e.getMessage());
-      loadData(); // Επαναφόρτωση δεδομένων σε περίπτωση λάθους
+      loadData();
     }
   }
 
@@ -774,7 +705,7 @@ public class DataEditorWindow2 extends JFrame {
         foreisService.deleteForeis(id);
       }
 
-      showInfo("Η εγγραφή διαγράφηκε επιτυχώς!");
+       showInfo("Η εγγραφή διαγράφηκε επιτυχώς!");
       loadData();
 
     } catch (Exception e) {
@@ -798,20 +729,5 @@ public class DataEditorWindow2 extends JFrame {
   private void showWarning(String message) {
     JOptionPane.showMessageDialog(this, message, "Προειδοποίηση",
             JOptionPane.WARNING_MESSAGE);
-  }
-
-  /**
-   * Test method - Παράδειγμα χρήσης.
-   */
-  public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> {
-      // Αρχικοποίηση βάσης δεδομένων
-      database.DatabaseSetup.setDatabase();
-      database.DataImporter.importer();
-
-      // Παράδειγμα: CashFlows για το 2023
-      DataEditorWindow2 cashflowWindow = new DataEditorWindow2(2023, "cashflow");
-      cashflowWindow.setVisible(true);
-    });
   }
 }
