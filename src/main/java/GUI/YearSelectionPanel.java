@@ -54,28 +54,58 @@ public class YearSelectionPanel extends JPanel {
             }
         };
         
-       /**center panel */
+        /**center panel */
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setOpaque(false);
         centerPanel.add(Box.createVerticalGlue());
         
-        JLabel titleLabel = new JLabel("Επιλέξτε έτος προυπολογισμού:");
+        // Δημιουργία του ημιδιάφανου λευκού container
+        JPanel whiteContainer = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Πολύ διάφανο λευκό φόντο με θολούρα
+                g2d.setColor(new Color(255, 255, 255, 100)); // 100/255 = ~40% opacity
+                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+                
+                // Ελαφρύ border
+                g2d.setColor(new Color(255, 255, 255, 150));
+                g2d.setStroke(new BasicStroke(1));
+                g2d.drawRoundRect(1, 1, getWidth()-2, getHeight()-2, 30, 30);
+            }
+        };
+        whiteContainer.setLayout(new BoxLayout(whiteContainer, BoxLayout.Y_AXIS));
+        whiteContainer.setOpaque(false);
+        whiteContainer.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+         whiteContainer.setMaximumSize(new Dimension(450, 600)); // Περιορισμός πλάτους
+        // Τίτλος
+        JLabel titleLabel = new JLabel("Επιλέξτε έτος ");
+        JLabel title2Label = new JLabel("προυπολογισμού:");
         titleLabel.setFont(SECTION_TITLE_FONT);
-        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setForeground(Color.WHITE); // Λευκό για καλύτερη αντίθεση με διάφανο φόντο
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        centerPanel.add(titleLabel);
-        centerPanel.add(Box.createVerticalStrut(30));
+        title2Label.setFont(SECTION_TITLE_FONT);
+        title2Label.setForeground(Color.WHITE); // Λευκό για καλύτερη αντίθεση με διάφανο φόντο
+        title2Label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        whiteContainer.add(titleLabel);
+        whiteContainer.add(title2Label);
+        whiteContainer.add(Box.createVerticalStrut(60));
         
         /** year buttons */
         String[] years = {"2023", "2024", "2025"};
         for (String year : years) {
             JButton yearBtn = createYearButton(year);
-            centerPanel.add(yearBtn);
-            centerPanel.add(Box.createVerticalStrut(20));
+            whiteContainer.add(yearBtn);
+            whiteContainer.add(Box.createVerticalStrut(20));
         }
         
+        centerPanel.add(whiteContainer);
         centerPanel.add(Box.createVerticalGlue());
+        
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
         
         /** previous button */
@@ -104,12 +134,25 @@ public class YearSelectionPanel extends JPanel {
         btn.setForeground(NAVY_BLUE);
         btn.setBackground(Color.WHITE);
         btn.setFont(YEAR_BUTTON_FONT);
-        btn.setPreferredSize(new Dimension(300, 70));
+        btn.setPreferredSize(new Dimension(250, 50));
         btn.setMinimumSize(new Dimension(300, 70));
         btn.setMaximumSize(new Dimension(300, 70));
         btn.setBorder(new RoundedBorder(30));
         btn.setFocusPainted(false);
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        // Hover effect για καλύτερη εμπειρία χρήστη
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(new Color(230, 240, 255));
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(Color.WHITE);
+            }
+        });
         
         btn.addActionListener(e -> {
             mainFrame.setSelectedYear(year);
@@ -147,7 +190,7 @@ public class YearSelectionPanel extends JPanel {
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setColor(Color.BLACK);
+            g2.setColor(Color.WHITE);
             g2.setStroke(new BasicStroke(2));
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
