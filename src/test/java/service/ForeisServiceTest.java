@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import dao.Foreis;
 import database.DatabaseSetup;
-
-import java.io.File;
 import java.util.List;
 import org.junit.jupiter.api.*;
 
@@ -13,7 +11,6 @@ public class ForeisServiceTest {
 
   private static final String ORIGINAL_URL = "jdbc:sqlite:budgetDB.db";
   private static final String TEST_URL = "jdbc:sqlite:test_foreis.db";
-  private static final String TEST_FILE = "test_foreis.db";
 
   private ForeisService service;
 
@@ -28,14 +25,10 @@ public class ForeisServiceTest {
     service = new ForeisService();
   }
 
-  @AfterAll
-    static void tearDown() {
+  @AfterEach
+    void tearDown() {
         
     DatabaseSetup.setURL(ORIGINAL_URL);
-    File f = new File(TEST_FILE);
-    if (f.exists()) {
-      f.delete();
-    }
   }
 
   @Test

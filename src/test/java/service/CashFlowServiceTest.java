@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import dao.CashFlow;
 import dao.CashFlowDao;
 import database.DatabaseSetup;
-
-import java.io.File;
 import java.util.List;
 import org.junit.jupiter.api.*;
 
@@ -14,7 +12,6 @@ public class CashFlowServiceTest {
 
   private static final String ORIGINAL_URL = "jdbc:sqlite:budgetDB.db";
   private static final String TEST_URL = "jdbc:sqlite:test_cashflow.db";
-  private static final String TEST_FILE = "test_cashflow.db";
 
   private CashFlowService service;
 
@@ -32,13 +29,9 @@ public class CashFlowServiceTest {
     service = new CashFlowService();
   }
 
-  @AfterAll
-  static void tearDown() {
+  @AfterEach
+  void tearDown() {
     DatabaseSetup.setURL(ORIGINAL_URL);
-    File f = new File(TEST_FILE); 
-    if (f.exists()) {
-      f.delete();
-    }
   }
 
   // -------------------------------------------------------------
