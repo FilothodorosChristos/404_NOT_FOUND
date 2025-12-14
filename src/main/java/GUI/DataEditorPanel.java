@@ -160,7 +160,7 @@ public class DataEditorPanel extends JPanel {
 
     panel.add(textPanel, BorderLayout.WEST);
 
-    // ΠΡΟΣΘΗΚΗ: Κουμπί Ιστορικού Αλλαγών (πάνω δεξιά)
+    // Κουμπί Ιστορικού Αλλαγών
     JButton historyButton = new JButton("📊 Ιστορικό Αλλαγών");
     historyButton.setFont(new Font("Arial", Font.BOLD, 13));
     historyButton.setPreferredSize(new Dimension(180, 45));
@@ -184,12 +184,19 @@ public class DataEditorPanel extends JPanel {
       }
     });
     
+    // *** ΑΥΤΗ ΕΙΝΑΙ Η ΣΗΜΑΝΤΙΚΗ ΑΛΛΑΓΗ ***
     historyButton.addActionListener(e -> {
       try {
-        System.out.println("Button clicked!");
-        mainFrame.showPanel("logViewer");
+        System.out.println("Opening Log Viewer for year: " + selectedYear + ", type: " + dataType);
+        mainFrame.showLogViewer(selectedYear, dataType);
       } catch (Exception ex) {
         ex.printStackTrace();
+        JOptionPane.showMessageDialog(
+          this,
+          "Σφάλμα κατά το άνοιγμα του ιστορικού: " + ex.getMessage(),
+          "Σφάλμα",
+          JOptionPane.ERROR_MESSAGE
+        );
       }
     });
     

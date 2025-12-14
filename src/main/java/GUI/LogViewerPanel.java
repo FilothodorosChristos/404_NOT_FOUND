@@ -19,6 +19,12 @@ public class LogViewerPanel extends JPanel {
     /** Reference to the main application frame. */
     private final MainFrame mainFrame;
     
+    /** Year to return to when going back */
+    private final int returnYear;
+    
+    /** Data type to return to when going back */
+    private final String returnDataType;
+    
     /** Navy-blue color used in UI. */
     private static final Color NAVY_BLUE = new Color(0, 0, 128);
     
@@ -44,9 +50,13 @@ public class LogViewerPanel extends JPanel {
      * Constructs a LogViewerPanel with the specified MainFrame reference.
      *
      * @param mainFrame the main application frame
+     * @param year the year to return to when going back
+     * @param dataType the data type to return to when going back
      */
-    public LogViewerPanel(MainFrame mainFrame) {
+    public LogViewerPanel(MainFrame mainFrame, int year, String dataType) {
         this.mainFrame = mainFrame;
+        this.returnYear = year;
+        this.returnDataType = dataType;
         this.logDao = new LogDao();
         setLayout(new BorderLayout());
         createUI();
@@ -194,7 +204,10 @@ public class LogViewerPanel extends JPanel {
         
         // Previous button (left side)
         JButton prevButton = createStyledButton("< Προηγούμενο");
-        prevButton.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
+        prevButton.addActionListener(e -> {
+            // Return to DataEditorPanel with saved parameters
+            mainFrame.showDataEditorPanel(returnYear, returnDataType);
+        });
         
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.setOpaque(false);
@@ -257,48 +270,49 @@ public class LogViewerPanel extends JPanel {
      * Loads log data from the database and populates the table.
      */
     private void loadLogData() {
-    // Clear existing data
-    tableModel.setRowCount(0);
-    
-    try {
-        List<Log> logs = logDao.selectLog();
+        // Clear existing data
+        tableModel.setRowCount(0);
         
-        System.out.println("Logs found: " + logs.size()); // Debug
-        
-        if (logs.isEmpty()) {
-            // Μην δείχνεις μήνυμα, απλά άδειασε τον πίνακα
-            System.out.println("No logs found in database.");
-            return;
+        try {
+            List<Log> logs = logDao.selectLog();
+            
+            System.out.println("Logs found: " + logs.size()); // Debug
+            
+            if (logs.isEmpty()) {
+                // Don't show message, just leave table empty
+                System.out.println("No logs found in database.");
+                return;
+            }
+            
+            // Add each log entry to the table
+            for (Log log : logs) {
+                Object[] row = {
+                    log.getId(),
+                    log.getTableName() != null ? log.getTableName() : "N/A",
+                    log.getOperation() != null ? log.getOperation() : "N/A",
+                    log.getRowId() != null ? log.getRowId() : "N/A",
+                    truncateText(log.getOldData(), 50),
+                    truncateText(log.getNewData(), 50),
+                    log.getTimestamp() != null ? log.getTimestamp() : "N/A"
+                };
+                tableModel.addRow(row);
+            }
+            
+            System.out.println("Logs loaded successfully!");
+            
+        } catch (Exception e) {
+            System.err.println("Error loading logs: " + e.getMessage());
+            e.printStackTrace();
+            
+            JOptionPane.showMessageDialog(
+                this,
+                "Σφάλμα κατά τη φόρτωση των δεδομένων:\n" + e.getMessage(),
+                "Σφάλμα",
+                JOptionPane.ERROR_MESSAGE
+            );
         }
-        
-        // Add each log entry to the table
-        for (Log log : logs) {
-            Object[] row = {
-                log.getId(),
-                log.getTableName() != null ? log.getTableName() : "N/A",
-                log.getOperation() != null ? log.getOperation() : "N/A",
-                log.getRowId() != null ? log.getRowId() : "N/A",
-                truncateText(log.getOldData(), 50),
-                truncateText(log.getNewData(), 50),
-                log.getTimestamp() != null ? log.getTimestamp() : "N/A"
-            };
-            tableModel.addRow(row);
-        }
-        
-        System.out.println("Logs loaded successfully!");
-        
-    } catch (Exception e) {
-        System.err.println("Error loading logs: " + e.getMessage());
-        e.printStackTrace();
-        
-        JOptionPane.showMessageDialog(
-            this,
-            "Σφάλμα κατά τη φόρτωση των δεδομένων:\n" + e.getMessage(),
-            "Σφάλμα",
-            JOptionPane.ERROR_MESSAGE
-        );
     }
-}
+    
     /**
      * Truncates text to a maximum length and adds ellipsis if needed.
      *

@@ -45,6 +45,8 @@ public class MainFrame extends JFrame {
     
     /** Panel name constant for year selection screen. */
     public static final String YEAR_SELECTION = "yearSelection";
+    
+    /** Panel name constant for log viewer screen. */
     public static final String LOG_VIEWER = "logViewer";
     
     /** Panel name constant for action selection screen. */
@@ -146,14 +148,14 @@ public class MainFrame extends JFrame {
     /**
      * Initializes and adds all panel instances to the CardLayout.
      * Each panel is registered with its corresponding name constant.
+     * Note: LogViewerPanel and DataEditorPanel are created dynamically when needed.
      */
     private void initializePanels() {
-        
         mainPanel.add(new WelcomePanel(this), WELCOME);
         mainPanel.add(new ProjectSelectionPanel(this), PROJECT_SELECTION);
         mainPanel.add(new YearSelectionPanel(this), YEAR_SELECTION);
         mainPanel.add(new ActionSelectionPanel(this), ACTION_SELECTION);
-        mainPanel.add(new LogViewerPanel(this), LOG_VIEWER); 
+        // LogViewerPanel and DataEditorPanel are created dynamically
     }
     
     /**
@@ -199,6 +201,17 @@ public class MainFrame extends JFrame {
             return;
         }
         
+        showDataEditorPanel(Integer.parseInt(selectedYear), dataType);
+    }
+    
+    /**
+     * Shows the data editor panel with specific year and data type.
+     * This method is used for navigation from LogViewerPanel.
+     *
+     * @param year the year to display
+     * @param dataType the type of data to edit ("cashflow" or "foreis")
+     */
+    public void showDataEditorPanel(int year, String dataType) {
         // Αφαίρεσε το παλιό panel αν υπάρχει
         for (Component comp : mainPanel.getComponents()) {
             if (comp instanceof DataEditorPanel) {
@@ -208,14 +221,33 @@ public class MainFrame extends JFrame {
         }
         
         // Δημιούργησε νέο panel
-        DataEditorPanel editorPanel = new DataEditorPanel(
-            this, 
-            Integer.parseInt(selectedYear), 
-            dataType
-        );
+        DataEditorPanel editorPanel = new DataEditorPanel(this, year, dataType);
         
         mainPanel.add(editorPanel, DATA_EDITOR);
         showPanel(DATA_EDITOR);
+    }
+    
+    /**
+     * Shows the log viewer panel with return parameters.
+     * Creates a new panel each time to ensure fresh data.
+     *
+     * @param year the year to return to when going back
+     * @param dataType the data type to return to when going back
+     */
+    public void showLogViewer(int year, String dataType) {
+        // Αφαίρεσε το παλιό panel αν υπάρχει
+        for (Component comp : mainPanel.getComponents()) {
+            if (comp instanceof LogViewerPanel) {
+                mainPanel.remove(comp);
+                break;
+            }
+        }
+        
+        // Δημιούργησε νέο panel με παραμέτρους επιστροφής
+        LogViewerPanel logPanel = new LogViewerPanel(this, year, dataType);
+        
+        mainPanel.add(logPanel, LOG_VIEWER);
+        showPanel(LOG_VIEWER);
     }
     
     /**
