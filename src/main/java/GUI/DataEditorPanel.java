@@ -134,7 +134,7 @@ public class DataEditorPanel extends JPanel {
   /**
    * Δημιουργία header panel με τίτλο και πληροφορίες.
    */
-  private JPanel createHeaderPanel() {
+ private JPanel createHeaderPanel() {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setBackground(new Color(0, 0, 128, 230));
     panel.setPreferredSize(new Dimension(0, 80));
@@ -160,9 +160,47 @@ public class DataEditorPanel extends JPanel {
 
     panel.add(textPanel, BorderLayout.WEST);
 
-    return panel;
-  }
+    // ΠΡΟΣΘΗΚΗ: Κουμπί Ιστορικού Αλλαγών (πάνω δεξιά)
+    JButton historyButton = new JButton("📊 Ιστορικό Αλλαγών");
+    historyButton.setFont(new Font("Arial", Font.BOLD, 13));
+    historyButton.setPreferredSize(new Dimension(180, 45));
+    historyButton.setBackground(new Color(255, 255, 255, 200));
+    historyButton.setForeground(NAVY_BLUE);
+    historyButton.setFocusPainted(false);
+    historyButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.WHITE, 2),
+            BorderFactory.createEmptyBorder(8, 15, 8, 15)
+    ));
+    historyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    
+    historyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+      @Override
+      public void mouseEntered(java.awt.event.MouseEvent evt) {
+        historyButton.setBackground(new Color(230, 240, 255, 230));
+      }
+      @Override
+      public void mouseExited(java.awt.event.MouseEvent evt) {
+        historyButton.setBackground(new Color(255, 255, 255, 200));
+      }
+    });
+    
+    historyButton.addActionListener(e -> {
+      try {
+        System.out.println("Button clicked!");
+        mainFrame.showPanel("logViewer");
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    });
+    
+    JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 10));
+    rightPanel.setOpaque(false);
+    rightPanel.add(historyButton);
+    
+    panel.add(rightPanel, BorderLayout.EAST);
 
+    return panel;
+}
   /**
    * Δημιουργία split panel με δύο πίνακες (Έσοδα & Έξοδα).
    */

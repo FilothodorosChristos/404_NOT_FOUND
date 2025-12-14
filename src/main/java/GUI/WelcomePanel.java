@@ -58,7 +58,7 @@ public class WelcomePanel extends JPanel {
 					Graphics2D g2 = (Graphics2D) g.create();
 					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 					
-					int diameter = (int) (Math.min(getWidth(), getHeight()) * 0.4);
+					int diameter = (int) (Math.min(getWidth(), getHeight()) * 0.3);
 					int x = (getWidth() - diameter) / 2;
 					int y = (getHeight() - diameter) / 3;
 					
@@ -79,8 +79,8 @@ public class WelcomePanel extends JPanel {
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 		centerPanel.setOpaque(false);
-		centerPanel.add(Box.createVerticalStrut(40));
-		centerPanel.add(createLabel("Καλώς ήρθατε στην GoverLens! ", TITLE_FONT));
+		centerPanel.add(Box.createVerticalStrut(30));
+		centerPanel.add(createLabel("Καλώς ήρθατε στην GmoverLens! ", TITLE_FONT));
 		
 		logoBackgroundPanel.add(centerPanel, BorderLayout.CENTER);
 		
@@ -91,23 +91,28 @@ public class WelcomePanel extends JPanel {
 		bottomSection.add(Box.createVerticalStrut(80));
 		bottomSection.add(createLabel("________________________________________________________", SUBTITLE_FONT));
 		bottomSection.add(Box.createVerticalStrut(40));
-		bottomSection.add(createLabel("Περισσότερη διαφάνεια , λιγότερη δυσκολία!", SUBTITLE_FONT));
+		bottomSection.add(createLabel("Περισσότερη διαφάνεια , λιγότερη δυσκολία", SUBTITLE_FONT));
 		bottomSection.add(Box.createVerticalStrut(10));
-		bottomSection.add(createLabel("Μάθε που πηγαίνει κάθε ευρώ και επεξεργάσου τα δεδομένα σαν υπουργός .", SUBTITLE_FONT));
+		
+		bottomSection.add(createLabel("Μάθε που πηγαίνει κάθε ευρώ και ", SUBTITLE_FONT));
+		bottomSection.add(Box.createVerticalStrut(10));
+		bottomSection.add(createLabel(" επεξεργάσου τα δεδομένα σαν υπουργός .", SUBTITLE_FONT));
 		bottomSection.add(Box.createVerticalStrut(80));
 		
-		JButton nextButton = new JButton("Επόμενο >");
-		nextButton.setPreferredSize(new Dimension(150, 40));
+		
+		JButton nextButton = new JButton("Ξεκινήστε!");
+		nextButton.setPreferredSize(new Dimension(250, 60));
 		nextButton.addActionListener(e -> mainFrame.showPanel(MainFrame.PROJECT_SELECTION));
 		
+
 		JPanel navigationPanel = new JPanel(new BorderLayout());
 		navigationPanel.setOpaque(false);
 		navigationPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		
-		JPanel nextButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JPanel nextButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		nextButtonPanel.setOpaque(false);
 		nextButtonPanel.add(nextButton);
-		navigationPanel.add(nextButtonPanel, BorderLayout.EAST);
+		navigationPanel.add(nextButtonPanel, BorderLayout.CENTER);
 		
 		JPanel southWrapper = new JPanel(new BorderLayout());
 		southWrapper.setOpaque(false);

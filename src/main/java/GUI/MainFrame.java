@@ -45,6 +45,7 @@ public class MainFrame extends JFrame {
     
     /** Panel name constant for year selection screen. */
     public static final String YEAR_SELECTION = "yearSelection";
+    public static final String LOG_VIEWER = "logViewer";
     
     /** Panel name constant for action selection screen. */
     public static final String ACTION_SELECTION = "actionSelection";
@@ -134,6 +135,7 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Πρέπει να επιλέξετε πρώτα έτος.", "Προειδοποίηση", JOptionPane.WARNING_MESSAGE);
             return;
         }
+       
         
         FinanceChartPanel chartPanel = FinanceChartPanel.createPanel(selectedYear);
         
@@ -151,6 +153,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(new ProjectSelectionPanel(this), PROJECT_SELECTION);
         mainPanel.add(new YearSelectionPanel(this), YEAR_SELECTION);
         mainPanel.add(new ActionSelectionPanel(this), ACTION_SELECTION);
+        mainPanel.add(new LogViewerPanel(this), LOG_VIEWER); 
     }
     
     /**
