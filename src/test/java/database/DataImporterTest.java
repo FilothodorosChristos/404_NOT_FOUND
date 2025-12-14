@@ -21,6 +21,9 @@ public class DataImporterTest {
     
     private static final String REAL_URL = "jdbc:sqlite:budgetDB.db"; 
 
+    /** 
+     * @throws Exception
+     */
     //Αντικαθιστούμε το URL της DataImporter κλάσης πριν από όλα τα tests
     @BeforeAll
     static void setupTestUrl() throws Exception {
@@ -29,6 +32,9 @@ public class DataImporterTest {
         DatabaseSetup.setURL(TEST_URL);
     }
     
+    /** 
+     * @throws Exception
+     */
     //Εισάγουμε το url της πραγματικής βάσης μετά τα tests
     @AfterAll
     static void restoreRealUrl() throws Exception {
@@ -69,6 +75,11 @@ public class DataImporterTest {
             fail("Αποτυχία δημιουργίας σχήματος βάσης δεδομένων: " + e.getMessage());
         }
     }
+        /** 
+         * @param tableName
+         * @return int
+         * @throws SQLException
+         */
         // Mock DatabaseSetup.cleanTables() - Ο DataImporter καλεί αυτή τη μέθοδο,
         // αλλά για τον test σκοπό, την αντικαθιστούμε με το DROP TABLE παραπάνω.
         // Βοηθητική μέθοδος για μέτρηση γραμμών σε πίνακα
@@ -84,6 +95,9 @@ public class DataImporterTest {
         }
         return 0;
     }
+    /** 
+     * @throws Exception
+     */
     // Test Case: Εισαγωγή Φορέων (Foreis)
     @Test
     void insertForeisFromCsv_ShouldInsertValidRowsAndSkipInvalid() throws Exception {
@@ -108,6 +122,9 @@ public class DataImporterTest {
         }
     }
 
+    /** 
+     * @throws Exception
+     */
     // Test Case: Εισαγωγή Ροών (Cashflows)
     @Test
     void insertCashflowsFromCsv_ShouldInsertValidRowsAndSkipInvalid() throws Exception {

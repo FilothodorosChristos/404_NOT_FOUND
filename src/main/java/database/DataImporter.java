@@ -5,18 +5,25 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Scanner;
 
-
+/**
+ * Κλάση με μεθόδους για την εισαγωγή δεδομένων στους πίνακες της βάσης δεδομένων.
+ */
 public class DataImporter {
 
   private static String URL = "jdbc:sqlite:budgetDB.db";
   private static final int[] YEARS = { 23, 24, 25 };
   private static final String[] CASHFLOW_TYPES = { "Esoda", "Exoda" };
 
+  /** 
+   * @param url
+   */
   // μέθοδος setter για τα τεστ
   public static void setURL(String url) {
     URL = url;
   }
-
+  /** 
+   * Εισάγει δεδομένα στους πίνακες foreis και cashflows από αρχεία CSV.
+   */
   public static void importer() {
     DatabaseSetup.resetTables(); // καθαρισμός πινάκων πριν απο το γέμισμα
 
@@ -45,6 +52,12 @@ public class DataImporter {
     }
   }
 
+  /** 
+   * Αναγνώσει δεδομένα από αρχείο CSV και τα εισάγει στον πίνακα foreis.
+   * 
+   * @param filename
+   * @throws Exception
+   */
   static void insertForeisFromCsv(String filename) throws Exception {
     // InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
     InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("data/" + filename);
@@ -96,6 +109,13 @@ public class DataImporter {
     }
   }
 
+  /** 
+   * Αναγνώσει δεδομένα από αρχείο CSV και τα εισάγει στον πίνακα cashflows.
+   * 
+   * @param filename
+   * @param type
+   * @throws Exception
+   */
   static void insertCashflowsFromCsv(String filename, String type) throws Exception {
     // InputStream is = DataImporter.class.getResourceAsStream("/data/" + filename);
     InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("data/" + filename);

@@ -24,6 +24,9 @@ public class DatabaseSetupTest {
     private static final String REAL_URL = "jdbc:sqlite:budgetDB.db";
 
 
+    /** 
+     * @throws Exception
+     */
     @BeforeAll
     static void setup() throws Exception {
         Class.forName("org.sqlite.JDBC");
@@ -32,6 +35,9 @@ public class DatabaseSetupTest {
         DatabaseSetup.setDatabase(); 
     }// Δημιουργεί πίνακες
 
+    /** 
+     * @throws SQLException
+     */
     @BeforeEach
         void resetDB() throws SQLException {
             // Drop tables + triggers (όπως στην cleanTables())
@@ -41,6 +47,9 @@ public class DatabaseSetupTest {
         }
 
 
+    /** 
+     * @throws Exception
+     */
     @AfterAll
     static void teardownClass() throws Exception {
         if (conn != null && !conn.isClosed()) {
@@ -54,6 +63,10 @@ public class DatabaseSetupTest {
         DatabaseSetup.setURL(REAL_URL);
     }
 
+    /** 
+     * @param tableName
+     * @return boolean
+     */
     // Helper method για έλεγχο αν υπάρχει πίνακας
     private boolean tableExists(String tableName) {
         try (Statement stmt = conn.createStatement();
@@ -95,6 +108,9 @@ public class DatabaseSetupTest {
         assertTrue(tableExists("log"), "Ο πίνακας 'log' πρέπει να υπάρχει μετά το reset.");// Andrew's addition for log table
     }
 
+    /** 
+     * @throws SQLException
+     */
     @Test
     void testForeisTriggers() throws SQLException {
         try (Connection conn = DatabaseSetup.getConnection();
@@ -125,6 +141,9 @@ public class DatabaseSetupTest {
         }
     }
 
+    /** 
+     * @throws SQLException
+     */
     @Test
     void testCashflowsTriggers() throws SQLException {
         try (Connection conn = DatabaseSetup.getConnection();
