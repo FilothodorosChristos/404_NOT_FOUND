@@ -2,7 +2,13 @@ package service;
 
 import dao.CashFlow;
 import dao.CashFlowDao;
+import dto.CashFlowCompareDto;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import util.ValidationUtils;
 
 /**
@@ -87,4 +93,49 @@ public class CashFlowService {
     }
     return cashflowDao.selectCashFlow(year, type);
   }
+
+/**
+     * Συγκρίνει amounts για ίδια έσοδα ή έξοδα μεταξύ δύο ετών.
+     *
+     * @param year1 πρώτο έτος
+     * @param year2 δεύτερο έτος
+     * @param type τύπος cashflow ("income" ή "expense")
+     * @return λίστα DTO με αποτελέσματα σύγκρισης
+     */
+    public List<CashFlowCompareDto> compareCashFlows(int year1, int year2, String type) {
+        List<CashFlow> listYear1 = cashflowDao.selectCashFlow(year1, type);
+        List<CashFlow> listYear2 = cashflowDao.selectCashFlow(year2, type);
+
+        Map<String, Double> mapYear1 = new HashMap<>();
+        for(CashFlow cf : listYear1) {
+            mapYear1.put(cf.getName(), cf.getAmount());
+        }
+
+        Map<String, Double> mapYear2 = new HashMap<>();
+        for(CashFlow cf : listYear2) {
+            mapYear2.put(cf.getName(), cf.getAmount());
+        }
+
+        // Συγκεντρώνουμε όλα τα ονόματα
+        Map<String, CashFlowCompareDto> comparisonMap = new HashMap<>();
+
+        for(String name : mapYear1.keySet()) {
+            double amountYear1 = mapYear1.get(name);
+            if(mapYear2.containsKey(name)) {
+                double amountYear2 = mapYear2.get(name);
+                comparisonMap.put(name, new CashFlowCompareDto(name, amountYear1, amountYear2, false, false));
+            } else {
+                comparisonMap.put(name, new CashFlowCompareDto(name, amountYear1, 0, false, true));
+            }
+        }
+
+        for(String name : mapYear2.keySet()) {
+            if(!comparisonMap.containsKey(name)) {
+                double amountYear2 = mapYear2.get(name);
+                comparisonMap.put(name, new CashFlowCompareDto(name, 0, amountYear2, true, false));
+            }
+        }
+
+        return new ArrayList<>(comparisonMap.values());
+    }
 }

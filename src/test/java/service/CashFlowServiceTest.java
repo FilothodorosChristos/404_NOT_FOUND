@@ -83,10 +83,6 @@ public class CashFlowServiceTest {
     assertThrows(IllegalArgumentException.class, () -> service.addCashflow(null));
   }
 
-  // -------------------------------------------------------------
-  // UPDATE TESTS
-  // -------------------------------------------------------------
-
   @Test
   void testUpdateCashflowInvalidId() {
     CashFlow updated = new CashFlow(
