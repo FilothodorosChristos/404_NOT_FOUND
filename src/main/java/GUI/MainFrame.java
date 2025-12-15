@@ -114,7 +114,7 @@ public class MainFrame extends JFrame {
      */
     private void setupFrame() {
         setTitle("GoverLens - Σύστημα Διαχείρισης Κρατικού Προϋπολογισμού");
-        setSize(1200, 900);
+        setSize(1200, 800);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(logoImage); 

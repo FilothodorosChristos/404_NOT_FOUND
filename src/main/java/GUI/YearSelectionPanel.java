@@ -1,200 +1,358 @@
 package GUI;
 
 import javax.swing.*;
-import javax.swing.border.AbstractBorder;
 import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
 
 /**
- * YearSelectionPanel allows the user to select a budget year.
- * Displays buttons for available years and allows navigation back to project selection.
+ * Modern YearSelectionPanel with unified aesthetic matching WelcomePanel.
+ * Allows the user to select a budget year.
  */
 public class YearSelectionPanel extends JPanel {
     
-    /** Reference to the main application frame (declared as final to fix EI_EXPOSE_REP2). */
     private final MainFrame mainFrame;
-    
-    /** Navy-blue color used in UI. */
-    private static final Color NAVY_BLUE = new Color(0, 0, 128);
-    
-    /** Font used for section headers. */
-    private static final Font SECTION_TITLE_FONT = new Font("Tahoma", Font.PLAIN, 30);
-    
-    /** Font used for year-selection buttons. */
-    private static final Font YEAR_BUTTON_FONT = new Font("Tahoma", Font.BOLD, 28);
+    private Timer animationTimer;
+    private float rotationAngle = 0;
+    private int fadeInProgress = 0;
+    private Point mousePosition = new Point(0, 0);
+    private JButton[] yearButtons;
+    private JButton backButton;
     
     /**
-     * Constructs a YearSelectionPanel with the specified MainFrame reference.
+     * Constructs a YearSelectionPanel with modern design.
      *
      * @param mainFrame the main application frame
      */
     public YearSelectionPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        setLayout(new BorderLayout());
+        setLayout(null);
+        setBackground(new Color(10, 14, 39));
+        
         createUI();
+        setupAnimations();
+        setupMouseTracking();
+        
+        // Add component listener to reposition on resize
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                repositionComponents();
+            }
+        });
     }
     
     /**
-     * Creates and initializes the user interface components.
-     * Sets up the background, title, year buttons, and navigation.
+     * Creates all UI components.
      */
     private void createUI() {
-        // Background panel
-        JPanel backgroundPanel = new JPanel(new BorderLayout()) {
-            /**
-             * Paints the background image.
-             *
-             * @param g the Graphics context
-             */
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                if (mainFrame.getBackgroundImage() != null) {
-                    g.drawImage(mainFrame.getBackgroundImage(), 0, 0, getWidth(), getHeight(), this);
-                }
-            }
-        };
-        
-        /**center panel */
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.setOpaque(false);
-        centerPanel.add(Box.createVerticalGlue());
-        
-        // Δημιουργία του ημιδιάφανου λευκού container
-        JPanel whiteContainer = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
-                // Πολύ διάφανο λευκό φόντο με θολούρα
-                g2d.setColor(new Color(255, 255, 255, 100)); // 100/255 = ~40% opacity
-                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
-                
-                // Ελαφρύ border
-                g2d.setColor(new Color(255, 255, 255, 150));
-                g2d.setStroke(new BasicStroke(1));
-                g2d.drawRoundRect(1, 1, getWidth()-2, getHeight()-2, 30, 30);
-            }
-        };
-        whiteContainer.setLayout(new BoxLayout(whiteContainer, BoxLayout.Y_AXIS));
-        whiteContainer.setOpaque(false);
-        whiteContainer.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
-         whiteContainer.setMaximumSize(new Dimension(450, 600)); // Περιορισμός πλάτους
-        // Τίτλος
-        JLabel titleLabel = new JLabel("Επιλέξτε έτος ");
-        JLabel title2Label = new JLabel("προυπολογισμού:");
-        titleLabel.setFont(SECTION_TITLE_FONT);
-        titleLabel.setForeground(Color.WHITE); // Λευκό για καλύτερη αντίθεση με διάφανο φόντο
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        title2Label.setFont(SECTION_TITLE_FONT);
-        title2Label.setForeground(Color.WHITE); // Λευκό για καλύτερη αντίθεση με διάφανο φόντο
-        title2Label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        whiteContainer.add(titleLabel);
-        whiteContainer.add(title2Label);
-        whiteContainer.add(Box.createVerticalStrut(60));
-        
-        /** year buttons */
-        String[] years = {"2023", "2024", "2025"};
-        for (String year : years) {
-            JButton yearBtn = createYearButton(year);
-            whiteContainer.add(yearBtn);
-            whiteContainer.add(Box.createVerticalStrut(20));
-        }
-        
-        centerPanel.add(whiteContainer);
-        centerPanel.add(Box.createVerticalGlue());
-        
-        backgroundPanel.add(centerPanel, BorderLayout.CENTER);
-        
-        /** previous button */
-        JButton prevButton = new JButton("< Προηγούμενο");
-        prevButton.setPreferredSize(new Dimension(150, 40));
-        prevButton.addActionListener(e -> mainFrame.showPanel(MainFrame.PROJECT_SELECTION));
-        
-        JPanel prevButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        prevButtonPanel.setOpaque(false);
-        prevButtonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        prevButtonPanel.add(prevButton);
-        
-        backgroundPanel.add(prevButtonPanel, BorderLayout.SOUTH);
-        add(backgroundPanel);
+        createYearButtons();
+        createBackButton();
+        repositionComponents();
     }
     
     /**
-     * Creates a year button for the year selection panel.
-     * When clicked, sets the selected year and navigates to the action selection panel.
-     *
-     * @param year the year displayed on the button
-     * @return the configured year JButton
+     * Repositions all components to center of panel.
+     */
+    private void repositionComponents() {
+        int width = getWidth();
+        int height = getHeight();
+        
+        // Position year buttons vertically centered
+        int buttonWidth = 320;
+        int buttonHeight = 90;
+        int gap = 25;
+        
+        int startX = (width - buttonWidth) / 2;
+        int startY = 380;
+        
+        for (int i = 0; i < yearButtons.length; i++) {
+            yearButtons[i].setBounds(startX, startY + i * (buttonHeight + gap), buttonWidth, buttonHeight);
+        }
+        
+        // Position back button
+        backButton.setBounds(30, height - 70, 150, 40);
+    }
+    
+    /**
+     * Creates the year selection buttons.
+     */
+    private void createYearButtons() {
+        String[] years = {"2023", "2024", "2025"};
+        yearButtons = new JButton[years.length];
+        
+        for (int i = 0; i < years.length; i++) {
+            yearButtons[i] = createYearButton(years[i]);
+            add(yearButtons[i]);
+        }
+    }
+    
+    /**
+     * Creates a single year button with unified styling.
      */
     private JButton createYearButton(String year) {
-        JButton btn = new JButton(year);
-        btn.setForeground(NAVY_BLUE);
-        btn.setBackground(Color.WHITE);
-        btn.setFont(YEAR_BUTTON_FONT);
-        btn.setPreferredSize(new Dimension(250, 50));
-        btn.setMinimumSize(new Dimension(300, 70));
-        btn.setMaximumSize(new Dimension(300, 70));
-        btn.setBorder(new RoundedBorder(30));
-        btn.setFocusPainted(false);
-        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        // Hover effect για καλύτερη εμπειρία χρήστη
-        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+        JButton button = new JButton() {
+            private boolean isHovered = false;
+            
             @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(230, 240, 255));
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                
+                // Background with gradient
+                if (isHovered) {
+                    GradientPaint gradient = new GradientPaint(
+                        0, 0, new Color(99, 102, 241, 30),
+                        getWidth(), getHeight(), new Color(139, 92, 246, 30)
+                    );
+                    g2.setPaint(gradient);
+                } else {
+                    g2.setColor(new Color(15, 23, 42, 128));
+                }
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                
+                // Border
+                g2.setColor(new Color(99, 102, 241, isHovered ? 100 : 50));
+                g2.setStroke(new BasicStroke(1));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                
+                // Year icon (calendar emoji)
+                g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
+                String icon = "📅";
+                FontMetrics fmIcon = g2.getFontMetrics();
+                int iconX = 30;
+                g2.setColor(new Color(255, 255, 255, 230));
+                g2.drawString(icon, iconX, 55);
+                
+                // Year text
+                g2.setFont(new Font("Arial", Font.BOLD, 32));
+                g2.setColor(new Color(226, 232, 240));
+                FontMetrics fmYear = g2.getFontMetrics();
+                int yearX = (getWidth() - fmYear.stringWidth(year)) / 2;
+                g2.drawString(year, yearX, 58);
+                
+                g2.dispose();
+            }
+        };
+        
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                JButton btn = (JButton) e.getSource();
+                btn.putClientProperty("hover", true);
+                btn.setBounds(btn.getX(), btn.getY() - 3, btn.getWidth(), btn.getHeight());
+                btn.repaint();
             }
             
             @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn.setBackground(Color.WHITE);
+            public void mouseExited(MouseEvent e) {
+                JButton btn = (JButton) e.getSource();
+                btn.putClientProperty("hover", false);
+                repositionComponents();
+                btn.repaint();
             }
         });
         
-        btn.addActionListener(e -> {
+        button.addActionListener(e -> {
             mainFrame.setSelectedYear(year);
             mainFrame.showPanel(MainFrame.ACTION_SELECTION);
         });
         
-        return btn;
+        return button;
     }
     
     /**
-     * A custom border with rounded corners for Swing components.
+     * Creates the back button with unified styling.
      */
-    static class RoundedBorder extends AbstractBorder {
-        private int radius;
+    private void createBackButton() {
+        backButton = new JButton("← Προηγούμενο") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Background
+                g2.setColor(new Color(15, 23, 42, 128));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                
+                // Border
+                g2.setColor(new Color(99, 102, 241, 80));
+                g2.setStroke(new BasicStroke(1));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+                
+                // Text
+                g2.setColor(new Color(226, 232, 240));
+                g2.setFont(new Font("Arial", Font.BOLD, 14));
+                FontMetrics fm = g2.getFontMetrics();
+                int textX = (getWidth() - fm.stringWidth(getText())) / 2;
+                int textY = (getHeight() + fm.getAscent()) / 2 - 2;
+                g2.drawString(getText(), textX, textY);
+                
+                g2.dispose();
+            }
+        };
         
-        /**
-         * Constructs a RoundedBorder with the specified corner radius.
-         *
-         * @param radius the radius of the rounded corners
-         */
-        public RoundedBorder(int radius) {
-            this.radius = radius;
+        backButton.setBorderPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setFocusPainted(false);
+        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        backButton.addActionListener(e -> mainFrame.showPanel(MainFrame.PROJECT_SELECTION));
+        
+        add(backButton);
+    }
+    
+    /**
+     * Sets up animation timer.
+     */
+    private void setupAnimations() {
+        animationTimer = new Timer(30, e -> {
+            rotationAngle += 0.5f;
+            if (rotationAngle >= 360) rotationAngle = 0;
+            
+            if (fadeInProgress < 100) {
+                fadeInProgress += 2;
+            }
+            
+            repaint();
+        });
+        animationTimer.start();
+    }
+    
+    /**
+     * Sets up mouse tracking for parallax effect.
+     */
+    private void setupMouseTracking() {
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mousePosition = e.getPoint();
+            }
+        });
+    }
+    
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        int width = getWidth();
+        int height = getHeight();
+        
+        // Draw animated grid (same as WelcomePanel)
+        drawAnimatedGrid(g2, width, height);
+        
+        // Draw floating orbs (same as WelcomePanel)
+        drawFloatingOrbs(g2, width, height);
+        
+        // Draw header with logo
+        drawHeader(g2, width);
+        
+        // Draw footer
+        drawFooter(g2, width, height);
+        
+        g2.dispose();
+    }
+    
+    private void drawAnimatedGrid(Graphics2D g2, int width, int height) {
+        g2.setColor(new Color(99, 102, 241, 13));
+        g2.setStroke(new BasicStroke(1));
+        
+        int gridSize = 50;
+        int offset = (int)(rotationAngle % gridSize);
+        
+        for (int x = -offset; x < width; x += gridSize) {
+            g2.drawLine(x, 0, x, height);
         }
+        for (int y = -offset; y < height; y += gridSize) {
+            g2.drawLine(0, y, width, y);
+        }
+    }
+    
+    private void drawFloatingOrbs(Graphics2D g2, int width, int height) {
+        float parallax1 = (mousePosition.x - width / 2f) * 0.01f;
+        float parallax2 = (mousePosition.y - height / 2f) * 0.01f;
         
-        /**
-         * Paints the rounded border around the specified component.
-         *
-         * @param c the component for which this border is being painted
-         * @param g the Graphics context to use for painting
-         * @param x the x position of the border
-         * @param y the y position of the border
-         * @param width the width of the border
-         * @param height the height of the border
-         */
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setColor(Color.WHITE);
+        // Orb 1 (top-left)
+        RadialGradientPaint gradient1 = new RadialGradientPaint(
+            -200 + parallax1, -200 + parallax2, 250,
+            new float[]{0f, 1f},
+            new Color[]{new Color(99, 102, 241, 76), new Color(99, 102, 241, 0)}
+        );
+        g2.setPaint(gradient1);
+        g2.fillOval((int)(-200 + parallax1), (int)(-200 + parallax2), 500, 500);
+        
+        // Orb 2 (bottom-right)
+        RadialGradientPaint gradient2 = new RadialGradientPaint(
+            width - 150 + parallax1 * 1.5f, height - 150 + parallax2 * 1.5f, 200,
+            new float[]{0f, 1f},
+            new Color[]{new Color(139, 92, 246, 76), new Color(139, 92, 246, 0)}
+        );
+        g2.setPaint(gradient2);
+        g2.fillOval((int)(width - 350 + parallax1 * 1.5f), (int)(height - 350 + parallax2 * 1.5f), 400, 400);
+    }
+    
+    private void drawHeader(Graphics2D g2, int width) {
+        int alpha = Math.min(255, fadeInProgress * 255 / 100);
+        
+        // Draw logo
+        Image logo = mainFrame.getLogoImage();
+        if (logo != null) {
+            int logoSize = 100;
+            int logoX = width / 2 - logoSize / 2;
+            int logoY = 80;
+            
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f));
+            
+            // Create circular clip
+            Shape oldClip = g2.getClip();
+            g2.setClip(new Ellipse2D.Double(logoX, logoY, logoSize, logoSize));
+            g2.drawImage(logo, logoX, logoY, logoSize, logoSize, this);
+            g2.setClip(oldClip);
+            
+            // Draw border
+            g2.setColor(new Color(99, 102, 241, alpha));
             g2.setStroke(new BasicStroke(2));
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-            g2.dispose();
+            g2.drawOval(logoX, logoY, logoSize, logoSize);
+            
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
+        
+        // Title
+        g2.setColor(new Color(255, 255, 255, alpha));
+        g2.setFont(new Font("Arial", Font.BOLD, 32));
+        String title = "GoverLens Pro";
+        FontMetrics fm = g2.getFontMetrics();
+        g2.drawString(title, width / 2 - fm.stringWidth(title) / 2, 215);
+        
+        // Subtitle
+        g2.setColor(new Color(148, 163, 184, alpha));
+        g2.setFont(new Font("Arial", Font.PLAIN, 14));
+        String subtitle = "Σύστημα Διαχείρισης Κρατικού Προϋπολογισμού";
+        fm = g2.getFontMetrics();
+        g2.drawString(subtitle, width / 2 - fm.stringWidth(subtitle) / 2, 240);
+        
+        // Main instruction
+        g2.setColor(new Color(226, 232, 240, alpha));
+        g2.setFont(new Font("Arial", Font.BOLD, 28));
+        String instruction = "Επιλέξτε Έτος Προϋπολογισμού";
+        fm = g2.getFontMetrics();
+        g2.drawString(instruction, width / 2 - fm.stringWidth(instruction) / 2, 310);
+    }
+    
+    private void drawFooter(Graphics2D g2, int width, int height) {
+        g2.setColor(new Color(71, 85, 105));
+        g2.setFont(new Font("Arial", Font.PLAIN, 10));
+        String footer = "© 2025 GoverLens Pro. Όλα τα δικαιώματα διατηρούνται.";
+        FontMetrics fm = g2.getFontMetrics();
+        g2.drawString(footer, width / 2 - fm.stringWidth(footer) / 2, height - 15);
     }
 }

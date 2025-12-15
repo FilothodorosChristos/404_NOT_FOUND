@@ -62,34 +62,25 @@ public class WelcomePanel extends JPanel {
         int width = getWidth();
         int height = getHeight();
         
-        // Center button
+        // Center button - moved up
         int buttonWidth = 250;
         int buttonHeight = 50;
-        enterButton.setBounds((width - buttonWidth) / 2, 580, buttonWidth, buttonHeight);
+        enterButton.setBounds((width - buttonWidth) / 2, 480, buttonWidth, buttonHeight);
         
-        // Reposition feature cards
+        // Reposition feature cards - 3 cards in one row
         int cardWidth = 300;
         int cardHeight = 120;
         int gap = 25;
         
-        // Calculate start position to center all cards
-        int totalFirstRowWidth = 3 * cardWidth + 2 * gap;
-        int firstRowStartX = (width - totalFirstRowWidth) / 2;
-        int startY = 660;
+        // Calculate start position to center all 3 cards
+        int totalWidth = 3 * cardWidth + 2 * gap;
+        int startX = (width - totalWidth) / 2;
+        int startY = 560;
         
-        // First row: 3 cards
+        // Single row: 3 cards
         for (int i = 0; i < 3; i++) {
-            int x = firstRowStartX + i * (cardWidth + gap);
+            int x = startX + i * (cardWidth + gap);
             featureCards[i].setBounds(x, startY, cardWidth, cardHeight);
-        }
-        
-        // Second row: 2 cards (centered)
-        int totalSecondRowWidth = 2 * cardWidth + gap;
-        int secondRowStartX = (width - totalSecondRowWidth) / 2;
-        for (int i = 3; i < 5; i++) {
-            int col = i - 3;
-            int x = secondRowStartX + col * (cardWidth + gap);
-            featureCards[i].setBounds(x, startY + cardHeight + gap, cardWidth, cardHeight);
         }
     }
     
@@ -142,34 +133,30 @@ public class WelcomePanel extends JPanel {
         });
         
         button.addActionListener(e -> 
-            mainFrame.showPanel(MainFrame.PROJECT_SELECTION)
+            mainFrame.showPanel(MainFrame.YEAR_SELECTION)
         );
         return button;
     }
     
     /**
-     * Creates the 5 feature cards (removed "Ολοκλήρωση").
+     * Creates the 3 feature cards.
      */
     private void createFeatureCards() {
-        featureCards = new JPanel[5];
+        featureCards = new JPanel[3];
         String[] titles = {
             "Διαγράμματα",
             "Έγκυρα Δεδομένα",
-            "Δυνατότητα Επεξεργασίας",
-            "Διαφάνεια",
-            "Multi-Platform"
+            "Δυνατότητα Επεξεργασίας"
         };
         String[] descriptions = {
             "Πλήρης ανάλυση δαπανών και εσόδων",
             "Κρυπτογράφηση 256-bit",
-            "Παρουσίαση εσόδων εξόδων",
-            "Πλήρης καταγραφή συναλλαγών",
-            "Πρόσβαση από κάθε συσκευή"
+            "Παρουσίαση εσόδων εξόδων"
         };
-        String[] emojis = {"📈", "🔒", "⚡", "🌐", "📱"};
+        String[] emojis = {"📈", "🔒", "⚡"};
         
         // Create all cards
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             featureCards[i] = createFeatureCard(titles[i], descriptions[i], emojis[i]);
             add(featureCards[i]);
         }
@@ -351,12 +338,12 @@ public class WelcomePanel extends JPanel {
     private void drawHeader(Graphics2D g2, int width) {
         int alpha = Math.min(255, fadeInProgress * 255 / 100);
         
-        // Draw logo (larger size)
+        // Draw logo (moved up)
         Image logo = mainFrame.getLogoImage();
         if (logo != null) {
-            int logoSize = 180;
+            int logoSize = 150;
             int logoX = width / 2 - logoSize / 2;
-            int logoY = 120;
+            int logoY = 80;
             
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f));
             
@@ -374,19 +361,19 @@ public class WelcomePanel extends JPanel {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
         
-        // Title (larger font)
+        // Title (moved up)
         g2.setColor(new Color(255, 255, 255, alpha));
-        g2.setFont(new Font("Arial", Font.BOLD, 52));
+        g2.setFont(new Font("Arial", Font.BOLD, 48));
         String title = "GoverLens Pro";
         FontMetrics fm = g2.getFontMetrics();
-        g2.drawString(title, width / 2 - fm.stringWidth(title) / 2, 350);
+        g2.drawString(title, width / 2 - fm.stringWidth(title) / 2, 270);
         
-        // Subtitle (larger font)
+        // Subtitle (moved up)
         g2.setColor(new Color(148, 163, 184, alpha));
-        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+        g2.setFont(new Font("Arial", Font.PLAIN, 18));
         String subtitle = "Σύστημα Διαχείρισης Κρατικού Προϋπολογισμού";
         fm = g2.getFontMetrics();
-        g2.drawString(subtitle, width / 2 - fm.stringWidth(subtitle) / 2, 385);
+        g2.drawString(subtitle, width / 2 - fm.stringWidth(subtitle) / 2, 300);
     }
     
     private void drawStatsBar(Graphics2D g2, int width) {
@@ -394,14 +381,14 @@ public class WelcomePanel extends JPanel {
         String[] labels = {"Ακρίβεια", "Διαθεσιμότητα", "Πιστοποίηση"};
         
         int startX = width / 2 - 300;
-        int y = 480;
+        int y = 380;
         int spacing = 200;
         
         for (int i = 0; i < 3; i++) {
             int x = startX + i * spacing;
             
             // Value
-            g2.setFont(new Font("Arial", Font.BOLD, 32));
+            g2.setFont(new Font("Arial", Font.BOLD, 28));
             GradientPaint valueGradient = new GradientPaint(
                 x, y, new Color(99, 102, 241),
                 x + 100, y + 20, new Color(139, 92, 246)
@@ -412,9 +399,9 @@ public class WelcomePanel extends JPanel {
             
             // Label
             g2.setColor(new Color(100, 116, 139));
-            g2.setFont(new Font("Arial", Font.BOLD, 11));
+            g2.setFont(new Font("Arial", Font.BOLD, 10));
             fm = g2.getFontMetrics();
-            g2.drawString(labels[i].toUpperCase(), x + 50 - fm.stringWidth(labels[i]) / 2, y + 25);
+            g2.drawString(labels[i].toUpperCase(), x + 50 - fm.stringWidth(labels[i]) / 2, y + 20);
         }
     }
     
