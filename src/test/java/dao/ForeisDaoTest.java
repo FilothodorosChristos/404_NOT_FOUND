@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import database.DataImporter;
 import database.DatabaseSetup;
+import dto.ForeasCompareDto;
+
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -147,6 +149,51 @@ public void testSelectForeisById() {
     public static void restoreDatabaseURL() {
     DatabaseSetup.setURL(REAL_DB_URL);
   }
+
+  @Test
+public void testCompareYears() throws Exception {
+    Foreis f1 = new Foreis(0, 301, 2023, "TYPE_C", "Foreas C", 100.0, 50.0, 150.0);
+    Foreis f2 = new Foreis(0, 301, 2024, "TYPE_C", "Foreas C", 200.0, 100.0, 300.0);
+    dao.addForeis(f1);
+    dao.addForeis(f2);
+
+    List<ForeasCompareDto> compareList = dao.compareYears(2023, 2024);
+
+    assertEquals(1, compareList.size());
+    ForeasCompareDto dto = compareList.get(0);
+
+    assertEquals(301, dto.getForeasId());
+    assertEquals("Foreas C", dto.getName());
+
+    assertEquals(100.0, dto.getRegularYear1());
+    assertEquals(200.0, dto.getRegularYear2());
+    assertEquals(100.0, dto.getRegularDiff());
+    assertEquals(100.0, dto.getRegularPercentChange());
+
+    assertEquals(50.0, dto.getPublicInvYear1());
+    assertEquals(100.0, dto.getPublicInvYear2());
+    assertEquals(50.0, dto.getPublicInvDiff());
+    assertEquals(100.0, dto.getPublicInvPercentChange());
+
+    assertEquals(150.0, dto.getTotalYear1());
+    assertEquals(300.0, dto.getTotalYear2());
+    assertEquals(150.0, dto.getTotalDiff());
+    assertEquals(100.0, dto.getTotalPercentChange());
+}
+
+@Test
+public void testSelectForeis_emptyResult() {
+    List<Foreis> list = dao.selectForeis(2025, "NON_EXISTENT_TYPE");
+    assertTrue(list.isEmpty());
+}
+
+@Test
+public void testDeleteForeis_nonExistingId() {
+    // απλώς δεν πρέπει να πετάξει exception
+    dao.deleteForeis(9999);
+}
+
+
 }
 
 
