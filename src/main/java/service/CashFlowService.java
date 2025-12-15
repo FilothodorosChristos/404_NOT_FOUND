@@ -119,22 +119,35 @@ public class CashFlowService {
         // Συγκεντρώνουμε όλα τα ονόματα
         Map<String, CashFlowCompareDto> comparisonMap = new HashMap<>();
 
-        for(String name : mapYear1.keySet()) {
-            double amountYear1 = mapYear1.get(name);
-            if(mapYear2.containsKey(name)) {
-                double amountYear2 = mapYear2.get(name);
-                comparisonMap.put(name, new CashFlowCompareDto(name, amountYear1, amountYear2, false, false));
-            } else {
-                comparisonMap.put(name, new CashFlowCompareDto(name, amountYear1, 0, false, true));
-            }
+        for (Map.Entry<String, Double> entry : mapYear1.entrySet()) {
+          String name = entry.getKey();
+          double amountYear1 = entry.getValue();
+
+          if (mapYear2.containsKey(name)) {
+              double amountYear2 = mapYear2.get(name);
+              comparisonMap.put(
+                  name,
+                  new CashFlowCompareDto(name, amountYear1, amountYear2, false, false)
+              );
+          } else {
+              comparisonMap.put(
+                  name,
+                  new CashFlowCompareDto(name, amountYear1, 0, false, true)
+              );
+          }
         }
 
-        for(String name : mapYear2.keySet()) {
-            if(!comparisonMap.containsKey(name)) {
-                double amountYear2 = mapYear2.get(name);
-                comparisonMap.put(name, new CashFlowCompareDto(name, 0, amountYear2, true, false));
-            }
-        }
+       for (Map.Entry<String, Double> entry : mapYear2.entrySet()) {
+    String name = entry.getKey();
+    double amountYear2 = entry.getValue();
+
+    if (!comparisonMap.containsKey(name)) {
+        comparisonMap.put(
+            name,
+            new CashFlowCompareDto(name, 0, amountYear2, true, false)
+        );
+    }
+    }
 
         return new ArrayList<>(comparisonMap.values());
     }
