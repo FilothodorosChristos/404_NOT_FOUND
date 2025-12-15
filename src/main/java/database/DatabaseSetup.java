@@ -171,7 +171,7 @@ public class DatabaseSetup {
       System.out.println("Οι πίνακες δημιουργήθηκαν με επιτυχία.");
 
     } catch (SQLException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
       System.err.println("Σφάλμα κατά τη δημιουργία των πινάκων: " + e.getMessage());
       //throw new RuntimeException("Σφάλμα κατά τη δημιουργία των πινάκων", e);
     }
