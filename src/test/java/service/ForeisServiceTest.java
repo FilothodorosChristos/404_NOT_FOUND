@@ -172,6 +172,43 @@ void testGetForeisByYearAndTypeInvalidType() {
             () -> service.getForeisByYearAndType(2023, ""));
   }
 
+  @Test
+void testAddForeisNull() {
+    assertThrows(IllegalArgumentException.class, () -> service.addForeis(null));
+}
+
+@Test
+void testUpdateForeisNullOrZeroId() {
+    assertThrows(IllegalArgumentException.class, () -> service.updateForeis(null));
+    Foreis f = new Foreis(0, 101, 2023, "TYPE", "Name", 10, 20, 30);
+    assertThrows(IllegalArgumentException.class, () -> service.updateForeis(f));
+}
+
+@Test
+void testUpdateForeisNonExisting() {
+    Foreis f = new Foreis(999, 101, 2023, "TYPE", "Name", 10, 20, 30);
+    assertThrows(IllegalArgumentException.class, () -> service.updateForeis(f));
+}
+
+@Test
+void testUpdateForeisTotalMismatch() {
+    service.addForeis(new Foreis(0, 101, 2023, "TYPE", "Name", 10, 20, 30));
+    Foreis existing = service.getForeisByYearAndType(2023, "TYPE").get(0);
+    Foreis updated = new Foreis(existing.getId(), 101, 2023, "TYPE", "Name", 10, 20, 50);
+    assertThrows(IllegalArgumentException.class, () -> service.updateForeis(updated));
+}
+
+@Test
+void testCompareYearsSameYear() {
+    assertThrows(IllegalArgumentException.class, () -> service.compareYears(2023, 2023));
+}
+
+@Test
+void testCompareYearsInvalidYear() {
+    assertThrows(IllegalArgumentException.class, () -> service.compareYears(2022, 2023));
+    assertThrows(IllegalArgumentException.class, () -> service.compareYears(2023, 2026));
+}
+
 }
 
 
