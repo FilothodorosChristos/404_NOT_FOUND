@@ -1,13 +1,40 @@
-# 404_NOT_FOUND
-At this repository , we are doing the project for coding.
-Use of JDBC (Java Database Connectivity) or SQLite for data management (creation of database with all Bidget info).
-Use of javax.swing for GUI
-Use of git and Maven
-Use of Junit...
-# another comment to test commit
-# just commenting and pushing try from filothodoros.
-#first comment from Antonis.
-hey guys its me EMMA
-#Comment from Katerina
-gamw thn Patra
-Change DataImporterTest Class by using in-memory database from andreas
+# GoverLens
+A **GUI-based state budget monitoring and editing system**.  
+This application allows users to view, edit, and track changes in the state budget through a graphical interface.
+
+
+## Project Description
+"GoverLens" is a simulation tool, demonstrating how a state budget can be managed.  
+The system provides an easy-to-use GUI where users can:
+
+- Display all budget items
+- Edit budget values
+- Add or delete budget entries
+- Validate changes against predefined constraints
+- Track and review all modifications
+- View charts based on budget values
+
+
+## Features
+
+- **Graphical User Interface (GUI)** for intuitive interactions  
+- **Display budget details**: View all entries with current values  
+- **Edit budget items**: Make changes to budget entries  
+- **Constraint checks**: Ensure updates are valid  
+- **Change tracking**: Show all modifications made in the budget
+
+
+## Status
+Under development 
+
+
+## TODO
+- Command line fallback: optionally run from terminal (if needed)
+-Improve test quality and fix reported bugs
+- Improve chart quality
+- Modify log table so as not to contain insertions from csv files
+
+
+## Author
+404_Not_Found
+

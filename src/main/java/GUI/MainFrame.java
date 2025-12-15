@@ -7,7 +7,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.ObjectStreamException;
 
-
 /**
  * Main GUI application class for GoverLens.
  * Handles navigation between panels using CardLayout.
@@ -15,7 +14,6 @@ import java.io.ObjectStreamException;
  * Uses Singleton pattern to ensure only one instance exists.
  */
 public class MainFrame extends JFrame { 
-    
     
     private static final long serialVersionUID = 1L;
 
@@ -69,7 +67,6 @@ public class MainFrame extends JFrame {
         BufferedImage tempLogo = null;
         BufferedImage tempBackground = null;
         try {
-            
             tempLogo = toBufferedImage(new ImageIcon("GoverLensLogo.jpg").getImage());
             tempBackground = toBufferedImage(new ImageIcon("BackroundPhoto.jpg").getImage());
         } catch (Exception e) {
@@ -82,7 +79,6 @@ public class MainFrame extends JFrame {
         initializePanels();
     }
 
-    
     private static BufferedImage toBufferedImage(Image img) {
         if (img == null) return null;
         if (img instanceof BufferedImage) {
@@ -117,15 +113,15 @@ public class MainFrame extends JFrame {
      * Sets title, size, location, close operation, icon, and layout.
      */
     private void setupFrame() {
-        setTitle("Καλώς Ήρθατε στην GoverLens.");
-        setSize(1000, 800);
+        setTitle("GoverLens - Σύστημα Διαχείρισης Κρατικού Προϋπολογισμού");
+        setSize(1200, 900);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(logoImage); 
         
-        
         cardLayout = new CardLayout(); 
         mainPanel = new JPanel(cardLayout);
+        mainPanel.setBackground(new Color(10, 14, 39));
         add(mainPanel);
     }
     
@@ -137,10 +133,8 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Πρέπει να επιλέξετε πρώτα έτος.", "Προειδοποίηση", JOptionPane.WARNING_MESSAGE);
             return;
         }
-       
         
         FinanceChartPanel chartPanel = FinanceChartPanel.createPanel(selectedYear);
-        
         mainPanel.add(chartPanel, FINANCE_CHART); 
         showPanel(FINANCE_CHART);
     }
@@ -148,14 +142,12 @@ public class MainFrame extends JFrame {
     /**
      * Initializes and adds all panel instances to the CardLayout.
      * Each panel is registered with its corresponding name constant.
-     * Note: LogViewerPanel and DataEditorPanel are created dynamically when needed.
      */
     private void initializePanels() {
         mainPanel.add(new WelcomePanel(this), WELCOME);
         mainPanel.add(new ProjectSelectionPanel(this), PROJECT_SELECTION);
         mainPanel.add(new YearSelectionPanel(this), YEAR_SELECTION);
         mainPanel.add(new ActionSelectionPanel(this), ACTION_SELECTION);
-        // LogViewerPanel and DataEditorPanel are created dynamically
     }
     
     /**
@@ -168,10 +160,8 @@ public class MainFrame extends JFrame {
             return;
         }
         
-        // Δημιούργησε ΝΕΟ panel κάθε φορά
         BudgetViewPanel budgetPanel = new BudgetViewPanel(this);
         
-        // Αφαίρεσε το παλιό αν υπάρχει
         for (Component comp : mainPanel.getComponents()) {
             if (comp instanceof BudgetViewPanel) {
                 mainPanel.remove(comp);
@@ -179,7 +169,6 @@ public class MainFrame extends JFrame {
             }
         }
         
-        // Πρόσθεσε το νέο
         mainPanel.add(budgetPanel, BUDGET_VIEW);
         showPanel(BUDGET_VIEW);
     }
@@ -206,13 +195,11 @@ public class MainFrame extends JFrame {
     
     /**
      * Shows the data editor panel with specific year and data type.
-     * This method is used for navigation from LogViewerPanel.
      *
      * @param year the year to display
      * @param dataType the type of data to edit ("cashflow" or "foreis")
      */
     public void showDataEditorPanel(int year, String dataType) {
-        // Αφαίρεσε το παλιό panel αν υπάρχει
         for (Component comp : mainPanel.getComponents()) {
             if (comp instanceof DataEditorPanel) {
                 mainPanel.remove(comp);
@@ -220,22 +207,18 @@ public class MainFrame extends JFrame {
             }
         }
         
-        // Δημιούργησε νέο panel
         DataEditorPanel editorPanel = new DataEditorPanel(this, year, dataType);
-        
         mainPanel.add(editorPanel, DATA_EDITOR);
         showPanel(DATA_EDITOR);
     }
     
     /**
      * Shows the log viewer panel with return parameters.
-     * Creates a new panel each time to ensure fresh data.
      *
      * @param year the year to return to when going back
      * @param dataType the data type to return to when going back
      */
     public void showLogViewer(int year, String dataType) {
-        // Αφαίρεσε το παλιό panel αν υπάρχει
         for (Component comp : mainPanel.getComponents()) {
             if (comp instanceof LogViewerPanel) {
                 mainPanel.remove(comp);
@@ -243,9 +226,7 @@ public class MainFrame extends JFrame {
             }
         }
         
-        // Δημιούργησε νέο panel με παραμέτρους επιστροφής
         LogViewerPanel logPanel = new LogViewerPanel(this, year, dataType);
-        
         mainPanel.add(logPanel, LOG_VIEWER);
         showPanel(LOG_VIEWER);
     }
@@ -265,7 +246,6 @@ public class MainFrame extends JFrame {
      * @return a copy of the logo Image object
      */
     public Image getLogoImage() { 
-        
         return logoImage != null ? copyImage(logoImage) : null;
     }
     
@@ -275,7 +255,6 @@ public class MainFrame extends JFrame {
      * @return a copy of the background Image object
      */
     public Image getBackgroundImage() { 
-        
         return backgroundImage != null ? copyImage(backgroundImage) : null;
     }
 
@@ -298,7 +277,6 @@ public class MainFrame extends JFrame {
     
     /**
      * Sets the selected budget year.
-     * Prints the selected year to console.
      *
      * @param year the year to set as selected
      */
@@ -309,9 +287,7 @@ public class MainFrame extends JFrame {
     
     /**
      * Called during deserialization to replace the object being deserialized
-     * with the existing singleton instance, preventing the creation of new instances.
-     * @return The existing singleton instance.
-     * @throws ObjectStreamException 
+     * with the existing singleton instance.
      */
     protected Object readResolve() throws ObjectStreamException {
         return getInstance();
@@ -319,12 +295,17 @@ public class MainFrame extends JFrame {
     
     /**
      * Main entry point for the GoverLens application.
-     * Uses SwingUtilities.invokeLater to ensure thread safety.
      *
      * @param args command-line arguments (unused)
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
             MainFrame frame = MainFrame.getInstance();
             frame.setVisible(true);
             frame.showPanel(WELCOME);

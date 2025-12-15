@@ -2,139 +2,427 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
+import java.awt.event.*;
+import java.awt.geom.*;
 
 /**
- * WelcomePanel displays the initial welcome screen of the application.
- * Shows the GoverLens logo, welcome message, and navigation to project selection.
+ * Modern WelcomePanel with animated background and professional design.
+ * Displays the GoverLens logo, welcome message, and navigation.
  */
 public class WelcomePanel extends JPanel {
-	
-	/** Reference to the main application frame. */
-	private final MainFrame mainFrame;
-	
-	/** White color for text. */
-	private static final Color TEXT_WHITE = Color.WHITE;
-	
-	/** Font used for main title. */
-	private static final Font TITLE_FONT = new Font("Tahoma", Font.PLAIN, 50);
-	
-	/** Font used for subtitles. */
-	private static final Font SUBTITLE_FONT = new Font("Tahoma", Font.PLAIN, 24);
-	
-	/**
-	 * Constructs a WelcomePanel with the specified MainFrame reference.
-	 *
-	 * @param mainFrame the main application frame
-	 */
-	public WelcomePanel(MainFrame mainFrame) {
-		this.mainFrame = mainFrame;
-		setLayout(new BorderLayout());
-		createUI();
-	}
-	
-	/**
-	 * Creates and initializes the user interface components.
-	 * Sets up the logo background, title, subtitle, and navigation button.
-	 */
-	private void createUI() {
-		JPanel logoBackgroundPanel = new JPanel(new BorderLayout()) {
-			/**
-			 * Paints the background image and circular logo.
-			 *
-			 * @param g the Graphics context
-			 */
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				
-				/**Background */
-				if (mainFrame.getBackgroundImage() != null) {
-					g.drawImage(mainFrame.getBackgroundImage(), 0, 0, getWidth(), getHeight(), this);
-				}
-				
-				/**circular logo */
-				if (mainFrame.getLogoImage() != null) {
-					Graphics2D g2 = (Graphics2D) g.create();
-					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-					
-					int diameter = (int) (Math.min(getWidth(), getHeight()) * 0.3);
-					int x = (getWidth() - diameter) / 2;
-					int y = (getHeight() - diameter) / 3;
-					
-					Shape clip = new Ellipse2D.Double(x, y, diameter, diameter);
-					g2.setClip(clip);
-					g2.drawImage(mainFrame.getLogoImage(), x, y, diameter, diameter, this);
-					
-					g2.setClip(null);
-					g2.setStroke(new BasicStroke(4));
-					g2.setColor(Color.DARK_GRAY);
-					g2.drawOval(x, y, diameter, diameter);
-					g2.dispose();
-				}
-			}
-		};
-		
-		/** center panel */
-		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-		centerPanel.setOpaque(false);
-		centerPanel.add(Box.createVerticalStrut(30));
-		centerPanel.add(createLabel("Καλώς ήρθατε στην GmoverLens! ", TITLE_FONT));
-		
-		logoBackgroundPanel.add(centerPanel, BorderLayout.CENTER);
-		
-		/**bottom section */
-		JPanel bottomSection = new JPanel();
-		bottomSection.setLayout(new BoxLayout(bottomSection, BoxLayout.Y_AXIS));
-		bottomSection.setOpaque(false);
-		bottomSection.add(Box.createVerticalStrut(80));
-		bottomSection.add(createLabel("________________________________________________________", SUBTITLE_FONT));
-		bottomSection.add(Box.createVerticalStrut(40));
-		bottomSection.add(createLabel("Περισσότερη διαφάνεια , λιγότερη δυσκολία", SUBTITLE_FONT));
-		bottomSection.add(Box.createVerticalStrut(10));
-		
-		bottomSection.add(createLabel("Μάθε που πηγαίνει κάθε ευρώ και ", SUBTITLE_FONT));
-		bottomSection.add(Box.createVerticalStrut(10));
-		bottomSection.add(createLabel(" επεξεργάσου τα δεδομένα σαν υπουργός .", SUBTITLE_FONT));
-		bottomSection.add(Box.createVerticalStrut(80));
-		
-		
-		JButton nextButton = new JButton("Ξεκινήστε!");
-		nextButton.setPreferredSize(new Dimension(250, 60));
-		nextButton.addActionListener(e -> mainFrame.showPanel(MainFrame.PROJECT_SELECTION));
-		
+    
+    private final MainFrame mainFrame;
+    private Timer animationTimer;
+    private float rotationAngle = 0;
+    private int fadeInProgress = 0;
+    private Point mousePosition = new Point(0, 0);
+    private JButton enterButton;
+    private JPanel[] featureCards;
+    
+    /**
+     * Constructs a WelcomePanel with modern design.
+     *
+     * @param mainFrame the main application frame
+     */
+    public WelcomePanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        setLayout(null);
+        setBackground(new Color(10, 14, 39));
+        
+        createUI();
+        setupAnimations();
+        setupMouseTracking();
+    }
+    
+    /**
+     * Creates all UI components.
+     */
+    private void createUI() {
+        // Components will be positioned dynamically in paintComponent
+        // Create enter button
+        enterButton = createStyledButton();
+        add(enterButton);
+        
+        // Create feature cards
+        createFeatureCards();
+        
+        // Add component listener to reposition on resize
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                repositionComponents();
+            }
+        });
+    }
+    
+    /**
+     * Repositions all components to center of panel.
+     */
+    private void repositionComponents() {
+        int width = getWidth();
+        int height = getHeight();
+        
+        // Center button
+        int buttonWidth = 250;
+        int buttonHeight = 50;
+        enterButton.setBounds((width - buttonWidth) / 2, 580, buttonWidth, buttonHeight);
+        
+        // Reposition feature cards
+        int cardWidth = 300;
+        int cardHeight = 120;
+        int gap = 25;
+        
+        // Calculate start position to center all cards
+        int totalFirstRowWidth = 3 * cardWidth + 2 * gap;
+        int firstRowStartX = (width - totalFirstRowWidth) / 2;
+        int startY = 660;
+        
+        // First row: 3 cards
+        for (int i = 0; i < 3; i++) {
+            int x = firstRowStartX + i * (cardWidth + gap);
+            featureCards[i].setBounds(x, startY, cardWidth, cardHeight);
+        }
+        
+        // Second row: 2 cards (centered)
+        int totalSecondRowWidth = 2 * cardWidth + gap;
+        int secondRowStartX = (width - totalSecondRowWidth) / 2;
+        for (int i = 3; i < 5; i++) {
+            int col = i - 3;
+            int x = secondRowStartX + col * (cardWidth + gap);
+            featureCards[i].setBounds(x, startY + cardHeight + gap, cardWidth, cardHeight);
+        }
+    }
+    
+    /**
+     * Creates the main styled button.
+     */
+    private JButton createStyledButton() {
+        JButton button = new JButton("ΕΙΣΟΔΟΣ ΣΤΟ ΣΥΣΤΗΜΑ →") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Gradient background
+                GradientPaint gradient = new GradientPaint(
+                    0, 0, new Color(99, 102, 241),
+                    getWidth(), getHeight(), new Color(139, 92, 246)
+                );
+                g2.setPaint(gradient);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                
+                // Button text
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("Arial", Font.BOLD, 16));
+                FontMetrics fm = g2.getFontMetrics();
+                int textX = (getWidth() - fm.stringWidth(getText())) / 2;
+                int textY = (getHeight() + fm.getAscent()) / 2 - 2;
+                g2.drawString(getText(), textX, textY);
+                
+                g2.dispose();
+            }
+        };
+        
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                JButton btn = (JButton) e.getSource();
+                btn.setBounds(btn.getX(), btn.getY() - 3, btn.getWidth(), btn.getHeight());
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                repositionComponents();
+            }
+        });
+        
+        button.addActionListener(e -> 
+            mainFrame.showPanel(MainFrame.PROJECT_SELECTION)
+        );
+        return button;
+    }
+    
+    /**
+     * Creates the 5 feature cards (removed "Ολοκλήρωση").
+     */
+    private void createFeatureCards() {
+        featureCards = new JPanel[5];
+        String[] titles = {
+            "Διαγράμματα",
+            "Έγκυρα Δεδομένα",
+            "Δυνατότητα Επεξεργασίας",
+            "Διαφάνεια",
+            "Multi-Platform"
+        };
+        String[] descriptions = {
+            "Πλήρης ανάλυση δαπανών και εσόδων",
+            "Κρυπτογράφηση 256-bit",
+            "Παρουσίαση εσόδων εξόδων",
+            "Πλήρης καταγραφή συναλλαγών",
+            "Πρόσβαση από κάθε συσκευή"
+        };
+        String[] emojis = {"📈", "🔒", "⚡", "🌐", "📱"};
+        
+        // Create all cards
+        for (int i = 0; i < 5; i++) {
+            featureCards[i] = createFeatureCard(titles[i], descriptions[i], emojis[i]);
+            add(featureCards[i]);
+        }
+        
+        // Position them
+        repositionComponents();
+    }
+    
+    /**
+     * Creates a single feature card.
+     */
+    private JPanel createFeatureCard(String title, String desc, String emoji) {
+        JPanel card = new JPanel() {
+            private boolean isHovered = false;
+            
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Background
+                if (isHovered) {
+                    g2.setColor(new Color(99, 102, 241, 20));
+                } else {
+                    g2.setColor(new Color(15, 23, 42, 128));
+                }
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                
+                // Border
+                g2.setColor(new Color(99, 102, 241, isHovered ? 100 : 50));
+                g2.setStroke(new BasicStroke(1));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                
+                g2.dispose();
+            }
+        };
+        
+        card.setLayout(null);
+        card.setOpaque(false);
+        
+        // Emoji
+        JLabel emojiLabel = new JLabel(emoji);
+        emojiLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 36));
+        emojiLabel.setBounds(20, 15, 50, 50);
+        card.add(emojiLabel);
+        
+        // Title
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        titleLabel.setForeground(new Color(226, 232, 240));
+        titleLabel.setBounds(20, 65, 260, 20);
+        card.add(titleLabel);
+        
+        // Description
+        JLabel descLabel = new JLabel("<html>" + desc + "</html>");
+        descLabel.setFont(new Font("Arial", Font.PLAIN, 11));
+        descLabel.setForeground(new Color(100, 116, 139));
+        descLabel.setBounds(20, 85, 260, 30);
+        card.add(descLabel);
+        
+        // Hover effect
+        card.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                JPanel source = (JPanel) e.getSource();
+                source.putClientProperty("hover", true);
+                card.repaint();
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                JPanel source = (JPanel) e.getSource();
+                source.putClientProperty("hover", false);
+                card.repaint();
+            }
+        });
+        
+        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        return card;
+    }
+    
+    /**
+     * Sets up animation timer.
+     */
+    private void setupAnimations() {
+        animationTimer = new Timer(30, e -> {
+            rotationAngle += 0.5f;
+            if (rotationAngle >= 360) rotationAngle = 0;
+            
+            if (fadeInProgress < 100) {
+                fadeInProgress += 2;
+            }
+            
+            repaint();
+        });
+        animationTimer.start();
+    }
+    
+    /**
+     * Sets up mouse tracking for parallax effect.
+     */
+    private void setupMouseTracking() {
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mousePosition = e.getPoint();
+            }
+        });
+    }
+    
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-		JPanel navigationPanel = new JPanel(new BorderLayout());
-		navigationPanel.setOpaque(false);
-		navigationPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		
-		JPanel nextButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		nextButtonPanel.setOpaque(false);
-		nextButtonPanel.add(nextButton);
-		navigationPanel.add(nextButtonPanel, BorderLayout.CENTER);
-		
-		JPanel southWrapper = new JPanel(new BorderLayout());
-		southWrapper.setOpaque(false);
-		southWrapper.add(bottomSection, BorderLayout.CENTER);
-		southWrapper.add(navigationPanel, BorderLayout.SOUTH);
-		
-		logoBackgroundPanel.add(southWrapper, BorderLayout.SOUTH);
-		add(logoBackgroundPanel);
-	}
-	
-	/**
-	 * Creates a centered JLabel with the specified text and font.
-	 *
-	 * @param text the text to display
-	 * @param font the font to use
-	 * @return the configured JLabel
-	 */
-	private JLabel createLabel(String text, Font font) {
-		JLabel label = new JLabel(text);
-		label.setFont(font);
-		label.setForeground(TEXT_WHITE);
-		label.setAlignmentX(Component.CENTER_ALIGNMENT);
-		return label;
-	}
+        int width = getWidth();
+        int height = getHeight();
+        
+        // Draw animated grid
+        drawAnimatedGrid(g2, width, height);
+        
+        // Draw floating orbs
+        drawFloatingOrbs(g2, width, height);
+        
+        // Draw header with logo (larger and more prominent)
+        drawHeader(g2, width);
+        
+        // Draw stats bar
+        drawStatsBar(g2, width);
+        
+        // Draw footer
+        drawFooter(g2, width, height);
+        
+        g2.dispose();
+    }
+    
+    private void drawAnimatedGrid(Graphics2D g2, int width, int height) {
+        g2.setColor(new Color(99, 102, 241, 13));
+        g2.setStroke(new BasicStroke(1));
+        
+        int gridSize = 50;
+        int offset = (int)(rotationAngle % gridSize);
+        
+        for (int x = -offset; x < width; x += gridSize) {
+            g2.drawLine(x, 0, x, height);
+        }
+        for (int y = -offset; y < height; y += gridSize) {
+            g2.drawLine(0, y, width, y);
+        }
+    }
+    
+    private void drawFloatingOrbs(Graphics2D g2, int width, int height) {
+        float parallax1 = (mousePosition.x - width / 2f) * 0.01f;
+        float parallax2 = (mousePosition.y - height / 2f) * 0.01f;
+        
+        // Orb 1
+        RadialGradientPaint gradient1 = new RadialGradientPaint(
+            -200 + parallax1, -200 + parallax2, 250,
+            new float[]{0f, 1f},
+            new Color[]{new Color(99, 102, 241, 76), new Color(99, 102, 241, 0)}
+        );
+        g2.setPaint(gradient1);
+        g2.fillOval((int)(-200 + parallax1), (int)(-200 + parallax2), 500, 500);
+        
+        // Orb 2
+        RadialGradientPaint gradient2 = new RadialGradientPaint(
+            width - 150 + parallax1 * 1.5f, height - 150 + parallax2 * 1.5f, 200,
+            new float[]{0f, 1f},
+            new Color[]{new Color(139, 92, 246, 76), new Color(139, 92, 246, 0)}
+        );
+        g2.setPaint(gradient2);
+        g2.fillOval((int)(width - 350 + parallax1 * 1.5f), (int)(height - 350 + parallax2 * 1.5f), 400, 400);
+    }
+    
+    private void drawHeader(Graphics2D g2, int width) {
+        int alpha = Math.min(255, fadeInProgress * 255 / 100);
+        
+        // Draw logo (larger size)
+        Image logo = mainFrame.getLogoImage();
+        if (logo != null) {
+            int logoSize = 180;
+            int logoX = width / 2 - logoSize / 2;
+            int logoY = 120;
+            
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f));
+            
+            // Create circular clip
+            Shape oldClip = g2.getClip();
+            g2.setClip(new Ellipse2D.Double(logoX, logoY, logoSize, logoSize));
+            g2.drawImage(logo, logoX, logoY, logoSize, logoSize, this);
+            g2.setClip(oldClip);
+            
+            // Draw border
+            g2.setColor(new Color(99, 102, 241, alpha));
+            g2.setStroke(new BasicStroke(3));
+            g2.drawOval(logoX, logoY, logoSize, logoSize);
+            
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        }
+        
+        // Title (larger font)
+        g2.setColor(new Color(255, 255, 255, alpha));
+        g2.setFont(new Font("Arial", Font.BOLD, 52));
+        String title = "GoverLens Pro";
+        FontMetrics fm = g2.getFontMetrics();
+        g2.drawString(title, width / 2 - fm.stringWidth(title) / 2, 350);
+        
+        // Subtitle (larger font)
+        g2.setColor(new Color(148, 163, 184, alpha));
+        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+        String subtitle = "Σύστημα Διαχείρισης Κρατικού Προϋπολογισμού";
+        fm = g2.getFontMetrics();
+        g2.drawString(subtitle, width / 2 - fm.stringWidth(subtitle) / 2, 385);
+    }
+    
+    private void drawStatsBar(Graphics2D g2, int width) {
+        String[] values = {"99.9%", "24/7", "ISO"};
+        String[] labels = {"Ακρίβεια", "Διαθεσιμότητα", "Πιστοποίηση"};
+        
+        int startX = width / 2 - 300;
+        int y = 480;
+        int spacing = 200;
+        
+        for (int i = 0; i < 3; i++) {
+            int x = startX + i * spacing;
+            
+            // Value
+            g2.setFont(new Font("Arial", Font.BOLD, 32));
+            GradientPaint valueGradient = new GradientPaint(
+                x, y, new Color(99, 102, 241),
+                x + 100, y + 20, new Color(139, 92, 246)
+            );
+            g2.setPaint(valueGradient);
+            FontMetrics fm = g2.getFontMetrics();
+            g2.drawString(values[i], x + 50 - fm.stringWidth(values[i]) / 2, y);
+            
+            // Label
+            g2.setColor(new Color(100, 116, 139));
+            g2.setFont(new Font("Arial", Font.BOLD, 11));
+            fm = g2.getFontMetrics();
+            g2.drawString(labels[i].toUpperCase(), x + 50 - fm.stringWidth(labels[i]) / 2, y + 25);
+        }
+    }
+    
+    private void drawFooter(Graphics2D g2, int width, int height) {
+        g2.setColor(new Color(71, 85, 105));
+        g2.setFont(new Font("Arial", Font.PLAIN, 10));
+        String footer = "© 2025 GoverLens Pro. Όλα τα δικαιώματα διατηρούνται.";
+        FontMetrics fm = g2.getFontMetrics();
+        g2.drawString(footer, width / 2 - fm.stringWidth(footer) / 2, height - 15);
+    }
 }

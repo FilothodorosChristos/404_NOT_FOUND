@@ -11,8 +11,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.DriverManager;
 
-import database.DatabaseSetup;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseSetupTest {
@@ -35,12 +33,13 @@ public class DatabaseSetupTest {
     }// Δημιουργεί πίνακες
 
     @BeforeEach
-    void cleanTables() throws SQLException {
-        try (Statement stmt = conn.createStatement()) {
-            stmt.execute("DELETE FROM foreis");
-            stmt.execute("DELETE FROM cashflows");
+        void resetDB() throws SQLException {
+            // Drop tables + triggers (όπως στην cleanTables())
+            DatabaseSetup.cleanTables();
+            // recreate από την αρχή (πίνακες + triggers)
+            DatabaseSetup.setDatabase();
         }
-    }
+
 
     @AfterAll
     static void teardownClass() throws Exception {
@@ -92,4 +91,64 @@ public class DatabaseSetupTest {
         assertTrue(tableExists("foreis"), "Ο πίνακας 'foreis' πρέπει να υπάρχει μετά το reset.");
         assertTrue(tableExists("cashflows"), "Ο πίνακας 'cashflows' πρέπει να υπάρχει μετά το reset.");
     }
+
+    @Test
+    void testForeisTriggers() throws SQLException {
+        try (Connection conn = DatabaseSetup.getConnection();
+            Statement stmt = conn.createStatement()) {
+
+            // INSERT trigger
+            stmt.executeUpdate("INSERT INTO foreis(foreas_id, year_id, type, name, regular_budget, public_inv_budget, total) " +
+                    "VALUES(1, 2025, 'typeA', 'NameA', 100.0, 50.0, 150.0)");
+
+            // Έλεγχος log μετά το INSERT
+            try (ResultSet rs = stmt.executeQuery("SELECT * FROM log WHERE table_name='foreis' AND operation='INSERT'")) {
+                assertTrue(rs.next(), "Το trigger INSERT στον foreis δεν εκτελέστηκε.");
+            }
+
+            // UPDATE trigger
+            stmt.executeUpdate("UPDATE foreis SET name='NameB' WHERE foreas_id=1 AND year_id=2025");
+
+            try (ResultSet rs = stmt.executeQuery("SELECT * FROM log WHERE table_name='foreis' AND operation='UPDATE'")) {
+                assertTrue(rs.next(), "Το trigger UPDATE στον foreis δεν εκτελέστηκε.");
+            }
+
+            // DELETE trigger
+            stmt.executeUpdate("DELETE FROM foreis WHERE foreas_id=1 AND year_id=2025");
+
+            try (ResultSet rs = stmt.executeQuery("SELECT * FROM log WHERE table_name='foreis' AND operation='DELETE'")) {
+                assertTrue(rs.next(), "Το trigger DELETE στον foreis δεν εκτελέστηκε.");
+            }
+        }
+    }
+
+    @Test
+    void testCashflowsTriggers() throws SQLException {
+        try (Connection conn = DatabaseSetup.getConnection();
+            Statement stmt = conn.createStatement()) {
+
+            // INSERT trigger
+            stmt.executeUpdate("INSERT INTO cashflows(year_id, type, name, amount) " +
+                    "VALUES(2025, 'Income', 'CashA', 200.0)");
+
+            try (ResultSet rs = stmt.executeQuery("SELECT * FROM log WHERE table_name='cashflows' AND operation='INSERT'")) {
+                assertTrue(rs.next(), "Το trigger INSERT στον cashflows δεν εκτελέστηκε.");
+            }
+
+            // UPDATE trigger
+            stmt.executeUpdate("UPDATE cashflows SET amount=300.0 WHERE name='CashA'");
+
+            try (ResultSet rs = stmt.executeQuery("SELECT * FROM log WHERE table_name='cashflows' AND operation='UPDATE'")) {
+                assertTrue(rs.next(), "Το trigger UPDATE στον cashflows δεν εκτελέστηκε.");
+            }
+
+            // DELETE trigger
+            stmt.executeUpdate("DELETE FROM cashflows WHERE name='CashA'");
+
+            try (ResultSet rs = stmt.executeQuery("SELECT * FROM log WHERE table_name='cashflows' AND operation='DELETE'")) {
+                assertTrue(rs.next(), "Το trigger DELETE στον cashflows δεν εκτελέστηκε.");
+            }
+        }
+    }
+
 }

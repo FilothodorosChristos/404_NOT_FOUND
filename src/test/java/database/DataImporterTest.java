@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import java.lang.reflect.Field;
 //import java.nio.file.Paths;
 //import java.nio.file.Files;
 //import database.DatabaseSetup;
@@ -26,32 +25,18 @@ public class DataImporterTest {
     @BeforeAll
     static void setupTestUrl() throws Exception {
         Class.forName("org.sqlite.JDBC");
-        // Χρησιμοποιούμε reflection για να αλλάξουμε το private static final πεδίο URL στην DataImporter
-        Field dataImporterUrlField = DataImporter.class.getDeclaredField("URL");
-        dataImporterUrlField.setAccessible(true);
-        dataImporterUrlField.set(null, TEST_URL);
-        Field databaseSetupUrlField = DatabaseSetup.class.getDeclaredField("URL");
-        databaseSetupUrlField.setAccessible(true);
-        databaseSetupUrlField.set(null, TEST_URL);
+        DataImporter.setURL(TEST_URL);
+        DatabaseSetup.setURL(TEST_URL);
     }
     
     //Εισάγουμε το url της πραγματικής βάσης μετά τα tests
     @AfterAll
     static void restoreRealUrl() throws Exception {
-    Field dataImporterUrlField = DataImporter.class.getDeclaredField("URL");
-    dataImporterUrlField.setAccessible(true);
-    dataImporterUrlField.set(null, REAL_URL);
-    
-    Field databaseSetupUrlField = DatabaseSetup.class.getDeclaredField("URL");
-    databaseSetupUrlField.setAccessible(true);
-    databaseSetupUrlField.set(null, REAL_URL);
+        DataImporter.setURL(REAL_URL);
+        DatabaseSetup.setURL(REAL_URL);
     }
     // Πριν από κάθε test, δημιουργούμε το σχήμα της βάσης δεδομένων
-    // throws error ....
-    // @BeforeEach
-    // void deleteTestDbFile() throws Exception {
-    //     Files.deleteIfExists(Paths.get("test_db_temp.db"));
-    // }
+   
     @BeforeEach
     void setupDatabaseSchema() {
     
