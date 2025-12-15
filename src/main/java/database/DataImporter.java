@@ -110,7 +110,7 @@ public class DataImporter {
   }
 
   /** 
-   * Αναγνώσει δεδομένα από αρχείο CSV και τα εισάγει στον πίνακα cashflows.
+   * Διαβάζει δεδομένα από αρχείο CSV και τα εισάγει στον πίνακα cashflows.
    * 
    * @param filename
    * @param type
