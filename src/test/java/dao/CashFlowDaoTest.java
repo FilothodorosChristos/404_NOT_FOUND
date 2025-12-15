@@ -1,5 +1,6 @@
 package dao;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -145,5 +146,24 @@ public void testSelectCashFlowById() {
     DatabaseSetup.setURL(REAL_DB_URL);
   }
  
+  @Test
+public void testSelectCashFlow_emptyResult() {
+    List<CashFlow> list = dao.selectCashFlow(2025, "nonexistent");
+    assertTrue(list.isEmpty());
+}
+
+@Test
+public void testDeleteCashFlow_nonExistingId() {
+    // Δεν πρέπει να πετάξει exception αν το ID δεν υπάρχει
+    dao.deleteCashFlow(9999);
+}
+
+@Test
+public void testUpdateCashFlow_nonExisting() {
+    CashFlow c = new CashFlow(9999, 2023, "income", "NonExisting", 100.0);
+    // Αν το update δεν βρει την εγγραφή, δεν κάνουμε τίποτα ή πετάει exception ανάλογα με την υλοποίηση
+    assertDoesNotThrow(() -> dao.updateCashFlow(c));
+}
+
 }
 
