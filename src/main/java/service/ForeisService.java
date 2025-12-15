@@ -2,6 +2,8 @@ package service;
 
 import dao.Foreis;
 import dao.ForeisDao;
+import dto.ForeasCompareDto;
+
 import java.util.List;
 import util.ValidationUtils;
 
@@ -133,5 +135,30 @@ public class ForeisService {
     }
     return foreisDao.selectForeis(year, type);
   }
+
+  /**
+   * Συγκρίνει δύο έτη και επιστρέφει λίστα DTO με budgets.
+   *
+   * @param year1 πρώτο έτος
+   * @param year2 δεύτερο έτος
+   * @return λίστα ForeasCompareDto με σύγκριση regular, public_inv και total
+   * @throws IllegalArgumentException αν τα έτη είναι ίδια ή εκτός ορίων
+   */
+  public List<ForeasCompareDto> compareYears(int year1, int year2) {
+      // validation
+      if (year1 == year2) {
+          throw new IllegalArgumentException("Τα έτη πρέπει να είναι διαφορετικά");
+      }
+      ValidationUtils.validateYear(year1);
+      ValidationUtils.validateYear(year2);
+
+      try {
+          return foreisDao.compareYears(year1, year2);
+      } catch (Exception e) {
+          throw new RuntimeException("Σφάλμα κατά τη σύγκριση ετών", e);
+      }
+  }
+
 }
+
 
