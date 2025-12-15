@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import dao.CashFlow;
 import dao.CashFlowDao;
 import database.DatabaseSetup;
+import dto.CashFlowCompareDto;
 
 import java.io.File;
 import java.util.List;
@@ -82,10 +83,6 @@ public class CashFlowServiceTest {
   void testAddCashflowNull() {
     assertThrows(IllegalArgumentException.class, () -> service.addCashflow(null));
   }
-
-  // -------------------------------------------------------------
-  // UPDATE TESTS
-  // -------------------------------------------------------------
 
   @Test
   void testUpdateCashflowInvalidId() {
@@ -171,9 +168,8 @@ public class CashFlowServiceTest {
     assertDoesNotThrow(() -> service.deleteCashflow(9999));
   }
 
-  // -------------------------------------------------------------
+  
   // GET TESTS
-  // -------------------------------------------------------------
 
   @Test
   void testGetCashflowsSuccessEmptyResult() {
@@ -194,10 +190,58 @@ public class CashFlowServiceTest {
             () -> service.getCashflows(2023, ""));
   }
 
+  @Test
+void testCompareCashFlows() {
+    CashFlowDao dao = new CashFlowDao();
+
+    // -------------------------
+    // Έτος 2023
+    // -------------------------
+    dao.addCashFlow(new CashFlow(0, 2023, "income", "Salary", 2000.0));
+    dao.addCashFlow(new CashFlow(0, 2023, "income", "Bonus", 500.0));
+    dao.addCashFlow(new CashFlow(0, 2023, "income", "Other Income", 300.0));
+
+    // -------------------------
+    // Έτος 2024
+    // -------------------------
+    dao.addCashFlow(new CashFlow(0, 2024, "income", "Salary", 2200.0));        // κοινό όνομα
+    dao.addCashFlow(new CashFlow(0, 2024, "income", "Gift", 400.0));          // νέο όνομα
+    dao.addCashFlow(new CashFlow(0, 2024, "income", "Bonus", 600.0));         // κοινό όνομα με αλλαγή
+
+    // Κλήση μεθόδου compareCashFlows
+    List<CashFlowCompareDto> comparison = service.compareCashFlows(2023, 2024, "income");
+
+    assertEquals(4, comparison.size()); // Salary, Bonus, Other Income, Gift → 5 διαφορετικά ονόματα
+
+    for (CashFlowCompareDto dto : comparison) {
+        switch (dto.getName()) {
+            case "Salary" -> {
+                assertEquals(2000.0, dto.getAmountYear1());
+                assertEquals(2200.0, dto.getAmountYear2());
+                assertFalse(dto.isMissingInYear1());
+                assertFalse(dto.isMissingInYear2());
+            }
+            case "Bonus" -> {
+                assertEquals(500.0, dto.getAmountYear1());
+                assertEquals(600.0, dto.getAmountYear2());
+                assertFalse(dto.isMissingInYear1());
+                assertFalse(dto.isMissingInYear2());
+            }
+            case "Other Income" -> {
+                assertEquals(300.0, dto.getAmountYear1());
+                assertEquals(0.0, dto.getAmountYear2());
+                assertFalse(dto.isMissingInYear1());
+                assertTrue(dto.isMissingInYear2());
+            }
+            case "Gift" -> {
+                assertEquals(0.0, dto.getAmountYear1());
+                assertEquals(400.0, dto.getAmountYear2());
+                assertTrue(dto.isMissingInYear1());
+                assertFalse(dto.isMissingInYear2());
+            }
+            default -> fail("Unexpected cashflow name: " + dto.getName());
+        }
+    }
 }
 
-
-
-
-
-
+}
