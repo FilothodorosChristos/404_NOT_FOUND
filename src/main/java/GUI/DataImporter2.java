@@ -9,14 +9,14 @@ import static GUI.FinanceChartPanel.DataItem;
 /**
  * Handles the loading and parsing of financial data from CSV files.
  */
-public class DataImporter {
+public class DataImporter2 {
     
     private final String year;
     private final List<DataItem> revenues = new ArrayList<>();
     private final List<DataItem> expenses = new ArrayList<>();
     private final List<DataItem> agencies = new ArrayList<>();
     
-    public DataImporter(String year) {
+    public DataImporter2(String year) {
         this.year = year;
     }
     

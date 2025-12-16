@@ -41,7 +41,7 @@ public class FinanceChartPanel extends JPanel {
 
     public static FinanceChartPanel createPanel(String year) {
         
-        DataImporter importer = new DataImporter(year);
+        DataImporter2 importer = new DataImporter2(year);
         importer.loadData();
         
         FinanceChartPanel panel = new FinanceChartPanel(
@@ -59,13 +59,13 @@ public class FinanceChartPanel extends JPanel {
     private void initializeUI() {
         JPanel contentPanel = createContentPanel();
         
-        // ✅ TOP PANEL: Back button + Title
+        //TOP PANEL: Back button + Title
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setOpaque(true);
         topPanel.setBackground(DARK_BACKGROUND);
         
-        // Back Button
+        
         JButton backButton = new JButton("← Πίσω");
         backButton.setFont(new Font("Arial", Font.BOLD, 14));
         backButton.setForeground(Color.WHITE);
@@ -240,7 +240,7 @@ public class FinanceChartPanel extends JPanel {
         legendPanel.add(mainTitle);
         legendPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         
-        // Σύνολο Εσόδων & Εξόδων
+        
         JLabel revenueTitle = new JLabel("<html><font color='#" + Integer.toHexString(TEXT_COLOR.getRGB()).substring(2) + "'>▶ Revenues: <b>€" + String.format("%,.0f", totalRevenue) + "</b></font></html>");
         revenueTitle.setFont(DETAIL_FONT);
         revenueTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -253,7 +253,7 @@ public class FinanceChartPanel extends JPanel {
         
         legendPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Λίστα Εσόδων
+        
         JLabel revenueGroupTitle = new JLabel("<html><font color='#" + Integer.toHexString(AGENCY_BAR_COLOR.getRGB()).substring(2) + "'><b>I. Έσοδα (Revenues)</b></font></html>");
         revenueGroupTitle.setFont(DETAIL_FONT);
         revenueGroupTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -296,7 +296,7 @@ public class FinanceChartPanel extends JPanel {
     
     
     private Color agencyBarGradient(int i, int total) {
-        float hue = 0.6f; // Μπλε
+        float hue = 0.6f; 
         
         float saturation = 0.8f; 
         float brightness = 0.7f; 
