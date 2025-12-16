@@ -60,7 +60,6 @@ public class WelcomePanel extends JPanel {
      */
     private void repositionComponents() {
         int width = getWidth();
-        int height = getHeight();
         
         // Center button - moved up
         int buttonWidth = 250;
@@ -133,7 +132,7 @@ public class WelcomePanel extends JPanel {
         });
         
         button.addActionListener(e -> 
-            mainFrame.showPanel(MainFrame.YEAR_SELECTION)
+            mainFrame.showPanel(MainFrame.PROJECT_SELECTION)
         );
         return button;
     }

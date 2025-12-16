@@ -120,7 +120,6 @@ public class YearSelectionPanel extends JPanel {
                 // Year icon (calendar emoji)
                 g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
                 String icon = "📅";
-                FontMetrics fmIcon = g2.getFontMetrics();
                 int iconX = 30;
                 g2.setColor(new Color(255, 255, 255, 230));
                 g2.drawString(icon, iconX, 55);

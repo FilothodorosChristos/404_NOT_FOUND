@@ -28,8 +28,6 @@ public class DataEditorPanel extends JPanel {
   private static final Font TABLE_FONT = new Font("Arial", Font.PLAIN, 12);
   private static final Font HEADER_FONT = new Font("Arial", Font.BOLD, 12);
 
-  private JTable incomeTable;
-  private JTable expenseTable;
   private DefaultTableModel incomeTableModel;
   private DefaultTableModel expenseTableModel;
   private String dataType;
@@ -327,10 +325,9 @@ public class DataEditorPanel extends JPanel {
     panel.add(buttonPanel, BorderLayout.SOUTH);
 
     if (isIncome) {
-      incomeTable = table;
       incomeTableModel = tableModel;
     } else {
-      expenseTable = table;
+      
       expenseTableModel = tableModel;
     }
 

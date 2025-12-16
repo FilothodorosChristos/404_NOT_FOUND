@@ -66,7 +66,6 @@ public class ActionSelectionPanel extends JPanel {
         
         // Calculate center position
         int totalWidth = 2 * buttonWidth + gapX;
-        int totalHeight = 2 * buttonHeight + gapY;
         int startX = (width - totalWidth) / 2;
         int startY = 380;
         
