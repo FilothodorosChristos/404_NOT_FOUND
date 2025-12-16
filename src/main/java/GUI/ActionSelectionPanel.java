@@ -229,17 +229,9 @@ public class ActionSelectionPanel extends JPanel {
      * Handles action button clicks.
      */
     private void handleAction(String action) {
-        String selectedYear = mainFrame.getSelectedYear();
-        
         if (action.equals("Διαγράμματα")) {
-            FinanceChartPanel chartPanel = FinanceChartPanel.createPanel(selectedYear);
             
-            JFrame chartFrame = new JFrame("Διαγράμματα Έτους " + selectedYear);
-            chartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            chartFrame.setSize(900, 700);
-            chartFrame.setLocationRelativeTo(null);
-            chartFrame.add(chartPanel);
-            chartFrame.setVisible(true);
+            mainFrame.showFinanceChart();
             
         } else if (action.equals("Προβολή")) {
             mainFrame.showBudgetView();

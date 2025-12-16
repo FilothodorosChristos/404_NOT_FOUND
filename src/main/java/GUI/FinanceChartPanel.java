@@ -18,14 +18,14 @@ public class FinanceChartPanel extends JPanel {
     private final List<DataItem> expenses;
     private final List<DataItem> agencies;
     
-    // ΧΡΩΜΑΤΑ ΓΙΑ ΣΚΟΥΡΟ ΘΕΜΑ (Όπως στην εικόνα)
+    
     // Dark Blue: #14192D
     private static final Color DARK_BACKGROUND = new Color(20, 25, 45); 
-    // Light Blue (για μπάρες φορέων / έσοδα)
+   
     private static final Color AGENCY_BAR_COLOR = new Color(75, 150, 225); 
-    // Λευκό για κείμενο τίτλων/άξονα
+    
     private static final Color TEXT_COLOR = Color.WHITE; 
-    // Ροζ/Κόκκινο για Έξοδα (για αντίθεση)
+    
     private static final Color EXPENSE_COLOR = new Color(255, 105, 180); 
     
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 18);
@@ -59,15 +59,64 @@ public class FinanceChartPanel extends JPanel {
     private void initializeUI() {
         JPanel contentPanel = createContentPanel();
         
+        // ✅ TOP PANEL: Back button + Title
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setOpaque(true);
+        topPanel.setBackground(DARK_BACKGROUND);
+        
+        // Back Button
+        JButton backButton = new JButton("← Πίσω");
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backButton.setForeground(Color.WHITE);
+        backButton.setBackground(new Color(75, 150, 225));
+        backButton.setFocusPainted(false);
+        backButton.setOpaque(true);
+        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        backButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        backButton.addActionListener(e -> {
+            Container parent = this.getParent();
+            while (parent != null && !(parent instanceof MainFrame)) {
+                parent = parent.getParent();
+            }
+            if (parent instanceof MainFrame) {
+                ((MainFrame) parent).showPanel(MainFrame.ACTION_SELECTION);
+            }
+        });
+        
+        backButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                backButton.setBackground(new Color(99, 170, 255));
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                backButton.setBackground(new Color(75, 150, 225));
+            }
+        });
+        
+        JPanel buttonWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        buttonWrapper.setOpaque(false);
+        buttonWrapper.add(backButton);
+        buttonWrapper.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        
+        /**title */
         JLabel mainHeader = new JLabel("Προϋπολογισμός (" + year + ")", SwingConstants.CENTER);
         mainHeader.setFont(new Font("Arial", Font.BOLD, 28));
-        mainHeader.setForeground(TEXT_COLOR); // Λευκό
-        mainHeader.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
-        contentPanel.add(mainHeader, BorderLayout.NORTH);
+        mainHeader.setForeground(TEXT_COLOR);
+        mainHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainHeader.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        
+        topPanel.add(buttonWrapper);
+        topPanel.add(mainHeader);
+        
+        contentPanel.add(topPanel, BorderLayout.NORTH);
         
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setOpaque(false);
-        tabbedPane.setForeground(TEXT_COLOR); // Λευκό κείμενο καρτελών
+        tabbedPane.setForeground(TEXT_COLOR);
         tabbedPane.setBackground(DARK_BACKGROUND);
         
         tabbedPane.add("Έσοδα/Έξοδα", createRevenueExpensePanel());
@@ -103,7 +152,7 @@ public class FinanceChartPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
 
-        // Χρησιμοποιούμε gradient για Έσοδα (AGENCY_BAR_COLOR) και Έξοδα (EXPENSE_COLOR)
+      
         JPanel barPanel = ChartRenderer.createBarChartPanel(allItems, 
                                                             this::revenueGradient, 
                                                             this::expenseGradient, 
@@ -134,7 +183,7 @@ public class FinanceChartPanel extends JPanel {
             emptyPanel.setOpaque(false);
             JLabel msgLabel = new JLabel("No Agency data found for the year " + year, SwingConstants.CENTER);
             msgLabel.setFont(new Font("Arial", Font.BOLD, 20));
-            msgLabel.setForeground(TEXT_COLOR); // Λευκό κείμενο
+            msgLabel.setForeground(TEXT_COLOR); 
             emptyPanel.add(msgLabel, BorderLayout.CENTER);
             return emptyPanel;
         }
@@ -142,9 +191,9 @@ public class FinanceChartPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
 
-        // Χρησιμοποιούμε μόνο το revenueGradient (το οποίο θα είναι το μπλε gradient των φορέων)
+        
         JPanel barPanel = ChartRenderer.createBarChartPanel(agencies, 
-                                                            this::agencyBarGradient, // Χρησιμοποιούμε νέα συνάρτηση gradient
+                                                            this::agencyBarGradient, 
                                                             null, 
                                                             this::formatValueForAxis);
         
@@ -223,7 +272,7 @@ public class FinanceChartPanel extends JPanel {
         
         legendPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         
-        // Λίστα Εξόδων
+       
         JLabel expenseGroupTitle = new JLabel("<html><font color='#" + Integer.toHexString(EXPENSE_COLOR.getRGB()).substring(2) + "'><b>II. Έξοδα (Expenses)</b></font></html>");
         expenseGroupTitle.setFont(DETAIL_FONT);
         expenseGroupTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -245,16 +294,16 @@ public class FinanceChartPanel extends JPanel {
         return legendPanel;
     }
     
-    // ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Gradient για Φορείς (Ανοιχτό Μπλε - Ομοιόμορφο)
+    
     private Color agencyBarGradient(int i, int total) {
         float hue = 0.6f; // Μπλε
-        // Κρατάμε υψηλή φωτεινότητα και κορεσμό για να ξεχωρίζει από το φόντο
+        
         float saturation = 0.8f; 
         float brightness = 0.7f; 
         return Color.getHSBColor(hue, saturation, brightness);
     }
 
-    // Gradient για Έσοδα (Ανοιχτό Μπλε) - Κρατάμε το gradient για να ξεχωρίζουν οι μπάρες
+    
     private Color revenueGradient(int i, int total) {
         float hue = 0.6f; 
         float saturation = 0.8f - 0.2f * i / Math.max(total - 1, 1); 
@@ -262,7 +311,7 @@ public class FinanceChartPanel extends JPanel {
         return Color.getHSBColor(hue, saturation, brightness);
     }
     
-    // Gradient για Έξοδα (Ροζ)
+   
     private Color expenseGradient(int i, int total) {
         float hue = 0.9f; 
         float saturation = 0.9f - 0.2f * i / Math.max(total - 1, 1); 
