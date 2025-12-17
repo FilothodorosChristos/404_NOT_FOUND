@@ -29,12 +29,13 @@ Under development
 
 
 ## TODO
-- Command line fallback: optionally run from terminal (if needed)
--Improve test quality and fix reported bugs
-- Improve chart quality
 - Modify log table so as not to contain insertions from csv files
+- Fix reported bugs
 
 
-## Author
-404_Not_Found
+## Ownership
+This project is a joint work created by multiple authors.
+Copyright is shared among the contributors.
+
+
 
