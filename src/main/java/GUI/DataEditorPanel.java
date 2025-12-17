@@ -19,7 +19,7 @@ import javax.imageio.ImageIO;
  * Υποστηρίζει τόσο CashFlows όσο και Foreis με δύο πίνακες (Έσοδα/Έξοδα).
  * Ενσωματώνεται στο MainFrame χωρίς να ανοίγει νέο παράθυρο.
  */
-public class DataEditorPanel extends JPanel {
+public final class DataEditorPanel extends JPanel {
 
   private static final Color NAVY_BLUE = new Color(0, 0, 128);
   private static final Color LIGHT_BLUE = new Color(173, 216, 230);
@@ -42,7 +42,7 @@ public class DataEditorPanel extends JPanel {
   /**
    * Custom JPanel με background image
    */
-  class BackgroundPanel extends JPanel {
+  private static class BackgroundPanel extends JPanel {
     private BufferedImage image;
     
     public BackgroundPanel(BufferedImage img) {

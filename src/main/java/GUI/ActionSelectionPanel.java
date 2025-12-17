@@ -24,6 +24,8 @@ public class ActionSelectionPanel extends JPanel {
      *
      * @param mainFrame the main application frame
      */
+    @SuppressWarnings(value = "EI_EXPOSE_REP2")
+                   
     public ActionSelectionPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         setLayout(null);

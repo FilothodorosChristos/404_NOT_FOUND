@@ -53,6 +53,9 @@ public class LogViewerPanel extends JPanel {
      * @param year the year to return to when going back
      * @param dataType the data type to return to when going back
      */
+
+     @SuppressWarnings(value = "EI_EXPOSE_REP2")
+     
     public LogViewerPanel(MainFrame mainFrame, int year, String dataType) {
         this.mainFrame = mainFrame;
         this.returnYear = year;

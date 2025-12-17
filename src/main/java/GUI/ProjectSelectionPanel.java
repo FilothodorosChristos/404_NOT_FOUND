@@ -25,6 +25,9 @@ public class ProjectSelectionPanel extends JPanel {
      *
      * @param mainFrame the main application frame
      */
+
+     @SuppressWarnings(value = "EI_EXPOSE_REP2")
+     
     public ProjectSelectionPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         setLayout(null);
