@@ -54,7 +54,7 @@ public class DataImporter2 {
      * @return An unmodifiable view of the revenues list
      */
     public List<DataItem> getRevenues() { 
-        return revenues; 
+        return new ArrayList<>(revenues); 
     }
     
     /**
@@ -63,7 +63,7 @@ public class DataImporter2 {
      * @return An unmodifiable view of the expenses list
      */
     public List<DataItem> getExpenses() { 
-        return expenses; 
+        return new ArrayList<>(expenses);
     }
     
     /**
@@ -72,7 +72,7 @@ public class DataImporter2 {
      * @return An unmodifiable view of the agencies list
      */
     public List<DataItem> getAgencies() { 
-        return agencies; 
+        return new ArrayList<>(agencies); 
     }
 
     /**
