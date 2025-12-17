@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
-import java.io.ObjectStreamException;
 
 /**
  * Main GUI application class for GoverLens.
@@ -13,10 +12,13 @@ import java.io.ObjectStreamException;
  * Manages shared data and resources across all panels.
  * Uses Singleton pattern to ensure only one instance exists.
  */
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "SING_SINGLETON_IMPLEMENTS_SERIALIZABLE", 
+    justification = "JFrame is native Serializable, but we don't use serialization for this Singleton"
+)
+
 public class MainFrame extends JFrame { 
     
-    private static final long serialVersionUID = 1L;
-
     /** Singleton instance of MainFrame (volatile for thread safety). */
     private static volatile transient MainFrame instance; 
     
@@ -97,6 +99,8 @@ public class MainFrame extends JFrame {
      *
      * @return the singleton MainFrame instance
      */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Singleton instance access is intentional")
+
     public static MainFrame getInstance() {
         if (instance == null) {
             synchronized (MainFrame.class) {
@@ -283,14 +287,6 @@ public class MainFrame extends JFrame {
     public void setSelectedYear(String year) {
         this.selectedYear = year;
         System.out.println("Selected year: " + selectedYear);
-    }
-    
-    /**
-     * Called during deserialization to replace the object being deserialized
-     * with the existing singleton instance.
-     */
-    protected Object readResolve() throws ObjectStreamException {
-        return getInstance();
     }
     
     /**

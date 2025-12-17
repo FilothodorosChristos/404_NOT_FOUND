@@ -15,7 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * LogViewerPanel displays the history of all changes made by users.
  * Shows log entries from the database in a sortable table format.
  */
-public class LogViewerPanel extends JPanel {
+public final class LogViewerPanel extends JPanel {
     
     /** Reference to the main application frame. */
     private final MainFrame mainFrame;
