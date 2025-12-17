@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.List;
 import dao.Log;
 import dao.LogDao;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * LogViewerPanel displays the history of all changes made by users.
@@ -54,8 +55,8 @@ public class LogViewerPanel extends JPanel {
      * @param dataType the data type to return to when going back
      */
 
-     @SuppressWarnings(value = "EI_EXPOSE_REP2")
-     
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
+
     public LogViewerPanel(MainFrame mainFrame, int year, String dataType) {
         this.mainFrame = mainFrame;
         this.returnYear = year;

@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Modern WelcomePanel with animated background and professional design.
  * Displays the GoverLens logo, welcome message, and navigation.
@@ -25,8 +27,8 @@ public class WelcomePanel extends JPanel {
      * @param mainFrame the main application frame
      */
 
-     @SuppressWarnings(value = "EI_EXPOSE_REP2")
-     
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
+
     public WelcomePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         setLayout(null);

@@ -9,6 +9,7 @@ import service.CashFlowService;
 import service.ForeisService;
 import dao.CashFlow;
 import dao.Foreis;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * BudgetViewPanel displays budget data in a single table.
@@ -39,8 +40,8 @@ public class BudgetViewPanel extends JPanel {
      *
      * @param mainFrame the main application frame
      */
-    
-     @SuppressWarnings(value = "EI_EXPOSE_REP2")
+
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
 
     public BudgetViewPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;

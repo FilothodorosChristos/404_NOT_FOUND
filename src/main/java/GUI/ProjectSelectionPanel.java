@@ -1,6 +1,9 @@
 package GUI;
 
 import javax.swing.*;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -26,8 +29,8 @@ public class ProjectSelectionPanel extends JPanel {
      * @param mainFrame the main application frame
      */
 
-     @SuppressWarnings(value = "EI_EXPOSE_REP2")
-     
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
+
     public ProjectSelectionPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         setLayout(null);

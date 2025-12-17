@@ -2,6 +2,7 @@ package GUI;
 
 import dao.CashFlow;
 import dao.Foreis;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import service.CashFlowService;
 import service.ForeisService;
 
@@ -65,6 +66,8 @@ public final class DataEditorPanel extends JPanel {
   /**
    * Constructor - Δέχεται MainFrame, έτος και κατηγορία δεδομένων.
    */
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
+  
   public DataEditorPanel(MainFrame mainFrame, int year, String dataType) {
     this.mainFrame = mainFrame;
     this.selectedYear = year;
