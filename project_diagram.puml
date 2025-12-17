@@ -1,0 +1,315 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam roundcorner 0
+skinparam shadowing false
+skinparam ArrowColor #34495E
+skinparam ArrowThickness 1.2
+skinparam classFontSize 14
+skinparam defaultFontSize 14
+skinparam classAttributeIconSize 0
+skinparam tightVSpacing true
+skinparam linetype ortho
+
+
+left to right direction
+skinparam nodesep 10
+skinparam ranksep 15
+
+' ===== PACKAGES =====
+
+package "menus" #FAD7A0 {
+    interface UserIo {
+        + getString(prompt) : String
+        + getInt(prompt) : int
+        + showMessage(message) : void
+        + exit() : void
+    }
+
+    abstract class Menu {
+        + showMenu(message, optionsCount) : void
+        + handleChoice(choice) : void
+    }
+    
+    class ConsoleIo {
+        + getString(message) : String
+        + getInt(message) : int
+        + showMessage(message) : void
+        + exit() : void
+    }
+    
+    ConsoleIo .up.|> UserIo
+}
+
+package "GUI" #AED6F1 {
+    skinparam classPadding 10
+    skinparam classFontSize 12
+    skinparam classAttributeIconSize 0
+    skinparam shadowing false
+    skinparam roundcorner 5
+
+    class MainFrame {
+       
+        + static getInstance() : MainFrame
+        + showFinanceChart() : void
+        + showPanel(panelName : String) : void
+        + getLogoImage() : Image
+        + getBackgroundImage() : Image
+        + getSelectedYear() : String
+        + setSelectedYear(year : String) : void
+        + static main(args : String[]) : void
+        - loadImages() : void
+        - setupFrame() : void
+        - initializePanels() : void
+    }
+
+    class WelcomePanel {
+        
+        + WelcomePanel(mainFrame: MainFrame)
+        - createUI() : void
+        - createLabel(text: String, font: Font) : JLabel
+    }
+    
+    class ProjectSelectionPanel {
+        
+        - static NAVY_BLUE : Color
+        + ProjectSelectionPanel(mainFrame: MainFrame)
+        - createUI() : void
+        - createStyledButton(text: String) : JButton
+    }
+    
+    class YearSelectionPanel {
+        + createUI() : void
+        + createYearButton(year : String) : JButton
+    }
+
+    class ActionSelectionPanel {
+        + createUI() : void
+        + createStyledButton(text : String) : JButton
+        + handleAction(action : String) : void
+    }
+
+    class BudgetViewPanel {
+   
+
+    - createUI() : void
+    - createFilterPanel() : JPanel
+    - createTableSection(title : String, tableScrollPane : JScrollPane) : JPanel
+    - createCashFlowTable() : JScrollPane
+    - createForeisTable() : JScrollPane
+    - styleTable(table : JTable) : void
+    
+    - loadCashFlowDataFromCSV(year : int, type : String) : List<Object[]>
+    - loadForeisDataFromCSV(year : int, type : String) : List<Object[]>
+
+    - loadData() : void
+    - loadDataByType(type : String) : void
+}
+
+    class FinanceChartPanel {
+        + FinanceChartPanel(year : String)
+        - loadData() : void
+        - createRevenueExpensePanel() : JPanel
+        - createAgencyPanel() : JPanel
+        - createLegendPanel(revenues : List<*>, expenses : List<*>) : JPanel
+        - pastelGreen(i : int, total : int) : Color
+        - pastelRed(i : int, total : int) : Color
+    }
+
+    
+    WelcomePanel --> MainFrame
+    ProjectSelectionPanel --> MainFrame
+    MainFrame *-- WelcomePanel
+    MainFrame *-- ProjectSelectionPanel
+    MainFrame *-- YearSelectionPanel
+    MainFrame *-- ActionSelectionPanel
+    MainFrame *-- FinanceChartPanel
+    YearSelectionPanel --> MainFrame
+    ActionSelectionPanel --> MainFrame
+}
+
+package "services" #F5CBA7 {
+    class CashFlowService {
+       
+        + addCashflow(cashflow: CashFlow) : void
+        + updateCashflow(cashflow: CashFlow) : void
+        + deleteCashflow(id: int) : void
+        + getCashflows(year: int, type: String) : List<CashFlow>
+    }
+
+    class ForeisService {
+        
+        + addForeis(foreis: Foreis) : void
+        + updateForeis(foreis: Foreis) : void
+        + deleteForeis(id: int) : void
+        + getForeisByYearAndType(year: int, type: String) : List<Foreis>
+    }
+
+    class LogService {
+        + getAllLogs() : List<Log>
+    }
+}
+
+package `DAO` #F9E79F {
+    class CashFlow {
+        + getId() : int
+        + setId(id : int) : void
+        + getAmount() : double
+        + setAmount(amount : double) : void
+        + getYear_id() : String
+        + setYear_id(year_id : String) : void
+        + getType() : String
+        + setType(type : String) : void
+        + getName() : String
+        + setName(name : String) : void
+    }
+
+    class Log {
+        + Log(id, tableName, operation, rowId, oldData, newData, timestamp)
+        + getId() : int
+        + getTableName() : String
+        + getOperation() : String
+        + getRowId() : Integer
+        + getOldData() : String
+        + getNewData() : String
+        + getTimestamp() : String
+    }
+    
+    class LogDao {
+        - mapRow(rs : ResultSet) : Log
+        + selectLog() : List<Log>
+    }
+
+    class CashFlowDao {
+        + selectAllCashFlows() : List<CashFlow>
+        + addCashFlow() : void
+        + updateCashFlow() : void
+        + deleteCashFlow() : void
+    }
+
+    class Foreis {
+        + getId() : int
+        + setId(id : int) : void
+        + getTotal() : double
+        + setTotal(total : double) : void
+        + getYear_id() : String
+        + setYear_id(year_id : String) : void
+        + getName() : String
+        + setName(name : String) : void
+    }
+
+    class ForeisDao {
+        + selectAllForeis() : List<Foreis>
+        + addForeis() : void
+        + updateForeis() : void
+        + deleteForeis() : void
+    }
+    LogDao --> Log
+    CashFlowDao --> CashFlow
+    ForeisDao --> Foreis
+}
+
+package "Database" #A9DFBF {
+    class DatabaseSetup {
+        + setURL(url : String) : void
+        + setDatabase() : void
+        + cleanTables() : void
+        + resetTables() : void
+        + getConnection() 
+    }
+
+    class DataImporter {
+        + setURL(url : String) : void
+        + importer() : void
+        + insertForeisFromCsv(filename : String) : void
+        + insertCashflowsFromCsv(filename : String, type : String) : void
+    }
+    
+  
+    DatabaseSetup <-- CashFlowDao
+    DatabaseSetup <-- ForeisDao
+    DatabaseSetup <-- DataImporter
+}
+
+package "Tests" #D2B4DE {
+    class CashFlowTest {
+        + testConstructorAndGetters() : void
+        + testSetters() : void
+        + testToString() : void
+    }
+
+    class CashFlowDaoTest {
+        + setupDatabase() : void
+        + init() : void
+        + testAddAndSelectCashFlow() : void
+        + testUpdateCashFlow() : void
+        + testDeleteCashFlow() : void
+        + restoreDatabaseURL() : void
+    }
+
+    class ForeisTest {
+        + testConstructorAndGetters() : void
+        + testSettersAndGetters() : void
+        + testToString() : void
+    }
+
+    class ForeisDaoTest {
+        + setupDatabase() : void
+        + init() : void
+        + testAddAndSelectForeis() : void
+        + testUpdateForeis() : void
+        + testDeleteForeis() : void
+        + restoreDatabaseURL() : void
+    }
+    
+    class DataImporterTest {
+        + setupTestUrl() : void
+        + restoreRealUrl() : void
+        + setupDatabaseSchema() : void
+        + insertForeisFromCsv_ShouldInsertValidRowsAndSkipInvalid() : void
+        + insertCashflowsFromCsv_ShouldInsertValidRowsAndSkipInvalid() : void
+        + insertForeisFromCsv_ShouldThrowFileNotFoundException() : void
+    }
+
+    class DatabaseSetupTest {
+        + setup() : void
+        + cleanTables() : void
+        + teardownClass() : void
+        + testSetDatabase_CreatesTables() : void
+        + testCleanTables_DeletesTables() : void
+        + testResetTables_RecreatesTables() : void
+    }
+    
+    class ConsoleIoTest {
+        + testGetString() : void
+        + testGetInt_validInvalidInput() : void
+        + testShowMessage() : void
+    }
+
+    CashFlowTest ..> CashFlow
+    CashFlowDaoTest ..> CashFlowDao
+    ForeisTest ..> Foreis
+    ForeisDaoTest ..> ForeisDao
+    DataImporterTest ..> DataImporter
+    DatabaseSetupTest ..> DatabaseSetup
+    ConsoleIoTest ..> ConsoleIo
+}
+
+
+' ===== CONNECTIONS =====
+' Services <-> DAO
+CashFlowService --> CashFlowDao
+ForeisService --> ForeisDao
+
+' GUI <-> Services
+MainFrame --> CashFlowService
+MainFrame --> ForeisService
+MainFrame --> LogService
+
+' Menus <-> GUI
+Menu --> MainFrame
+Menu --> UserIo
+
+' GUI <-> Database
+MainFrame --> DatabaseSetup
+
+@enduml
