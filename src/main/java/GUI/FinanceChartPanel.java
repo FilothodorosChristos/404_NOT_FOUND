@@ -63,7 +63,7 @@ public class FinanceChartPanel extends JPanel {
      */
     public static FinanceChartPanel createPanel(String year) {
         
-        DataImporter2 importer = new DataImporter2(year);
+        GraphDataImporter importer = new GraphDataImporter(year);
         importer.loadData();
         
         FinanceChartPanel panel = new FinanceChartPanel(

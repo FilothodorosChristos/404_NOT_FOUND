@@ -25,7 +25,7 @@ import static GUI.FinanceChartPanel.DataItem;
  * @version 1.0
  * @see FinanceChartPanel.DataItem
  */
-public class DataImporter2 {
+public class GraphDataImporter {
     
     /** The fiscal year for which data should be loaded (e.g., "2023") */
     private final String year;
@@ -44,7 +44,7 @@ public class DataImporter2 {
      * 
      * @param year The fiscal year to load data for (e.g., "2023")
      */
-    public DataImporter2(String year) {
+    public GraphDataImporter(String year) {
         this.year = year;
     }
     
