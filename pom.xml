@@ -39,6 +39,13 @@
             <version>3.45.2.0</version>
         </dependency>
 
+       <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>4.8.3</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <!-- 🔹 Plugins -->
