@@ -28,7 +28,7 @@ public class ValidationUtils {
     }
   }
   /**
-   * Έλεγχος έτους (μόνο 2023–2025).
+   * Έλεγχος έτους (μόνο 2021–2026).
    */
 
   public static void validateYear(int year) {
@@ -59,70 +59,5 @@ public class ValidationUtils {
       throw new IllegalArgumentException(fieldName + " πρέπει να είναι θετικό (id: " + id + ")");
     }
   }
-  /**
-   * Δισδιάστατος πίνακας που περιέχει τα συνολικά ποσά του κρατικού προϋπολογισμού.
-   * Κάθε γραμμή αντιστοιχεί σε ένα έτος (2023–2025).
-   * Κάθε στήλη αντιστοιχεί σε τύπο cashflow:
-   *   - Στήλη 0 = income (έσοδα)
-   *   - Στήλη 1 = expense (έξοδα)
-   */
-
-  private static final double[][] BUDGET_TOTALS = {
-      {798_039_000_000.0, 806_878_193_000.0},   // 2023
-      {1_107_649_000_000.0, 1_108_188_270_000.0}, // 2024
-      {1_304_827_000_000.0, 1_307_907_506_000.0}  // 2025
-  };
-
-  /**
-   * Ελέγχει ότι μετά τις αλλαγές τα συνολικά έσοδα και έξοδα ενός έτους
-   * ταιριάζουν με τα αντίστοιχα ποσά του κρατικού προϋπολογισμού.
-   * Η μέθοδος:
-   * <ul>
-   *   <li>Υπολογίζει ξεχωριστά το άθροισμα των εσόδων (income).</li>
-   *   <li>Υπολογίζει ξεχωριστά το άθροισμα των εξόδων (expense).</li>
-   *   <li>Συγκρίνει κάθε άθροισμα με το αντίστοιχο ποσό από τον πίνακα 
-   * {@code BUDGET_TOTALS}.</li>
-   *   <li>Αν κάποιο άθροισμα δεν ταιριάζει, πετάει {@link IllegalArgumentException}.</li>
-   * </ul>
-   *
-   * @param cashflows λίστα με όλα τα CashFlow (income + expense) για το συγκεκριμένο έτος
-   * @param year το έτος (2023–2025)
-   * @throws IllegalArgumentException αν τα αθροίσματα δεν ταιριάζουν με τον κρατικό προϋπολογισμό
-   */
-
-  public static void validateFinalTotals(List<CashFlow> cashflows, int year) {
-    // Υπολογισμός αθροισμάτων ξεχωριστά
-    double incomeSum = cashflows.stream()
-                                    .filter(cf -> "Έσοδο".equals(cf.getType()))
-                                    .mapToDouble(CashFlow::getAmount)
-                                    .sum();
-
-    double expenseSum = cashflows.stream()
-                                     .filter(cf -> "Έξοδο".equals(cf.getType()))
-                                     .mapToDouble(CashFlow::getAmount)
-                                     .sum();
-
-    // Εύρεση αναμενόμενων ποσών από τον πίνακα
-    validateYear(year);
-    int yearIndex = year - 2021; // 2021->0, 2022->1, 2023->2 ...
-    double expectedIncome = BUDGET_TOTALS[yearIndex][0];
-    double expectedExpense = BUDGET_TOTALS[yearIndex][1];
-    // Έλεγχος εσόδων
-    if (Math.abs(incomeSum - expectedIncome) > 1.0) {
-      throw new IllegalArgumentException(
-                "Τα έσοδα για το έτος " + year 
-               + " (" + incomeSum + ") δεν ταιριάζουν με τον κρατικό προϋπολογισμό (" 
-               + expectedIncome + ")"
-            );
-    }
-
-    // Έλεγχος εξόδων
-    if (Math.abs(expenseSum - expectedExpense) > 1.0) {
-      throw new IllegalArgumentException(
-                "Τα έξοδα για το έτος " + year 
-                + " (" + expenseSum + ") δεν ταιριάζουν με τον κρατικό προϋπολογισμό (" 
-                + expectedExpense + ")"
-            );
-    }
-  }
 }
+ 

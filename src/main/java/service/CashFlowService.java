@@ -74,7 +74,7 @@ public class CashFlowService {
   /**
    * Επιστρέφει όλα τα cashflows για συγκεκριμένο έτος και τύπο.
    * 
-   * @param year το έτος (2023–2025)
+   * @param year το έτος (2021–2026)
    * @param type ο τύπος (π.χ. "Έσοδο", "Έξοδο")
    * @return λίστα με cashflows
    * @throws IllegalArgumentException αν το έτος ή ο τύπος δεν είναι έγκυρα

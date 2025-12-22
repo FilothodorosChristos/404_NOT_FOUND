@@ -14,7 +14,7 @@ import util.ValidationUtils;
  *
  * <p>Οι βασικοί κανόνες που εφαρμόζονται:
  * <ul>
- *   <li>Έλεγχος έτους (2023–2025)</li>
+ *   <li>Έλεγχος έτους (2021–2026)</li>
  *   <li>Έλεγχος θετικών/μη αρνητικών αριθμητικών πεδίων</li>
  *   <li>Έλεγχος ότι το total = regular_budget + public_inv_budget</li>
  *   <li>Έλεγχος επιτρεπτής μεταβολής συνολικού ποσού (±45%)</li>
@@ -119,7 +119,7 @@ public class ForeisService {
   /**
    * Επιστρέφει όλους τους Foreis για συγκεκριμένο έτος και τύπο.
    *
-   * @param year το έτος (2023–2025)
+   * @param year το έτος (2021–2026)
    * @param type ο τύπος (π.χ. "Τακτικός", "ΠΔΕ")
    * @return λίστα με Foreis
    * @throws IllegalArgumentException αν το έτος ή ο τύπος δεν είναι έγκυρα
