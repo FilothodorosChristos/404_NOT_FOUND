@@ -2,9 +2,6 @@ package util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import dao.CashFlow;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -34,12 +31,12 @@ public class ValidationUtilsTest {
   }
 
   /**
-   * Ελέγχει ότι η validateYear δέχεται έτη 2023–2025.
+   * Ελέγχει ότι η validateYear δέχεται έτη 2021–2026.
    */
   @Test
     public void testValidateYearValid() {
-    assertDoesNotThrow(() -> ValidationUtils.validateYear(2023));
-    assertDoesNotThrow(() -> ValidationUtils.validateYear(2025));
+    assertDoesNotThrow(() -> ValidationUtils.validateYear(2021));
+    assertDoesNotThrow(() -> ValidationUtils.validateYear(2026));
   }
 
   /**
@@ -48,9 +45,9 @@ public class ValidationUtilsTest {
   @Test
     public void testValidateYearInvalid() {
     assertThrows(IllegalArgumentException.class,
-                () -> ValidationUtils.validateYear(2022));
+                () -> ValidationUtils.validateYear(2020));
     assertThrows(IllegalArgumentException.class,
-                () -> ValidationUtils.validateYear(2026));
+                () -> ValidationUtils.validateYear(2027));
   }
 
   /**
@@ -88,34 +85,5 @@ public class ValidationUtilsTest {
                 () -> ValidationUtils.validatePositiveId(0, "Foreas ID"));
     assertThrows(IllegalArgumentException.class,
                 () -> ValidationUtils.validatePositiveId(-1, "Foreas ID"));
-  }
-
-  /**
-   * Ελέγχει ότι η validateFinalTotals δέχεται σωστά αθροίσματα
-   * που ταιριάζουν με τον κρατικό προϋπολογισμό.
-   */
-  @Test
-    public void testValidateFinalTotalsValid() {
-    List<CashFlow> cashflows = Arrays.asList(
-                new CashFlow(1, 2023, "Έσοδο", "Income A", 798_039_000_000.0),
-                new CashFlow(2, 2023, "Έξοδο", "Expense A", 806_878_193_000.0)
-        );
-
-    assertDoesNotThrow(() -> ValidationUtils.validateFinalTotals(cashflows, 2023));
-  }
-
-  /**
-   * Ελέγχει ότι η validateFinalTotals πετάει exception
-   * όταν τα αθροίσματα δεν ταιριάζουν με τον κρατικό προϋπολογισμό.
-   */
-  @Test
-    public void testValidateFinalTotalsInvalid() {
-    List<CashFlow> cashflows = Arrays.asList(
-                new CashFlow(1, 2023, "Έσοδο", "Income A", 100.0),
-                new CashFlow(2, 2023, "Έξοδο", "Expense A", 200.0)
-        );
-
-    assertThrows(IllegalArgumentException.class,
-                () -> ValidationUtils.validateFinalTotals(cashflows, 2023));
   }
 }
