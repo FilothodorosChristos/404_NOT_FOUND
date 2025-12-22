@@ -163,7 +163,7 @@ void testGetForeisByYearAndTypeSuccess() {
   @Test
 void testGetForeisByYearAndTypeInvalidYear() {
     assertThrows(IllegalArgumentException.class,
-            () -> service.getForeisByYearAndType(2026, "Τακτικός"));
+            () -> service.getForeisByYearAndType(2027, "Τακτικός"));
   }
 
   @Test
@@ -205,8 +205,8 @@ void testCompareYearsSameYear() {
 
 @Test
 void testCompareYearsInvalidYear() {
-    assertThrows(IllegalArgumentException.class, () -> service.compareYears(2022, 2023));
-    assertThrows(IllegalArgumentException.class, () -> service.compareYears(2023, 2026));
+    assertThrows(IllegalArgumentException.class, () -> service.compareYears(2020, 2023));
+    assertThrows(IllegalArgumentException.class, () -> service.compareYears(2023, 2027));
 }
 
 }
