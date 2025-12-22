@@ -233,7 +233,9 @@ public class ProjectSelectionPanel extends JPanel {
      */
 private void handleAction(String action) {
     if (action.equals("Εκκίνηση Νέας")) {
-        // Εμφάνιση confirmation dialog
+        /**
+         * Εμφάνιση confirmation dialog
+         */
         int response = JOptionPane.showConfirmDialog(
             this,
             "Θέλετε να ξεκινήσετε νέα προσομοίωση?\n" +
@@ -245,7 +247,7 @@ private void handleAction(String action) {
         
         if (response == JOptionPane.YES_OPTION) {
             try {
-                // Καλούμε τη μέθοδο για νέα προσομοίωση
+                /**Καλούμε τη μέθοδο για νέα προσομοίωση */
                 SimulationService.startNewSimulation();
                 
                 // Εμφάνιση μηνύματος επιτυχίας
