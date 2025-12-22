@@ -3,10 +3,12 @@ package GUI;
 import javax.swing.*;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import service.SimulationService;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+
 
 /**
  * Modern ActionSelectionPanel with unified aesthetic matching WelcomePanel.
@@ -229,10 +231,50 @@ public class ProjectSelectionPanel extends JPanel {
     /**
      * Handles action button clicks.
      */
-    private void handleAction(String action) {
-    mainFrame.showPanel(MainFrame.YEAR_SELECTION);
+private void handleAction(String action) {
+    if (action.equals("Εκκίνηση Νέας")) {
+        // Εμφάνιση confirmation dialog
+        int response = JOptionPane.showConfirmDialog(
+            this,
+            "Θέλετε να ξεκινήσετε νέα προσομοίωση?\n" +
+            "ΠΡΟΣΟΧΗ: Όλες οι τρέχουσες αλλαγές θα χαθούν!",
+            "Επιβεβαίωση Νέας Προσομοίωσης",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+        
+        if (response == JOptionPane.YES_OPTION) {
+            try {
+                // Καλούμε τη μέθοδο για νέα προσομοίωση
+                SimulationService.startNewSimulation();
+                
+                // Εμφάνιση μηνύματος επιτυχίας
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Η νέα προσομοίωση ξεκίνησε επιτυχώς!\n" +
+                    "Τα δεδομένα επαναφέρθηκαν στην αρχική τους κατάσταση.",
+                    "Επιτυχία",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                
+                // Μεταβαίνουμε στην επιλογή έτους
+                mainFrame.showPanel(MainFrame.YEAR_SELECTION);
+                
+            } catch (Exception ex) {
+                // Σε περίπτωση σφάλματος
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Σφάλμα κατά την εκκίνηση νέας προσομοίωσης:\n" + ex.getMessage(),
+                    "Σφάλμα",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        }
+    } else {
+        // Για το κουμπί "Συνέχεια Προσομοίωσης"
+        mainFrame.showPanel(MainFrame.YEAR_SELECTION);
+    }
 }
-    
     /**
      * Sets up animation timer.
      */
