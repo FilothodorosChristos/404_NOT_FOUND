@@ -151,9 +151,9 @@ public class DataImporterTest {
     // Test Case: Έλεγχος Missing CSV File
     @Test
     void insertForeisFromCsv_ShouldThrowFileNotFoundException() {
-        // Αναμένουμε μια εξαίρεση για αρχείο που δεν υπάρχει (π.χ., "B26Foreis.csv")
+        // Αναμένουμε μια εξαίρεση για αρχείο που δεν υπάρχει (π.χ., "B27Foreis.csv")
         Exception exception = assertThrows(Exception.class, () -> {
-            DataImporter.insertForeisFromCsv("B26ForeisTEST.csv"); // Δεν υπάρχει
+            DataImporter.insertForeisFromCsv("B27ForeisTEST.csv"); // Δεν υπάρχει
         });
 
         // Ελέγχουμε αν το μήνυμα της εξαίρεσης είναι αυτό που περιμένουμε.
