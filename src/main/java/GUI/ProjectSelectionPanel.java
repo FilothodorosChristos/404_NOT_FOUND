@@ -257,11 +257,11 @@ private void handleAction(String action) {
                     JOptionPane.INFORMATION_MESSAGE
                 );
                 
-                // Μεταβαίνουμε στην επιλογή έτους
+                /** Μεταβαίνουμε στην επιλογή έτους */
                 mainFrame.showPanel(MainFrame.YEAR_SELECTION);
                 
             } catch (Exception ex) {
-                // Σε περίπτωση σφάλματος
+                /**  Σε περίπτωση σφάλματος */
                 JOptionPane.showMessageDialog(
                     this,
                     "Σφάλμα κατά την εκκίνηση νέας προσομοίωσης:\n" + ex.getMessage(),
@@ -271,7 +271,7 @@ private void handleAction(String action) {
             }
         }
     } else {
-        // Για το κουμπί "Συνέχεια Προσομοίωσης"
+        /**  Για το κουμπί "Συνέχεια Προσομοίωσης" */
         mainFrame.showPanel(MainFrame.YEAR_SELECTION);
     }
 }
