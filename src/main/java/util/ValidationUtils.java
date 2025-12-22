@@ -32,8 +32,8 @@ public class ValidationUtils {
    */
 
   public static void validateYear(int year) {
-    if (year < 2023 || year > 2025) {
-      throw new IllegalArgumentException("Επιτρέπονται μόνο έτη 2023–2025");
+    if (year < 2021 || year > 2026) {
+      throw new IllegalArgumentException("Επιτρέπονται μόνο έτη 2021–2026");
     }
   }
   /**
@@ -104,7 +104,7 @@ public class ValidationUtils {
 
     // Εύρεση αναμενόμενων ποσών από τον πίνακα
     validateYear(year);
-    int yearIndex = year - 2023; // 2023->0, 2024->1, 2025->2
+    int yearIndex = year - 2021; // 2021->0, 2022->1, 2023->2 ...
     double expectedIncome = BUDGET_TOTALS[yearIndex][0];
     double expectedExpense = BUDGET_TOTALS[yearIndex][1];
     // Έλεγχος εσόδων
