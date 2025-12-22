@@ -46,16 +46,6 @@ public class CashFlowServiceTest {
   // ADD TESTS
   // -------------------------------------------------------------
 
-  @Test
-  void testAddCashflowThrowsDueToFinalTotals() {
-    CashFlow c = new CashFlow(
-            0, 2023, "income",
-            "Salary",
-            1200.0
-    );
-
-    assertThrows(IllegalArgumentException.class, () -> service.addCashflow(c));
-  }
 
   @Test
   void testAddCashflowInvalidAmount() {
@@ -71,7 +61,7 @@ public class CashFlowServiceTest {
   @Test
   void testAddCashflowInvalidYear() {
     CashFlow c = new CashFlow(
-            0, 2026, "income",
+            0, 2027, "income",
             "Invalid Year",
             100.0
     );
@@ -181,7 +171,7 @@ public class CashFlowServiceTest {
   @Test
   void testGetCashflowsInvalidYear() {
     assertThrows(IllegalArgumentException.class,
-            () -> service.getCashflows(2026, "income"));
+            () -> service.getCashflows(2027, "income"));
   }
 
   @Test

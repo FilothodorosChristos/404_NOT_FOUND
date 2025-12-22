@@ -35,10 +35,6 @@ public class CashFlowService {
     ValidationUtils.validateYear(cashflow.getYearId());
 
     cashflowDao.addCashFlow(cashflow);
-    // Έλεγχος συνολικών ποσών μετά την εισαγωγή
-    List<CashFlow> allCashflows = 
-        cashflowDao.selectCashFlow(cashflow.getYearId(), cashflow.getType());
-    ValidationUtils.validateFinalTotals(allCashflows, cashflow.getYearId());
   }
 
   /**
@@ -61,9 +57,6 @@ public class CashFlowService {
 
     ValidationUtils.validateAmountChange(existing.getAmount(), cashflow.getAmount());
     cashflowDao.updateCashFlow(cashflow);
-    List<CashFlow> allCashflows =
-        cashflowDao.selectCashFlow(cashflow.getYearId(), cashflow.getType());
-    ValidationUtils.validateFinalTotals(allCashflows, cashflow.getYearId());
   }
 
   /**
@@ -81,7 +74,7 @@ public class CashFlowService {
   /**
    * Επιστρέφει όλα τα cashflows για συγκεκριμένο έτος και τύπο.
    * 
-   * @param year το έτος (2023–2025)
+   * @param year το έτος (2021–2026)
    * @param type ο τύπος (π.χ. "Έσοδο", "Έξοδο")
    * @return λίστα με cashflows
    * @throws IllegalArgumentException αν το έτος ή ο τύπος δεν είναι έγκυρα

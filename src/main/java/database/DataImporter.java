@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class DataImporter {
 
   private static String URL = "jdbc:sqlite:budgetDB.db";
-  private static final int[] YEARS = { 23, 24, 25 };
+  private static final int[] YEARS = {21, 22, 23, 24, 25, 26 };
   private static final String[] CASHFLOW_TYPES = { "Esoda", "Exoda" };
 
   /** 
