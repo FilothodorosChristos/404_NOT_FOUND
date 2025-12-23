@@ -1,8 +1,5 @@
 package util;
 
-import dao.CashFlow;
-import java.util.List;
-
 public class ValidationUtils {
   private ValidationUtils() {}
   
