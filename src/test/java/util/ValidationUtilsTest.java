@@ -2,7 +2,12 @@ package util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import dao.CashFlow;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.List;
 import org.junit.jupiter.api.Test;
+
 
 /**
  * Test class για την ValidationUtils.
@@ -86,4 +91,31 @@ public class ValidationUtilsTest {
     assertThrows(IllegalArgumentException.class,
                 () -> ValidationUtils.validatePositiveId(-1, "Foreas ID"));
   }
+
+  @Test
+public void testPrintBudgetStatusBalanced() {
+
+    // Arrange
+    List<CashFlow> cashflows = List.of(
+            new CashFlow(1, 2023, "Έσοδο", "Income", 100.0),
+            new CashFlow(2, 2023, "Έξοδο", "Expense", 100.0)
+    );
+
+    PrintStream originalOut = System.out;
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+
+    try {
+      // Act
+      ValidationUtils.printBudgetStatus(cashflows);
+
+      // Assert
+      String output = outContent.toString().trim();
+      assertTrue(output.contains("ΙΣΟΣΚΕΛΙΣΜΕΝΟΣ"));
+    } finally {
+      // Restore System.out
+      System.setOut(originalOut);
+    }
+  }
+
 }
