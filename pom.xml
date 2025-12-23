@@ -24,7 +24,7 @@
         <version>5.2.5</version>
     </dependency>
     
-    <!-- ✅ JUnit 5 -->
+    <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -32,7 +32,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ✅ SQLite JDBC -->
+        <!-- SQLite JDBC -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
@@ -48,11 +48,11 @@
 
     </dependencies>
 
-    <!-- 🔹 Plugins -->
+    <!-- Plugins -->
     <build>
         <plugins>
 
-            <!-- ✅ Maven Compiler -->
+            <!-- Maven Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -62,7 +62,7 @@
                 </configuration>
             </plugin>
 
-            <!-- ✅ JaCoCo για code coverage -->
+            <!-- JaCoCo για code coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -84,7 +84,7 @@
             </plugin>
 
 
-            <!-- ✅ Checkstyle plugin για έλεγχο μορφοποίησης κώδικα -->
+            <!-- Checkstyle plugin για έλεγχο μορφοποίησης κώδικα -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -112,7 +112,6 @@
 
                 <configuration>
                     <configLocation>google_checks.xml</configLocation>
-                    <!-- Αν έχεις δικό σου αρχείο κανόνων -->
                     <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError> 
@@ -122,7 +121,7 @@
             </plugin>
 
             
-            <!-- ✅ SpotBugs για στατικό έλεγχο -->
+            <!-- SpotBugs-->
             <plugin>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-maven-plugin</artifactId>
