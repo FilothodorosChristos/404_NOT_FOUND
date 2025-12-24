@@ -28,14 +28,10 @@ The system provides an easy-to-use GUI where users can:
 Under development 
 
 
-## TODO
-- Modify log table so as not to contain insertions from csv files
-- Fix reported bugs
-
-
 ## Ownership
 This project is a joint work created by multiple authors.
 Copyright is shared among the contributors.
+
 
 
 
