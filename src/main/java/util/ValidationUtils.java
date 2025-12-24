@@ -1,5 +1,8 @@
 package util;
 
+import dao.CashFlow;
+import java.util.List;
+
 public class ValidationUtils {
   private ValidationUtils() {}
   
@@ -56,5 +59,31 @@ public class ValidationUtils {
       throw new IllegalArgumentException(fieldName + " πρέπει να είναι θετικό (id: " + id + ")");
     }
   }
+  /**
+   * Εκτυπώνει αν ο προϋπολογισμός είναι πλεονασματικός,
+   * ελλειμματικός ή ισοσκελισμένος.
+   */
+
+  public static void printBudgetStatus(List<CashFlow> cashflows) {
+
+    double incomeSum = cashflows.stream()
+                .filter(cf -> "Έσοδο".equals(cf.getType()))
+                .mapToDouble(CashFlow::getAmount)
+                .sum();
+
+    double expenseSum = cashflows.stream()
+                .filter(cf -> "Έξοδο".equals(cf.getType()))
+                .mapToDouble(CashFlow::getAmount)
+                .sum();
+
+    if (Math.abs(incomeSum - expenseSum) < 1.0) {
+      System.out.println("Ο προϋπολογισμός είναι ΙΣΟΣΚΕΛΙΣΜΕΝΟΣ");
+    } else if (incomeSum > expenseSum) {
+      System.out.println("Ο προϋπολογισμός είναι ΠΛΕΟΝΑΣΜΑΤΙΚΟΣ");
+    } else {
+      System.out.println("Ο προϋπολογισμός είναι ΕΛΛΕΙΜΜΑΤΙΚΟΣ");
+    }
+  }
 }
+
  
