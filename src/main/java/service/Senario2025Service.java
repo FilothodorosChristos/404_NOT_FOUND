@@ -4,7 +4,7 @@ import dao.CashFlow;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirstSenarioService {
+public class Senario2025Service {
 	private final CashFlowService cashFlowService = new CashFlowService();
 
 	/**
