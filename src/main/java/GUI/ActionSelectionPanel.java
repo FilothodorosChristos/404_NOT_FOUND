@@ -232,26 +232,18 @@ public class ActionSelectionPanel extends JPanel {
     /**
      * Handles action button clicks.
      */
-    private void handleAction(String action) {
-        if (action.equals("Διαγράμματα")) {
-            
-            mainFrame.showFinanceChart();
-            
-        } else if (action.equals("Προβολή")) {
-            mainFrame.showBudgetView();
-            
-        } else if (action.equals("Επεξεργασία")) {
-            mainFrame.showDataEditor("cashflow");
-            
-        } else if (action.equals("Σύγκριση")) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Η λειτουργία 'Σύγκριση' δεν έχει υλοποιηθεί ακόμα.",
-                "Υπό Κατασκευή",
-                JOptionPane.INFORMATION_MESSAGE
-            );
-        }
+ private void handleAction(String action) {
+    if (action.equals("Διαγράμματα")) {
+        mainFrame.showFinanceChart();
+    } else if (action.equals("Προβολή")) {
+        mainFrame.showBudgetView();
+    } else if (action.equals("Επεξεργασία")) {
+        mainFrame.showDataEditor("cashflow");
+    } else if (action.equals("Σύγκριση")) {
+        // Καλούμε τη νέα μέθοδο που φτιάξαμε στο MainFrame
+        mainFrame.showComparison(); 
     }
+}
     
     /**
      * Sets up animation timer.
