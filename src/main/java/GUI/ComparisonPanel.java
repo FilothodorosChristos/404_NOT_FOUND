@@ -51,6 +51,8 @@ public class ComparisonPanel extends JPanel {
     }
 
     public ComparisonPanel(MainFrame mainFrame) {
+        
+        if (mainFrame == null) throw new IllegalArgumentException("MainFrame cannot be null");
         this.mainFrame = mainFrame;
         this.comparisonService = new ComparisonService();
         setLayout(new BorderLayout(0, 10));
