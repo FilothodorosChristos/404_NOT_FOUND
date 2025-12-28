@@ -2,6 +2,7 @@ package GUI;
 
 import dto.CashFlowCompareDto;
 import dto.ForeasCompareDto;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -50,6 +51,7 @@ public class ComparisonPanel extends JPanel {
         }
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public ComparisonPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         this.comparisonService = new ComparisonService();
