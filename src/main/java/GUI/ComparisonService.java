@@ -26,8 +26,7 @@ public class ComparisonService {
     
     /**
      * Compares cash flows between two years.
-     * 
-     * @param year1 First year to compare
+     * * @param year1 First year to compare
      * @param year2 Second year to compare
      * @param type Type of cash flow ("Έσοδο" or "Έξοδο")
      * @return List of comparison DTOs
@@ -49,10 +48,11 @@ public class ComparisonService {
         
         List<CashFlowCompareDto> results = new ArrayList<>();
         
-        // Get all unique cash flow names from year1
-        for (String name : mapYear1.keySet()) {
+ 
+        for (Map.Entry<String, CashFlow> entry : mapYear1.entrySet()) {
+            String name = entry.getKey();
             if (!mapYear2.containsKey(name)) {
-                CashFlow cf = mapYear1.get(name);
+                CashFlow cf = entry.getValue();
                 results.add(new CashFlowCompareDto(
                     name,
                     cf.getAmount(),
@@ -63,9 +63,10 @@ public class ComparisonService {
             }
         }
         
-        // Get all unique cash flow names from year2
-        for (String name : mapYear2.keySet()) {
-            CashFlow cfYear2 = mapYear2.get(name);
+
+        for (Map.Entry<String, CashFlow> entry : mapYear2.entrySet()) {
+            String name = entry.getKey();
+            CashFlow cfYear2 = entry.getValue();
             if (mapYear1.containsKey(name)) {
                 CashFlow cfYear1 = mapYear1.get(name);
                 results.add(new CashFlowCompareDto(
@@ -91,13 +92,12 @@ public class ComparisonService {
     
     /**
      * Compares foreis (organizations) between two years.
-     * 
-     * @param year1 First year to compare
+     * * @param year1 First year to compare
      * @param year2 Second year to compare
      * @return List of comparison DTOs
      */
     public List<ForeasCompareDto> compareForeis(int year1, int year2) {
-        // Φορτώνουμε όλους τους τύπους φορέων για κάθε έτος
+        
         List<Foreis> foreisYear1 = new ArrayList<>();
         foreisYear1.addAll(foreisService.getForeisByYearAndType(year1, "Κεντρική Διοίκηση"));
         foreisYear1.addAll(foreisService.getForeisByYearAndType(year1, "Υπουργείο"));
@@ -121,26 +121,28 @@ public class ComparisonService {
         
         List<ForeasCompareDto> results = new ArrayList<>();
         
-        // Σύγκριση φορέων που υπάρχουν και στα δύο έτη
-        for (Integer id : mapYear1.keySet()) {
-            Foreis f1 = mapYear1.get(id);
+      
+        for (Map.Entry<Integer, Foreis> entry : mapYear1.entrySet()) {
+            Integer id = entry.getKey();
+            Foreis f1 = entry.getValue();
             Foreis f2 = mapYear2.get(id);
             
             if (f2 != null) {
-                // Υπάρχει και στα δύο έτη
+                
                 ForeasCompareDto dto = createCompareDto(f1, f2);
                 results.add(dto);
             } else {
-                // Υπάρχει μόνο στο έτος 1
+                
                 ForeasCompareDto dto = createCompareDto(f1, null);
                 results.add(dto);
             }
         }
         
-        // Προσθήκη φορέων που υπάρχουν μόνο στο έτος 2
-        for (Integer id : mapYear2.keySet()) {
+       
+        for (Map.Entry<Integer, Foreis> entry : mapYear2.entrySet()) {
+            Integer id = entry.getKey();
             if (!mapYear1.containsKey(id)) {
-                Foreis f2 = mapYear2.get(id);
+                Foreis f2 = entry.getValue();
                 ForeasCompareDto dto = createCompareDto(null, f2);
                 results.add(dto);
             }
@@ -173,12 +175,12 @@ public class ComparisonService {
             dto.setTotalYear2(year2.getTotal());
         }
         
-        // Calculate differences
+        
         dto.setRegularDiff(dto.getRegularYear2() - dto.getRegularYear1());
         dto.setPublicInvDiff(dto.getPublicInvYear2() - dto.getPublicInvYear1());
         dto.setTotalDiff(dto.getTotalYear2() - dto.getTotalYear1());
         
-        // Calculate percentage changes
+        
         if (dto.getRegularYear1() != 0) {
             dto.setRegularPercentChange((dto.getRegularDiff() / dto.getRegularYear1()) * 100);
         }

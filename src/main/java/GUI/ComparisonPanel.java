@@ -51,10 +51,10 @@ public class ComparisonPanel extends JPanel {
     }
 
     public ComparisonPanel(MainFrame mainFrame) {
-        
-        if (mainFrame == null) throw new IllegalArgumentException("MainFrame cannot be null");
-        this.mainFrame = mainFrame;
+
+        this.mainFrame = mainFrame; 
         this.comparisonService = new ComparisonService();
+        
         setLayout(new BorderLayout(0, 10));
         setBackground(DARK_BG);
         initComponents();
@@ -154,7 +154,9 @@ public class ComparisonPanel extends JPanel {
         backBtn.setOpaque(true);
         backBtn.setContentAreaFilled(true);
         backBtn.setBorderPainted(true);
-        backBtn.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
+        if (mainFrame != null) {
+            backBtn.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
+        }
         
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bottom.setBackground(DARK_BG);
@@ -164,10 +166,10 @@ public class ComparisonPanel extends JPanel {
     }
 
     private void performComparison() {
-        int y1 = (int) year1Combo.getSelectedItem();
-        int y2 = (int) year2Combo.getSelectedItem();
+        int y1 = (year1Combo.getSelectedItem() != null) ? (int) year1Combo.getSelectedItem() : 0;
+        int y2 = (year2Combo.getSelectedItem() != null) ? (int) year2Combo.getSelectedItem() : 0;
         
-        if (y1 == y2) {
+        if (y1 == y2 && y1 != 0) {
             JOptionPane.showMessageDialog(this, 
                 "Δεν μπορείτε να συγκρίνετε το ίδιο έτος με τον εαυτό του.", 
                 "Μη έγκυρη Σύγκριση", 
@@ -226,7 +228,7 @@ public class ComparisonPanel extends JPanel {
                     resultsPanel.revalidate();
                     resultsPanel.repaint();
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
             }
         };
