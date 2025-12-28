@@ -8,19 +8,18 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Year;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class ComparisonPanel extends JPanel {
 
     private final MainFrame mainFrame;
     private final ComparisonService comparisonService;
     
-    
     private JComboBox<Integer> year1Combo; 
     private JComboBox<Integer> year2Combo;
     private JComboBox<String> dataTypeCombo;
     private JPanel resultsPanel, cardsPanel;
     private int selectedYear;
-    
     
     private static final Color DARK_BG = new Color(15, 23, 42);
     private static final Color DARKER_BG = new Color(8, 15, 30);
@@ -37,12 +36,25 @@ public class ComparisonPanel extends JPanel {
     private final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00 €");
     private final DecimalFormat percentFormat = new DecimalFormat("+#,##0.00%;-#,##0.00%");
 
+    private static class ComparisonResult {
+        final DefaultTableModel model;
+        final double sum1;
+        final double sum2;
+        final boolean hasData;
+
+        ComparisonResult(DefaultTableModel model, double sum1, double sum2, boolean hasData) {
+            this.model = model;
+            this.sum1 = sum1;
+            this.sum2 = sum2;
+            this.hasData = hasData;
+        }
+    }
+
     public ComparisonPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         this.comparisonService = new ComparisonService();
         setLayout(new BorderLayout(0, 10));
         setBackground(DARK_BG);
-        
         initComponents();
     }
     
@@ -58,7 +70,6 @@ public class ComparisonPanel extends JPanel {
         JPanel topContainer = new JPanel(new BorderLayout());
         topContainer.setBackground(DARK_BG);
 
-        // Header Section
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(DARK_BG);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 10, 25));
@@ -68,10 +79,8 @@ public class ComparisonPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         headerPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // Control Panel
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         controls.setBackground(DARK_BG);
-        
         
         JLabel yearBaseLabel = new JLabel("Έτος Βάσης:");
         yearBaseLabel.setForeground(TEXT_SECONDARY);
@@ -80,7 +89,6 @@ public class ComparisonPanel extends JPanel {
         year1Combo = new JComboBox<>();
         styleComboBox(year1Combo);
         populateYears(year1Combo); 
-        
         
         JLabel compareLabel = new JLabel("Σύγκριση με:");
         compareLabel.setForeground(TEXT_SECONDARY);
@@ -96,7 +104,6 @@ public class ComparisonPanel extends JPanel {
         
         dataTypeCombo = new JComboBox<>(new String[]{"Φορείς", "Έσοδα", "Έξοδα"});
         styleComboBox(dataTypeCombo);
-        
         
         JButton compareBtn = new JButton("🔄 ΑΝΑΝΕΩΣΗ ΣΥΓΚΡΙΣΗΣ");
         compareBtn.setBackground(ACCENT_BLUE); 
@@ -120,7 +127,6 @@ public class ComparisonPanel extends JPanel {
         controls.add(compareBtn);
         headerPanel.add(controls, BorderLayout.CENTER);
 
-        
         cardsPanel = new JPanel(new GridLayout(1, 3, 20, 0));
         cardsPanel.setBackground(DARK_BG);
         cardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 25, 20, 25));
@@ -128,7 +134,6 @@ public class ComparisonPanel extends JPanel {
         topContainer.add(headerPanel, BorderLayout.NORTH);
         topContainer.add(cardsPanel, BorderLayout.SOUTH);
 
-        
         resultsPanel = new JPanel(new BorderLayout());
         resultsPanel.setBackground(DARKER_BG);
         resultsPanel.setBorder(BorderFactory.createEmptyBorder(0, 25, 20, 25));
@@ -136,7 +141,6 @@ public class ComparisonPanel extends JPanel {
         add(topContainer, BorderLayout.NORTH);
         add(resultsPanel, BorderLayout.CENTER);
 
-        
         JButton backBtn = new JButton("← Προηγούμενο");
         backBtn.setBackground(ACCENT_BLUE); 
         backBtn.setForeground(Color.WHITE);
@@ -157,77 +161,73 @@ public class ComparisonPanel extends JPanel {
         add(bottom, BorderLayout.SOUTH);
     }
 
-
     private void performComparison() {
-        
         int y1 = (int) year1Combo.getSelectedItem();
         int y2 = (int) year2Combo.getSelectedItem();
         
-        
         if (y1 == y2) {
             JOptionPane.showMessageDialog(this, 
-                "Δεν μπορείτε να συγκρίνετε το ίδιο έτος με τον εαυτό του.\nΠαρακαλώ επιλέξτε διαφορετικό έτος σύγκρισης.", 
+                "Δεν μπορείτε να συγκρίνετε το ίδιο έτος με τον εαυτό του.", 
                 "Μη έγκυρη Σύγκριση", 
                 JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         String type = (String) dataTypeCombo.getSelectedItem();
-
         resultsPanel.removeAll();
-        JLabel loadingLabel = new JLabel("Ανάκτηση δεδομένων, παρακαλώ περιμένετε...", SwingConstants.CENTER);
-        loadingLabel.setFont(new Font("Segoe UI", Font.ITALIC, 16));
+        JLabel loadingLabel = new JLabel("Ανάκτηση δεδομένων...", SwingConstants.CENTER);
         loadingLabel.setForeground(TEXT_SECONDARY);
         resultsPanel.add(loadingLabel, BorderLayout.CENTER);
         resultsPanel.revalidate();
         resultsPanel.repaint();
 
-        SwingWorker<Void, Void> worker = new SwingWorker<>() {
-            private double sum1 = 0, sum2 = 0;
-            private DefaultTableModel tableModel;
-            private boolean hasData = false;
-
+        SwingWorker<ComparisonResult, Void> worker = new SwingWorker<>() {
             @Override
-            protected Void doInBackground() throws Exception {
-                if (type.equals("Φορείς")) {
+            protected ComparisonResult doInBackground() throws Exception {
+                double s1 = 0, s2 = 0;
+                DefaultTableModel model = null;
+                boolean dataFound = false;
+
+                if ("Φορείς".equals(type)) {
                     List<ForeasCompareDto> data = comparisonService.compareForeis(y1, y2);
                     if (data != null && !data.isEmpty()) {
-                        for(ForeasCompareDto d : data) { sum1 += d.getTotalYear1(); sum2 += d.getTotalYear2(); }
-                        tableModel = createForeisModel(data, y1, y2);
-                        hasData = true;
+                        for(ForeasCompareDto d : data) { s1 += d.getTotalYear1(); s2 += d.getTotalYear2(); }
+                        model = createForeisModel(data, y1, y2);
+                        dataFound = true;
                     }
                 } else {
-                    String dbType = type.equals("Έσοδα") ? "Έσοδο" : "Έξοδο";
+                    String dbType = "Έσοδα".equals(type) ? "Έσοδο" : "Έξοδο";
                     List<CashFlowCompareDto> data = comparisonService.compareCashFlows(y1, y2, dbType);
                     if (data != null && !data.isEmpty()) {
-                        for(CashFlowCompareDto d : data) { sum1 += d.getAmountYear1(); sum2 += d.getAmountYear2(); }
-                        tableModel = createCashFlowModel(data, y1, y2);
-                        hasData = true;
+                        for(CashFlowCompareDto d : data) { s1 += d.getAmountYear1(); s2 += d.getAmountYear2(); }
+                        model = createCashFlowModel(data, y1, y2);
+                        dataFound = true;
                     }
                 }
-                return null;
+                return new ComparisonResult(model, s1, s2, dataFound);
             }
 
             @Override
             protected void done() {
-                resultsPanel.removeAll();
-                if (hasData) {
-                    JTable table = setupTable(tableModel);
-                    JScrollPane scrollPane = new JScrollPane(table);
-                    scrollPane.getViewport().setBackground(DARKER_BG);
-                    scrollPane.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
-                    resultsPanel.add(scrollPane, BorderLayout.CENTER);
-                } else {
-                    JLabel noDataLabel = new JLabel("<html><center>Δεν βρέθηκαν δεδομένα για τα έτη " + y1 + " - " + y2 + "</center></html>", SwingConstants.CENTER);
-                    noDataLabel.setForeground(TEXT_SECONDARY);
-                    resultsPanel.add(noDataLabel);
+                try {
+                    ComparisonResult res = get();
+                    resultsPanel.removeAll();
+                    if (res.hasData) {
+                        JTable table = setupTable(res.model);
+                        JScrollPane scrollPane = new JScrollPane(table);
+                        scrollPane.getViewport().setBackground(DARKER_BG);
+                        resultsPanel.add(scrollPane, BorderLayout.CENTER);
+                    } else {
+                        resultsPanel.add(new JLabel("Δεν βρέθηκαν δεδομένα.", SwingConstants.CENTER));
+                    }
+                    updateSummaryCards(res.sum1, res.sum2, res.sum2 - res.sum1, y1, y2);
+                    resultsPanel.revalidate();
+                    resultsPanel.repaint();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
-                updateSummaryCards(sum1, sum2, sum2 - sum1, y1, y2);
-                resultsPanel.revalidate();
-                resultsPanel.repaint();
             }
         };
-
         worker.execute();
     }
 
@@ -235,7 +235,6 @@ public class ComparisonPanel extends JPanel {
         cardsPanel.removeAll();
         String winnerTitle = (t2 > t1) ? "Υψηλότερο Έτος: " + y2 + " ↑" : (t1 > t2) ? "Υψηλότερο Έτος: " + y1 + " ↓" : "Ισοπαλία";
         Color winnerColor = (t2 > t1) ? SUCCESS_GREEN : (t1 > t2) ? DANGER_RED : TEXT_SECONDARY;
-
         cardsPanel.add(createCard("Προηγούμενο (" + y1 + ")", decimalFormat.format(t1), TEXT_PRIMARY));
         cardsPanel.add(createCard("Σύγκριση (" + y2 + ")", decimalFormat.format(t2), TEXT_PRIMARY));
         cardsPanel.add(createCard(winnerTitle, "Διαφορά: " + decimalFormat.format(Math.abs(diff)), winnerColor));
@@ -248,17 +247,9 @@ public class ComparisonPanel extends JPanel {
         card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(BORDER_COLOR, 1),
             BorderFactory.createEmptyBorder(15, 18, 15, 18)));
-        
-        JLabel t = new JLabel(title); 
-        t.setFont(new Font("Segoe UI", Font.PLAIN, 13)); 
-        t.setForeground(TEXT_SECONDARY);
-        
-        JLabel v = new JLabel(val); 
-        v.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
-        v.setForeground(valueColor);
-        
-        card.add(t); 
-        card.add(v);
+        JLabel t = new JLabel(title); t.setForeground(TEXT_SECONDARY);
+        JLabel v = new JLabel(val); v.setFont(new Font("Segoe UI", Font.BOLD, 18)); v.setForeground(valueColor);
+        card.add(t); card.add(v);
         return card;
     }
 
@@ -267,53 +258,28 @@ public class ComparisonPanel extends JPanel {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         table.setRowHeight(45);
-        table.setShowGrid(true);
-        table.setGridColor(BORDER_COLOR);
         table.setBackground(DARKER_BG);
         table.setForeground(TEXT_PRIMARY);
+        table.setGridColor(BORDER_COLOR);
         
         JTableHeader header = table.getTableHeader();
         header.setBackground(TABLE_HEADER);
         header.setForeground(TEXT_PRIMARY);
         header.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        header.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, ACCENT_BLUE));
-        header.setPreferredSize(new Dimension(header.getWidth(), 50));
         
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                setHorizontalAlignment(column == 0 ? LEFT : CENTER);
-                setBackground(TABLE_HEADER);
-                setForeground(TEXT_PRIMARY);
-                setFont(new Font("Segoe UI", Font.BOLD, 14));
-                setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
-                return c;
-            }
-        };
-        
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
-        }
-
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable t, Object v, boolean isS, boolean hasF, int r, int c) {
                 Component comp = super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
                 setHorizontalAlignment(c == 0 ? LEFT : RIGHT);
-                
-                if (c >= 3) {
+                if (c >= 3 && v != null) {
                     String str = v.toString();
                     if (str.startsWith("+")) setForeground(SUCCESS_GREEN);
                     else if (str.startsWith("-")) setForeground(DANGER_RED);
                     else setForeground(TEXT_PRIMARY);
-                    setFont(getFont().deriveFont(Font.BOLD));
                 } else {
                     setForeground(TEXT_PRIMARY);
                 }
-                
                 setBackground(r % 2 == 0 ? DARKER_BG : TABLE_ROW_ALT);
-                setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
                 return comp;
             }
         });
@@ -346,31 +312,7 @@ public class ComparisonPanel extends JPanel {
     private void styleComboBox(JComboBox<?> combo) {
         combo.setBackground(new Color(51, 65, 85));
         combo.setForeground(TEXT_PRIMARY);
-        combo.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1)); 
-        combo.setFont(new Font("Segoe UI", Font.BOLD, 14));
         combo.setPreferredSize(new Dimension(120, 38));
-        combo.setOpaque(true);
-        
-        combo.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value,
-                    int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                label.setHorizontalAlignment(CENTER);
-                label.setFont(new Font("Segoe UI", Font.BOLD, 13));
-                
-                if (isSelected) {
-                    label.setBackground(ACCENT_BLUE);
-                    label.setForeground(Color.WHITE);
-                } else {
-                    label.setBackground(new Color(51, 65, 85));
-                    label.setForeground(TEXT_PRIMARY);
-                }
-                label.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
-                label.setOpaque(true);
-                return label;
-            }
-        });
     }
 
     private void populateYears(JComboBox<Integer> combo) {
@@ -379,11 +321,8 @@ public class ComparisonPanel extends JPanel {
         for (int i = 2021; i <= currentYear + 1; i++) {
             combo.addItem(i);
         }
-        
-        
         if (combo == year2Combo) {
-            int defaultYear = (selectedYear != currentYear) ? currentYear : currentYear - 1;
-            combo.setSelectedItem(defaultYear);
+            combo.setSelectedItem((selectedYear != currentYear) ? currentYear : currentYear - 1);
         } else if (selectedYear != 0) {
             combo.setSelectedItem(selectedYear);
         }
