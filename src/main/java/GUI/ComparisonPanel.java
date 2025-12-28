@@ -51,8 +51,7 @@ public class ComparisonPanel extends JPanel {
     }
 
     public ComparisonPanel(MainFrame mainFrame) {
-
-        this.mainFrame = mainFrame; 
+        this.mainFrame = mainFrame;
         this.comparisonService = new ComparisonService();
         
         setLayout(new BorderLayout(0, 10));
