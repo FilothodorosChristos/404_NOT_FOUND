@@ -225,7 +225,8 @@ public class ComparisonPanel extends JPanel {
                         noData.setForeground(TEXT_PRIMARY);
                         resultsPanel.add(noData);
                     }
-                    updateSummaryCards(res.sum1, res.sum2, res.sum2 - res.sum1, y1, y2);
+                    
+                    updateSummaryCards(res.sum1, res.sum2, res.sum1 - res.sum2, y1, y2);
                     resultsPanel.revalidate();
                     resultsPanel.repaint();
                 } catch (InterruptedException | ExecutionException e) {
@@ -238,10 +239,12 @@ public class ComparisonPanel extends JPanel {
 
     private void updateSummaryCards(double t1, double t2, double diff, int y1, int y2) {
         cardsPanel.removeAll();
-        String winnerTitle = (t2 > t1) ? "Υψηλότερο Έτος: " + y2 + " ↑" : (t1 > t2) ? "Υψηλότερο Έτος: " + y1 + " ↓" : "Ισοπαλία";
-        Color winnerColor = (t2 > t1) ? SUCCESS_GREEN : (t1 > t2) ? DANGER_RED : TEXT_SECONDARY;
-        cardsPanel.add(createCard("Προηγούμενο (" + y1 + ")", decimalFormat.format(t1), TEXT_PRIMARY));
-        cardsPanel.add(createCard("Σύγκριση (" + y2 + ")", decimalFormat.format(t2), TEXT_PRIMARY));
+        
+        String winnerTitle = (diff > 0) ? "Υψηλότερο Έτος: " + y1 + " ↑" : (diff < 0) ? "Υψηλότερο Έτος: " + y2 + " ↓" : "Ισοπαλία";
+        Color winnerColor = (diff > 0) ? SUCCESS_GREEN : (diff < 0) ? DANGER_RED : TEXT_SECONDARY;
+        
+        cardsPanel.add(createCard("Έτος Βάσης (" + y1 + ")", decimalFormat.format(t1), TEXT_PRIMARY));
+        cardsPanel.add(createCard("Έτος Σύγκρισης (" + y2 + ")", decimalFormat.format(t2), TEXT_PRIMARY));
         cardsPanel.add(createCard(winnerTitle, "Διαφορά: " + decimalFormat.format(Math.abs(diff)), winnerColor));
         cardsPanel.revalidate();
     }
@@ -306,8 +309,9 @@ public class ComparisonPanel extends JPanel {
         String[] cols = {typeLabel, "Έτος " + y1, "Έτος " + y2, "Διαφορά", "Τάση %"};
         DefaultTableModel model = new DefaultTableModel(cols, 0);
         for (CashFlowCompareDto d : data) {
-            double diff = d.getAmountYear2() - d.getAmountYear1();
-            double p = (d.getAmountYear1() != 0) ? (diff / d.getAmountYear1()) : 0;
+            
+            double diff = d.getAmountYear1() - d.getAmountYear2();
+            double p = (d.getAmountYear2() != 0) ? (diff / d.getAmountYear2()) : 0;
             model.addRow(new Object[]{d.getName(), decimalFormat.format(d.getAmountYear1()), 
                 decimalFormat.format(d.getAmountYear2()), decimalFormat.format(diff), percentFormat.format(p)});
         }
@@ -318,9 +322,13 @@ public class ComparisonPanel extends JPanel {
         String[] cols = {"Φορέας", "Έτος " + y1, "Έτος " + y2, "Διαφορά", "Μεταβολή %"};
         DefaultTableModel model = new DefaultTableModel(cols, 0);
         for (ForeasCompareDto d : data) {
+            
+            double diff = d.getTotalYear1() - d.getTotalYear2();
+            double p = (d.getTotalYear2() != 0) ? (diff / d.getTotalYear2()) : 0;
+            
             model.addRow(new Object[]{d.getName(), decimalFormat.format(d.getTotalYear1()), 
-                decimalFormat.format(d.getTotalYear2()), decimalFormat.format(d.getTotalDiff()), 
-                d.getTotalPercentChange() != null ? percentFormat.format(d.getTotalPercentChange()/100) : "0.00%"});
+                decimalFormat.format(d.getTotalYear2()), decimalFormat.format(diff), 
+                percentFormat.format(p)});
         }
         return model;
     }
