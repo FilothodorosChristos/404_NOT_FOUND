@@ -278,7 +278,29 @@ public class MainFrame extends JFrame {
     public String getSelectedYear() { 
         return selectedYear; 
     }
+   
+    /** Panel name constant for comparison screen. */
+public static final String COMPARISON = "comparison";
+
+// Μέσα στη μέθοδο initializePanels() προσθέστε:
+// mainPanel.add(new ComparisonPanel(this), COMPARISON);
+
+/**
+ * Εμφανίζει το πάνελ σύγκρισης ετών.
+ */
+public void showComparison() {
+    // Μπορείτε να αφαιρείτε το παλιό πάνελ για να ανανεώνονται τα δεδομένα
+    for (Component comp : mainPanel.getComponents()) {
+        if (comp instanceof ComparisonPanel) {
+            mainPanel.remove(comp);
+            break;
+        }
+    }
     
+    ComparisonPanel compPanel = new ComparisonPanel(this);
+    mainPanel.add(compPanel, COMPARISON);
+    showPanel(COMPARISON);
+}
     /**
      * Sets the selected budget year.
      *
