@@ -5,6 +5,10 @@ import dto.ForeasCompareDto;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.plaf.basic.ComboPopup;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Year;
@@ -31,7 +35,7 @@ public class ComparisonPanel extends JPanel {
     private static final Color TEXT_PRIMARY = new Color(248, 250, 252);
     private static final Color TEXT_SECONDARY = new Color(148, 163, 184);
     private static final Color BORDER_COLOR = new Color(51, 65, 85);
-    private static final Color TABLE_HEADER = new Color(30, 41, 59);
+    private static final Color TABLE_HEADER_BG = new Color(30, 41, 59);
     private static final Color TABLE_ROW_ALT = new Color(20, 30, 48);
 
     private final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00 €");
@@ -87,7 +91,6 @@ public class ComparisonPanel extends JPanel {
         
         JLabel yearBaseLabel = new JLabel("Έτος Βάσης:");
         yearBaseLabel.setForeground(TEXT_SECONDARY);
-        yearBaseLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
         year1Combo = new JComboBox<>();
         styleComboBox(year1Combo);
@@ -95,7 +98,6 @@ public class ComparisonPanel extends JPanel {
         
         JLabel compareLabel = new JLabel("Σύγκριση με:");
         compareLabel.setForeground(TEXT_SECONDARY);
-        compareLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
         year2Combo = new JComboBox<>();
         styleComboBox(year2Combo);
@@ -103,22 +105,19 @@ public class ComparisonPanel extends JPanel {
         
         JLabel categoryLabel = new JLabel("Κατηγορία:");
         categoryLabel.setForeground(TEXT_SECONDARY);
-        categoryLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
         dataTypeCombo = new JComboBox<>(new String[]{"Φορείς", "Έσοδα", "Έξοδα"});
         styleComboBox(dataTypeCombo);
         
-        JButton compareBtn = new JButton("🔄 ΑΝΑΝΕΩΣΗ ΣΥΓΚΡΙΣΗΣ");
-        compareBtn.setBackground(ACCENT_BLUE); 
-        compareBtn.setForeground(Color.WHITE); 
-        compareBtn.setFocusPainted(false); 
+        JButton compareBtn = new JButton("ΑΝΑΝΕΩΣΗ ΣΥΓΚΡΙΣΗΣ");
+        compareBtn.setUI(new BasicButtonUI()); 
         compareBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
         compareBtn.setPreferredSize(new Dimension(220, 38));
-        compareBtn.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1)); 
-        compareBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        compareBtn.setBackground(ACCENT_BLUE); 
+        compareBtn.setForeground(Color.WHITE); 
         compareBtn.setOpaque(true);
-        compareBtn.setContentAreaFilled(true);
-        compareBtn.setBorderPainted(true);
+        compareBtn.setBorder(BorderFactory.createEmptyBorder());
+        compareBtn.setFocusPainted(false);
         compareBtn.addActionListener(e -> performComparison());
 
         controls.add(yearBaseLabel); 
@@ -145,16 +144,14 @@ public class ComparisonPanel extends JPanel {
         add(resultsPanel, BorderLayout.CENTER);
 
         JButton backBtn = new JButton("← Προηγούμενο");
-        backBtn.setBackground(ACCENT_BLUE); 
-        backBtn.setForeground(Color.WHITE);
-        backBtn.setFocusPainted(false);
+        backBtn.setUI(new BasicButtonUI());
         backBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
         backBtn.setPreferredSize(new Dimension(160, 38));
-        backBtn.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1)); 
-        backBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        backBtn.setBackground(ACCENT_BLUE); 
+        backBtn.setForeground(Color.WHITE); 
         backBtn.setOpaque(true);
-        backBtn.setContentAreaFilled(true);
-        backBtn.setBorderPainted(true);
+        backBtn.setBorder(BorderFactory.createEmptyBorder());
+        backBtn.setFocusPainted(false);
         if (mainFrame != null) {
             backBtn.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
         }
@@ -181,7 +178,7 @@ public class ComparisonPanel extends JPanel {
         String type = (String) dataTypeCombo.getSelectedItem();
         resultsPanel.removeAll();
         JLabel loadingLabel = new JLabel("Ανάκτηση δεδομένων...", SwingConstants.CENTER);
-        loadingLabel.setForeground(TEXT_SECONDARY);
+        loadingLabel.setForeground(TEXT_PRIMARY);
         resultsPanel.add(loadingLabel, BorderLayout.CENTER);
         resultsPanel.revalidate();
         resultsPanel.repaint();
@@ -205,7 +202,7 @@ public class ComparisonPanel extends JPanel {
                     List<CashFlowCompareDto> data = comparisonService.compareCashFlows(y1, y2, dbType);
                     if (data != null && !data.isEmpty()) {
                         for(CashFlowCompareDto d : data) { s1 += d.getAmountYear1(); s2 += d.getAmountYear2(); }
-                        model = createCashFlowModel(data, y1, y2);
+                        model = createCashFlowModel(data, y1, y2, type);
                         dataFound = true;
                     }
                 }
@@ -221,11 +218,15 @@ public class ComparisonPanel extends JPanel {
                         JTable table = setupTable(res.model);
                         JScrollPane scrollPane = new JScrollPane(table);
                         scrollPane.getViewport().setBackground(DARKER_BG);
+                        scrollPane.setBorder(BorderFactory.createEmptyBorder());
                         resultsPanel.add(scrollPane, BorderLayout.CENTER);
                     } else {
-                        resultsPanel.add(new JLabel("Δεν βρέθηκαν δεδομένα.", SwingConstants.CENTER));
+                        JLabel noData = new JLabel("Δεν βρέθηκαν δεδομένα.", SwingConstants.CENTER);
+                        noData.setForeground(TEXT_PRIMARY);
+                        resultsPanel.add(noData);
                     }
-                    updateSummaryCards(res.sum1, res.sum2, res.sum2 - res.sum1, y1, y2);
+                    
+                    updateSummaryCards(res.sum1, res.sum2, res.sum1 - res.sum2, y1, y2);
                     resultsPanel.revalidate();
                     resultsPanel.repaint();
                 } catch (InterruptedException | ExecutionException e) {
@@ -238,10 +239,12 @@ public class ComparisonPanel extends JPanel {
 
     private void updateSummaryCards(double t1, double t2, double diff, int y1, int y2) {
         cardsPanel.removeAll();
-        String winnerTitle = (t2 > t1) ? "Υψηλότερο Έτος: " + y2 + " ↑" : (t1 > t2) ? "Υψηλότερο Έτος: " + y1 + " ↓" : "Ισοπαλία";
-        Color winnerColor = (t2 > t1) ? SUCCESS_GREEN : (t1 > t2) ? DANGER_RED : TEXT_SECONDARY;
-        cardsPanel.add(createCard("Προηγούμενο (" + y1 + ")", decimalFormat.format(t1), TEXT_PRIMARY));
-        cardsPanel.add(createCard("Σύγκριση (" + y2 + ")", decimalFormat.format(t2), TEXT_PRIMARY));
+        
+        String winnerTitle = (diff > 0) ? "Υψηλότερο Έτος: " + y1 + " ↑" : (diff < 0) ? "Υψηλότερο Έτος: " + y2 + " ↓" : "Ισοπαλία";
+        Color winnerColor = (diff > 0) ? SUCCESS_GREEN : (diff < 0) ? DANGER_RED : TEXT_SECONDARY;
+        
+        cardsPanel.add(createCard("Έτος Βάσης (" + y1 + ")", decimalFormat.format(t1), TEXT_PRIMARY));
+        cardsPanel.add(createCard("Έτος Σύγκρισης (" + y2 + ")", decimalFormat.format(t2), TEXT_PRIMARY));
         cardsPanel.add(createCard(winnerTitle, "Διαφορά: " + decimalFormat.format(Math.abs(diff)), winnerColor));
         cardsPanel.revalidate();
     }
@@ -266,11 +269,22 @@ public class ComparisonPanel extends JPanel {
         table.setBackground(DARKER_BG);
         table.setForeground(TEXT_PRIMARY);
         table.setGridColor(BORDER_COLOR);
+        table.setFillsViewportHeight(true);
         
         JTableHeader header = table.getTableHeader();
-        header.setBackground(TABLE_HEADER);
-        header.setForeground(TEXT_PRIMARY);
-        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object v, boolean isS, boolean hasF, int r, int c) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
+                label.setBackground(TABLE_HEADER_BG);
+                label.setForeground(Color.WHITE);
+                label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, BORDER_COLOR));
+                label.setOpaque(true);
+                return label;
+            }
+        });
         
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable t, Object v, boolean isS, boolean hasF, int r, int c) {
@@ -291,12 +305,13 @@ public class ComparisonPanel extends JPanel {
         return table;
     }
 
-    private DefaultTableModel createCashFlowModel(List<CashFlowCompareDto> data, int y1, int y2) {
-        String[] cols = {"Περιγραφή", "Έτος " + y1, "Έτος " + y2, "Διαφορά", "Τάση %"};
+    private DefaultTableModel createCashFlowModel(List<CashFlowCompareDto> data, int y1, int y2, String typeLabel) {
+        String[] cols = {typeLabel, "Έτος " + y1, "Έτος " + y2, "Διαφορά", "Τάση %"};
         DefaultTableModel model = new DefaultTableModel(cols, 0);
         for (CashFlowCompareDto d : data) {
-            double diff = d.getAmountYear2() - d.getAmountYear1();
-            double p = (d.getAmountYear1() != 0) ? (diff / d.getAmountYear1()) : 0;
+            
+            double diff = d.getAmountYear1() - d.getAmountYear2();
+            double p = (d.getAmountYear2() != 0) ? (diff / d.getAmountYear2()) : 0;
             model.addRow(new Object[]{d.getName(), decimalFormat.format(d.getAmountYear1()), 
                 decimalFormat.format(d.getAmountYear2()), decimalFormat.format(diff), percentFormat.format(p)});
         }
@@ -307,17 +322,49 @@ public class ComparisonPanel extends JPanel {
         String[] cols = {"Φορέας", "Έτος " + y1, "Έτος " + y2, "Διαφορά", "Μεταβολή %"};
         DefaultTableModel model = new DefaultTableModel(cols, 0);
         for (ForeasCompareDto d : data) {
+            
+            double diff = d.getTotalYear1() - d.getTotalYear2();
+            double p = (d.getTotalYear2() != 0) ? (diff / d.getTotalYear2()) : 0;
+            
             model.addRow(new Object[]{d.getName(), decimalFormat.format(d.getTotalYear1()), 
-                decimalFormat.format(d.getTotalYear2()), decimalFormat.format(d.getTotalDiff()), 
-                d.getTotalPercentChange() != null ? percentFormat.format(d.getTotalPercentChange()/100) : "0.00%"});
+                decimalFormat.format(d.getTotalYear2()), decimalFormat.format(diff), 
+                percentFormat.format(p)});
         }
         return model;
     }
 
     private void styleComboBox(JComboBox<?> combo) {
-        combo.setBackground(new Color(51, 65, 85));
-        combo.setForeground(TEXT_PRIMARY);
-        combo.setPreferredSize(new Dimension(120, 38));
+        combo.setUI(new BasicComboBoxUI() {
+            @Override
+            protected JButton createArrowButton() {
+                JButton b = super.createArrowButton();
+                b.setBackground(CARD_BG);
+                b.setBorder(BorderFactory.createEmptyBorder());
+                b.setContentAreaFilled(false);
+                return b;
+            }
+            @Override
+            protected ComboPopup createPopup() {
+                BasicComboPopup popup = (BasicComboPopup) super.createPopup();
+                popup.setBorder(BorderFactory.createLineBorder(BORDER_COLOR));
+                return popup;
+            }
+        });
+        combo.setBackground(CARD_BG);
+        combo.setForeground(Color.WHITE);
+        combo.setBorder(BorderFactory.createLineBorder(BORDER_COLOR));
+        combo.setPreferredSize(new Dimension(140, 38));
+        
+        combo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel l = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                l.setForeground(Color.WHITE);
+                l.setBackground(isSelected ? ACCENT_BLUE : CARD_BG);
+                l.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+                return l;
+            }
+        });
     }
 
     private void populateYears(JComboBox<Integer> combo) {
