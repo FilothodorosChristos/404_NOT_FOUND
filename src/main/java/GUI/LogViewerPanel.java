@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.List;
 import dao.Log;
 import dao.LogDao;
+import service.LogService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -44,8 +45,8 @@ public final class LogViewerPanel extends JPanel {
     /** The JTable component. */
     private JTable logTable;
     
-    /** DAO for accessing log data. */
-    private final LogDao logDao;
+    /** LogService for accessing log data. */
+    private final LogService logService;
     
     /**
      * Constructs a LogViewerPanel with the specified MainFrame reference.
@@ -61,7 +62,7 @@ public final class LogViewerPanel extends JPanel {
         this.mainFrame = mainFrame;
         this.returnYear = year;
         this.returnDataType = dataType;
-        this.logDao = new LogDao();
+        this.logService = new LogService(new LogDao());
         setLayout(new BorderLayout());
         createUI();
         loadLogData();
@@ -278,7 +279,7 @@ public final class LogViewerPanel extends JPanel {
         tableModel.setRowCount(0);
         
         try {
-            List<Log> logs = logDao.selectLog();
+            List<Log> logs = logService.getLogsFrom();
             
             System.out.println("Logs found: " + logs.size()); // Debug
             
