@@ -43,9 +43,9 @@ public class LogServiceTest {
     }
   }
 
-  // -------------------------------------------------------------
+ 
   // TEST 1: Empty logs
-  // -------------------------------------------------------------
+ 
   @Test
   void testGetAllLogsEmpty() {
     List<Log> logs = service.getAllLogs();
@@ -54,9 +54,9 @@ public class LogServiceTest {
     assertEquals(0, logs.size());
   }
 
-  // -------------------------------------------------------------
+
   // TEST 2: Logs exist in DB
-  // -------------------------------------------------------------
+
   @Test
   void testGetAllLogsWithData() {
 
@@ -98,9 +98,9 @@ public class LogServiceTest {
     assertEquals("{amount:250.0}", log2.getNewData());
   }
 
-  // -------------------------------------------------------------
+  
   // Helper method to insert logs directly into DB
-  // -------------------------------------------------------------
+  
   private void insertLogIntoDB(String tableName, String operation, Integer rowId,
                                String oldData, String newData, String timestamp) {
 
