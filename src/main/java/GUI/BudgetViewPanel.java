@@ -232,11 +232,6 @@ public class BudgetViewPanel extends JPanel {
             String yearStr = mainFrame.getSelectedYear();
             int year = Integer.parseInt(yearStr);
 
-            System.out.println("=== DEBUG INFO ===");
-            System.out.println("Selected Year String: " + yearStr);
-            System.out.println("Selected Year Int: " + year);
-            System.out.println("Selected Category: " + selection);
-
             // Update section label
             sectionLabel.setText(selection);
 
@@ -276,10 +271,7 @@ public class BudgetViewPanel extends JPanel {
 
         List<CashFlow> cashFlows = cashFlowService.getCashflows(year, type);
 
-        System.out.println("CashFlow results (" + type + "): " + cashFlows.size() + " rows");
-
         for (CashFlow cf : cashFlows) {
-            System.out.println("  - ID: " + cf.getId() + ", Name: " + cf.getName() + ", Amount: " + cf.getAmount());
             Object[] row = {
                     cf.getId(),
                     cf.getYearId(),
@@ -303,13 +295,8 @@ public class BudgetViewPanel extends JPanel {
         List<Foreis> foreisListDepartment = foreisService.getForeisByYearAndType(year, "Υπουργείο");
         List<Foreis> foreisListDecentered = foreisService.getForeisByYearAndType(year, "Αποκεντρωμένη Διοίκηση");
 
-        System.out.println("Foreis results (Κεντρική Διοίκηση): " + foreisListCentered.size() + " rows");
-        System.out.println("Foreis results (Υπουργείο): " + foreisListDepartment.size() + " rows");
-        System.out.println("Foreis results (Αποκεντρωμένη Διοίκηση): " + foreisListDecentered.size() + " rows");
-
         // Προσθήκη όλων των φορέων
         for (Foreis f : foreisListCentered) {
-            System.out.println("  - ID: " + f.getId() + ", Name: " + f.getName() + ", Total: " + f.getTotal());
             Object[] row = {
                     f.getId(),
                     f.getForeasId(),
@@ -324,7 +311,6 @@ public class BudgetViewPanel extends JPanel {
         }
 
         for (Foreis f : foreisListDepartment) {
-            System.out.println("  - ID: " + f.getId() + ", Name: " + f.getName() + ", Total: " + f.getTotal());
             Object[] row = {
                     f.getId(),
                     f.getForeasId(),
@@ -337,8 +323,9 @@ public class BudgetViewPanel extends JPanel {
             };
             tableModel.addRow(row);
         }
+
         for (Foreis f : foreisListDecentered) {
-            System.out.println("  - ID: " + f.getId() + ", Name: " + f.getName() + ", Total: " + f.getTotal());
+           
             Object[] row = {
                     f.getId(),
                     f.getForeasId(),

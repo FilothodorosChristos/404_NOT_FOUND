@@ -44,7 +44,7 @@ public class CashFlowTest {
 
   @Test
     public void testToString() {
-    CashFlow cf = new CashFlow(3, 2025, "Revenue","Donation", 200.0);
+    CashFlow cf = new CashFlow(3, 2025, "Revenue", "Donation", 200.0);
     String str = cf.toString();
 
     // Ελέγχουμε ότι η toString περιέχει τα σωστά δεδομένα

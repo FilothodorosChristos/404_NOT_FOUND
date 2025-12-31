@@ -168,8 +168,6 @@ public class DatabaseSetup {
       stmt.execute(triggerDeleteCashflows);
 
 
-      System.out.println("Οι πίνακες δημιουργήθηκαν με επιτυχία.");
-
     } catch (SQLException e) {
       //e.printStackTrace();
       System.err.println("Σφάλμα κατά τη δημιουργία των πινάκων: " + e.getMessage());
@@ -208,8 +206,6 @@ public class DatabaseSetup {
 
 
       stmt.execute("PRAGMA foreign_keys = ON;");
-
-      System.out.println("Επιτυχής διαγραφή των πινάκων.");
 
     } catch (SQLException e) {
       System.err.println("Σφάλμα κατά τη διαγραφή των πινάκων: " + e.getMessage());

@@ -281,11 +281,8 @@ public final class LogViewerPanel extends JPanel {
         try {
             List<Log> logs = logService.getLogsFrom();
             
-            System.out.println("Logs found: " + logs.size()); // Debug
-            
             if (logs.isEmpty()) {
                 // Don't show message, just leave table empty
-                System.out.println("No logs found in database.");
                 return;
             }
             
@@ -302,8 +299,6 @@ public final class LogViewerPanel extends JPanel {
                 };
                 tableModel.addRow(row);
             }
-            
-            System.out.println("Logs loaded successfully!");
             
         } catch (Exception e) {
             System.err.println("Error loading logs: " + e.getMessage());
