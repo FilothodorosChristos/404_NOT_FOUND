@@ -308,7 +308,6 @@ public void showComparison() {
      */
     public void setSelectedYear(String year) {
         this.selectedYear = year;
-        System.out.println("Selected year: " + selectedYear);
     }
     
     /**

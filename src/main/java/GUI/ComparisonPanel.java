@@ -370,7 +370,7 @@ public class ComparisonPanel extends JPanel {
     private void populateYears(JComboBox<Integer> combo) {
         int currentYear = Year.now().getValue();
         combo.removeAllItems();
-        for (int i = 2021; i <= currentYear + 1; i++) {
+        for (int i = 2021; i < currentYear + 1; i++) {
             combo.addItem(i);
         }
         if (combo == year2Combo) {

@@ -32,7 +32,6 @@ public class DataImporter {
       String filename = "B" + year + "Foreis.csv";
       try {
         insertForeisFromCsv(filename);
-        System.out.println("Εισήχθησαν δεδομένα από " + filename);
       } catch (Exception e) {
         System.err.println(e.getMessage());
       }
@@ -44,7 +43,6 @@ public class DataImporter {
         String filename = "B" + year + type + ".csv";
         try {
           insertCashflowsFromCsv(filename, type);
-          System.out.println("Εισήχθησαν δεδομένα από " + filename);
         } catch (Exception e) {
           System.err.println(e.getMessage());
         }
@@ -67,7 +65,7 @@ public class DataImporter {
     try (Connection conn = DriverManager.getConnection(URL);
             PreparedStatement pstmt = conn.prepareStatement(
                     "INSERT INTO foreis (foreas_id, year_id, type, name, regular_budget, public_inv_budget, total) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            Scanner scanner = new Scanner(is, "UTF-8")) { // <-- UTF-8
+            Scanner scanner = new Scanner(is, "UTF-8")) { 
 
       conn.setAutoCommit(false);
       if (scanner.hasNextLine()) {
@@ -80,7 +78,7 @@ public class DataImporter {
         if (line.isEmpty())
             continue;
 
-        String[] parts = line.split(";", -1); // <-- διαχωριστικό ;
+        String[] parts = line.split(";", -1); 
         if (parts.length < 7) {
             System.err.println("Foreis line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 6 πεδία");
             continue;
@@ -124,8 +122,7 @@ public class DataImporter {
     try (Connection conn = DriverManager.getConnection(URL);
             PreparedStatement pstmt = conn.prepareStatement(
                     "INSERT INTO cashflows (year_id, type, name, amount) VALUES (?, ?, ?, ?)");
-            Scanner scanner = new Scanner(is, "UTF-8")) { // <-- UTF-8
-
+            Scanner scanner = new Scanner(is, "UTF-8")) {
         conn.setAutoCommit(false);
         if (scanner.hasNextLine())
             scanner.nextLine(); // Παράβλεψη header
@@ -137,7 +134,7 @@ public class DataImporter {
             if (line.isEmpty())
                 continue;
 
-            String[] parts = line.split(";", -1); // <-- διαχωριστικό ;
+            String[] parts = line.split(";", -1);
             if (parts.length < 4) {
                 System.err
                         .println("Cashflows line " + lineNo + ": " + line + " -> Παράλειψη: λιγότερα από 3 πεδία");
@@ -162,4 +159,4 @@ public class DataImporter {
         throw new Exception("Σφάλμα κατά την εισαγωγή στον πίνακα cashflows: " + e.getMessage());
     }
   }
-  }
+}
