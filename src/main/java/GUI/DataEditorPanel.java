@@ -3,17 +3,17 @@ package GUI;
 import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
+import java.io.File;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import java.util.List;
+import javax.imageio.ImageIO;
 import service.CashFlowService;
 import service.ForeisService;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.List;
-import javax.imageio.ImageIO;
 
 /**
  * Panel για εμφάνιση και επεξεργασία δεδομένων από τη βάση.
@@ -101,11 +101,10 @@ public final class DataEditorPanel extends JPanel {
         }
       }
       
-      System.out.println("Warning: BackroundPhoto.jpg not found in common locations");
+      System.err.println("Warning: BackroundPhoto.jpg not found in common locations");
       
     } catch (Exception e) {
       System.err.println("Error loading background image: " + e.getMessage());
-      e.printStackTrace();
     }
   }
 
