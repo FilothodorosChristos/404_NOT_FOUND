@@ -2,7 +2,6 @@ package dao;
 
 import database.DatabaseSetup;
 import dto.ForeasCompareDto;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

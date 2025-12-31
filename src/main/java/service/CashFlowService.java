@@ -33,6 +33,13 @@ public class CashFlowService {
     ValidationUtils.validateYear(cashflow.getYearId());
 
     cashflowDao.addCashFlow(cashflow);
+    List<CashFlow> existing = cashflowDao.selectCashFlow(
+        cashflow.getYearId(), "Έσοδο"
+    );
+    existing.addAll(cashflowDao.selectCashFlow(
+        cashflow.getYearId(), "Έξοδο"
+    ));
+    ValidationUtils.printBudgetStatus(existing);
   }
 
   /**
