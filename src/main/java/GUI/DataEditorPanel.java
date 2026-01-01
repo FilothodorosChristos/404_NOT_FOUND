@@ -439,8 +439,6 @@ public final class DataEditorPanel extends JPanel {
         loadForeisData("Έξοδο", expenseTableModel);
       }
 
-      updateStatistics();
-
     } catch (Exception e) {
       showError("Σφάλμα φόρτωσης δεδομένων: " + e.getMessage());
     }
@@ -485,13 +483,7 @@ public final class DataEditorPanel extends JPanel {
     }
   }
 
-  /**
-   * Ενημέρωση στατιστικών στο header.
-   */
-  private void updateStatistics() {
-    int incomeCount = incomeTableModel.getRowCount();
-    int expenseCount = expenseTableModel.getRowCount();
-  }
+
 
   /**
    * Αυτόματη αποθήκευση γραμμής κατά την επεξεργασία.
@@ -514,7 +506,6 @@ public final class DataEditorPanel extends JPanel {
       } else if ("foreis".equalsIgnoreCase(dataType)) {
         saveForeisRow(row, tableModel);
       }
-      updateStatistics();
     } catch (Exception e) {
       showError("Σφάλμα αυτόματης αποθήκευσης: " + e.getMessage());
       loadData();
