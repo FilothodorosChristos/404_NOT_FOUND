@@ -64,7 +64,7 @@ public class ValidationUtils {
    * ελλειμματικός ή ισοσκελισμένος.
    */
 
-  public static String printBudgetStatus(List<CashFlow> cashflows) {
+  public static String calculateBudgetStatus(List<CashFlow> cashflows) {
 
     double incomeSum = cashflows.stream()
                 .filter(cf -> "Έσοδο".equals(cf.getType()))

@@ -102,7 +102,7 @@ public void testPrintBudgetStatusBalanced() {
     );
 
     // Act
-    String result = ValidationUtils.printBudgetStatus(cashflows);
+    String result = ValidationUtils.calculateBudgetStatus(cashflows);
 
     // Assert
     assertEquals("Ο προϋπολογισμός είναι ΙΣΟΣΚΕΛΙΣΜΕΝΟΣ", result);
@@ -116,7 +116,7 @@ public void testPrintBudgetStatusSurplus() {
             new CashFlow(2, 2023, "Έξοδο", "Expense", 100.0)
     );
 
-    String result = ValidationUtils.printBudgetStatus(cashflows);
+    String result = ValidationUtils.calculateBudgetStatus(cashflows);
 
     assertEquals("Ο προϋπολογισμός είναι ΠΛΕΟΝΑΣΜΑΤΙΚΟΣ", result);
 }
@@ -129,7 +129,7 @@ public void testPrintBudgetStatusDeficit() {
             new CashFlow(2, 2023, "Έξοδο", "Expense", 200.0)
     );
 
-    String result = ValidationUtils.printBudgetStatus(cashflows);
+    String result = ValidationUtils.calculateBudgetStatus(cashflows);
 
     assertEquals("Ο προϋπολογισμός είναι ΕΛΛΕΙΜΜΑΤΙΚΟΣ", result);
 }

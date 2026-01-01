@@ -5,14 +5,16 @@ import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import javax.swing.*;
 import java.io.File;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.util.List;
 import javax.imageio.ImageIO;
 import service.CashFlowService;
 import service.ForeisService;
+import util.ValidationUtils;
+
 
 
 /**
@@ -96,7 +98,7 @@ public final class DataEditorPanel extends JPanel {
         File imageFile = new File(path);
         if (imageFile.exists()) {
           backgroundImage = ImageIO.read(imageFile);
-          System.out.println("Background image loaded from: " + path);
+          //System.out.println("Background image loaded from: " + path);
           return;
         }
       }
@@ -187,7 +189,6 @@ public final class DataEditorPanel extends JPanel {
     // *** ΑΥΤΗ ΕΙΝΑΙ Η ΣΗΜΑΝΤΙΚΗ ΑΛΛΑΓΗ ***
     historyButton.addActionListener(e -> {
       try {
-        System.out.println("Opening Log Viewer for year: " + selectedYear + ", type: " + dataType);
         mainFrame.showLogViewer(selectedYear, dataType);
       } catch (Exception ex) {
         ex.printStackTrace();
@@ -442,7 +443,6 @@ public final class DataEditorPanel extends JPanel {
 
     } catch (Exception e) {
       showError("Σφάλμα φόρτωσης δεδομένων: " + e.getMessage());
-      e.printStackTrace();
     }
   }
 
@@ -489,11 +489,8 @@ public final class DataEditorPanel extends JPanel {
    * Ενημέρωση στατιστικών στο header.
    */
   private void updateStatistics() {
-    // Μπορείς να προσθέσεις ένα label στο header για να δείχνει στατιστικά
-    // Προς το παρόν απλά ενημερώνει το console
     int incomeCount = incomeTableModel.getRowCount();
     int expenseCount = expenseTableModel.getRowCount();
-    System.out.println("Stats updated - Income: " + incomeCount + ", Expense: " + expenseCount);
   }
 
   /**
@@ -503,6 +500,17 @@ public final class DataEditorPanel extends JPanel {
     try {
       if ("cashflow".equalsIgnoreCase(dataType)) {
         saveCashFlowRow(row, tableModel);
+
+        // Υπολογισμός Budget Status 
+        List<CashFlow> allCashflows = cashFlowService.getCashflows(selectedYear, "Έσοδο");
+        allCashflows.addAll(cashFlowService.getCashflows(selectedYear, "Έξοδο"));
+        String status = ValidationUtils.calculateBudgetStatus(allCashflows);
+
+        // Εμφάνιση στον χρήστη
+        JOptionPane.showMessageDialog(this, status, "Κατάσταση Προϋπολογισμού",
+                JOptionPane.INFORMATION_MESSAGE);
+
+
       } else if ("foreis".equalsIgnoreCase(dataType)) {
         saveForeisRow(row, tableModel);
       }
@@ -522,13 +530,23 @@ public final class DataEditorPanel extends JPanel {
     String type = tableModel.getValueAt(row, 2).toString();
     String name = tableModel.getValueAt(row, 3).toString().trim();
     double amount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
+    double newAmount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
 
-    if (name.isEmpty()) {
-      throw new IllegalArgumentException("Το όνομα δεν μπορεί να είναι κενό!");
-    }
-    if (amount < 0) {
-      throw new IllegalArgumentException("Το ποσό δεν μπορεί να είναι αρνητικό!");
-    }
+      if (name.isEmpty()) {
+        throw new IllegalArgumentException("Το όνομα δεν μπορεί να είναι κενό!");
+      }
+
+      ValidationUtils.validateYear(yearId);
+      ValidationUtils.validateNonNegative(newAmount);
+
+       // Υπολογισμός Budget Status 
+        List<CashFlow> allCashflows = cashFlowService.getCashflows(selectedYear, "Έσοδο");
+        allCashflows.addAll(cashFlowService.getCashflows(selectedYear, "Έξοδο"));
+        String status = ValidationUtils.calculateBudgetStatus(allCashflows);
+
+        // Εμφάνιση στον χρήστη
+        JOptionPane.showMessageDialog(this, status, "Κατάσταση Προϋπολογισμού",
+                JOptionPane.INFORMATION_MESSAGE);
 
     CashFlow cf = new CashFlow(id, yearId, type, name, amount);
     cashFlowService.updateCashflow(cf);
@@ -547,12 +565,12 @@ public final class DataEditorPanel extends JPanel {
     double publicInvBudget = Double.parseDouble(tableModel.getValueAt(row, 6).toString());
     double total = Double.parseDouble(tableModel.getValueAt(row, 7).toString());
 
-    if (name.isEmpty()) {
-      throw new IllegalArgumentException("Το όνομα δεν μπορεί να είναι κενό!");
-    }
-    if (regularBudget < 0 || publicInvBudget < 0 || total < 0) {
-      throw new IllegalArgumentException("Τα ποσά δεν μπορούν να είναι αρνητικά!");
-    }
+    ValidationUtils.validateYear(yearId);
+    ValidationUtils.validatePositiveId(foreasId, "Foreas ID");
+
+    ValidationUtils.validateNonNegative(regularBudget);
+    ValidationUtils.validateNonNegative(publicInvBudget);
+    ValidationUtils.validateNonNegative(total);
 
     Foreis f = new Foreis(id, foreasId, yearId, type, name,
             regularBudget, publicInvBudget, total);
@@ -607,9 +625,8 @@ public final class DataEditorPanel extends JPanel {
       }
 
       double amount = Double.parseDouble(amountStr);
-      if (amount < 0) {
-        throw new IllegalArgumentException("Το ποσό δεν μπορεί να είναι αρνητικό!");
-      }
+      ValidationUtils.validateYear(selectedYear);
+      ValidationUtils.validateNonNegative(amount);
 
       CashFlow cf = new CashFlow(0, selectedYear, type, name, amount);
       cashFlowService.addCashflow(cf);
@@ -679,9 +696,12 @@ public final class DataEditorPanel extends JPanel {
       double publicInv = Double.parseDouble(publicStr);
       double total = regular + publicInv;
 
-      if (regular < 0 || publicInv < 0) {
-        throw new IllegalArgumentException("Τα ποσά δεν μπορούν να είναι αρνητικά!");
-      }
+      ValidationUtils.validatePositiveId(foreasId, "Foreas ID");
+      ValidationUtils.validateYear(selectedYear);
+
+      ValidationUtils.validateNonNegative(regular);
+      ValidationUtils.validateNonNegative(publicInv);
+      ValidationUtils.validateNonNegative(total);
 
       Foreis f = new Foreis(0, foreasId, selectedYear, type, name,
               regular, publicInv, total);
