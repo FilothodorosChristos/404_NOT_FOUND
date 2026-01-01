@@ -539,15 +539,6 @@ public final class DataEditorPanel extends JPanel {
       ValidationUtils.validateYear(yearId);
       ValidationUtils.validateNonNegative(newAmount);
 
-       // Υπολογισμός Budget Status 
-        List<CashFlow> allCashflows = cashFlowService.getCashflows(selectedYear, "Έσοδο");
-        allCashflows.addAll(cashFlowService.getCashflows(selectedYear, "Έξοδο"));
-        String status = ValidationUtils.calculateBudgetStatus(allCashflows);
-
-        // Εμφάνιση στον χρήστη
-        JOptionPane.showMessageDialog(this, status, "Κατάσταση Προϋπολογισμού",
-                JOptionPane.INFORMATION_MESSAGE);
-
     CashFlow cf = new CashFlow(id, yearId, type, name, amount);
     cashFlowService.updateCashflow(cf);
   }
@@ -633,6 +624,7 @@ public final class DataEditorPanel extends JPanel {
 
       showInfo("Η νέα εγγραφή προστέθηκε επιτυχώς!");
       loadData();
+      showBudgetStatus(); 
     }
   }
 
@@ -771,12 +763,28 @@ public final class DataEditorPanel extends JPanel {
 
        showInfo("Η εγγραφή διαγράφηκε επιτυχώς!");
       loadData();
-
+      showBudgetStatus(); 
     } catch (Exception e) {
       showError("Σφάλμα διαγραφής: " + e.getMessage());
       e.printStackTrace();
     }
   }
+
+  //helper μέθοδος για εμφάνιση κατάστασης προϋπολογισμού
+  private void showBudgetStatus() {
+    List<CashFlow> allCashflows = cashFlowService.getCashflows(selectedYear, "Έσοδο");
+    allCashflows.addAll(cashFlowService.getCashflows(selectedYear, "Έξοδο"));
+
+    String status = ValidationUtils.calculateBudgetStatus(allCashflows);
+
+    JOptionPane.showMessageDialog(
+            this,
+            status,
+            "Κατάσταση Προϋπολογισμού",
+            JOptionPane.INFORMATION_MESSAGE
+    );
+}
+
 
   /**
    * Helper methods για εμφάνιση μηνυμάτων.
