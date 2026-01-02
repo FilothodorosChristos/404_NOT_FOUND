@@ -94,6 +94,13 @@ public class ActionSelectionPanel extends JPanel {
         // Back button
         backButton.setBounds(30, height - 70, 150, 40);
     }
+
+    // Back button
+    backButton.setBounds(30, height - 70, 150, 40);
+}
+
+
+
     
     /**
      * Creates the 5 action buttons.

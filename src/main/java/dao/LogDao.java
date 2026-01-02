@@ -23,22 +23,26 @@ public class LogDao {
     );
   }
     
-    public List<Log> selectLog() {
-    List<Log> log = new ArrayList<>();
-    final String SQL = "SELECT * FROM log";  //where id>168 
-    try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+  public List<Log> selectLog(int index) {
+  List<Log> log = new ArrayList<>();
 
-      try (ResultSet resultSet = statement.executeQuery()) {
+  final String SQL = "SELECT * FROM log WHERE id >= ? ORDER BY id";
+
+  try (Connection connection = DatabaseSetup.getConnection();
+    PreparedStatement statement = connection.prepareStatement(SQL)) {
+
+    statement.setInt(1, index);
+
+    try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          log.add(mapRow(resultSet));
+            log.add(mapRow(resultSet));
         }
-      }
-
-    } catch (SQLException e) {
-      throw new RuntimeException("Σφάλμα στη βάση (selectLog): " + e.getMessage(), e);
     }
 
-    return log;
+  } catch (SQLException e) {
+    throw new RuntimeException("Σφάλμα στη βάση (selectLog): " + e.getMessage(), e);
   }
+
+  return log;
+ }
 }

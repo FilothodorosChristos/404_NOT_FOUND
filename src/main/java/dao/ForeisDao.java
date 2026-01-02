@@ -2,7 +2,6 @@ package dao;
 
 import database.DatabaseSetup;
 import dto.ForeasCompareDto;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -97,7 +96,7 @@ public class ForeisDao {
         + "public_inv_budget = ?, total = ?, foreas_id = ? WHERE id = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
 
       preparedStatement.setInt(1, foreis.getYearId());
       preparedStatement.setString(2, foreis.getType());
@@ -114,35 +113,35 @@ public class ForeisDao {
     }
   }
 
-  /**
-   * Διαγράφει μια εγγραφή foreis με βάση το ID της.
-   */
-  public void deleteForeis(int id) {
-    final String SQL = "DELETE FROM foreis WHERE id = ?";
+      /**
+       * Διαγράφει μια εγγραφή foreis με βάση το ID της.
+       */
+      public void deleteForeis(int id) {
+      final String SQL = "DELETE FROM foreis WHERE id = ?";
 
-    try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+      try (Connection connection = DatabaseSetup.getConnection();
+              PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
 
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
 
-    } catch (SQLException e) {
+      } catch (SQLException e) {
       throw new RuntimeException("Σφάλμα στη βάση (deleteForeis): " + e.getMessage(), e);
-    }
-  }
-  /**
-   * Αναζητά και επιστρέφει ένα αντικείμενο Foreis από τη βάση δεδομένων
-   * με βάση το μοναδικό αναγνωριστικό (ID).
-   *
-   * @param id το μοναδικό αναγνωριστικό της εγγραφής foreis
-   * @return το αντικείμενο Foreis αν βρεθεί, αλλιώς null
-   * @throws RuntimeException αν προκύψει σφάλμα κατά την επικοινωνία με τη βάση
-   */
+      }
+      }
+      /**
+       * Αναζητά και επιστρέφει ένα αντικείμενο Foreis από τη βάση δεδομένων
+       * με βάση το μοναδικό αναγνωριστικό (ID).
+       *
+       * @param id το μοναδικό αναγνωριστικό της εγγραφής foreis
+       * @return το αντικείμενο Foreis αν βρεθεί, αλλιώς null
+       * @throws RuntimeException αν προκύψει σφάλμα κατά την επικοινωνία με τη βάση
+       */
 
-  public Foreis selectForeisById(int id) {
-    final String SQL = "SELECT * FROM foreis WHERE id = ?";
-    try (Connection connection = DatabaseSetup.getConnection();
-         PreparedStatement statement = connection.prepareStatement(SQL)) {
+      public Foreis selectForeisById(int id) {
+      final String SQL = "SELECT * FROM foreis WHERE id = ?";
+      try (Connection connection = DatabaseSetup.getConnection();
+          PreparedStatement statement = connection.prepareStatement(SQL)) {
 
       statement.setInt(1, id);
 
@@ -152,16 +151,16 @@ public class ForeisDao {
         }
       }
 
-    } catch (SQLException e) {
+      } catch (SQLException e) {
       throw new RuntimeException("Σφάλμα στη βάση (selectForeisById): " + e.getMessage(), e);
-    }
-    return null;
-  }
+      }
+      return null;
+      }
 
-  public List<ForeasCompareDto> compareYears(int year1, int year2) throws SQLException {
-    List<ForeasCompareDto> results = new ArrayList<>();
+      public List<ForeasCompareDto> compareYears(int year1, int year2) throws SQLException {
+      List<ForeasCompareDto> results = new ArrayList<>();
 
-    String sql = """
+      String sql = """
         SELECT
           f1.foreas_id,
           f1.name,
@@ -199,9 +198,9 @@ public class ForeisDao {
         WHERE f1.year_id = ?
           AND f2.year_id = ?
         ORDER BY f1.name;
-    """;
+      """;
 
-    try (Connection conn = DatabaseSetup.getConnection();
+      try (Connection conn = DatabaseSetup.getConnection();
           PreparedStatement ps = conn.prepareStatement(sql)) {
 
         ps.setInt(1, year1);

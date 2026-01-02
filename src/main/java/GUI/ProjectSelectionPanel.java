@@ -1,10 +1,8 @@
 package GUI;
 
 import javax.swing.*;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import service.SimulationService;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -16,14 +14,14 @@ import java.awt.geom.*;
  */
 public class ProjectSelectionPanel extends JPanel {
     
-    private final MainFrame mainFrame;
-    private Timer animationTimer;
-    private float rotationAngle = 0;
-    private int fadeInProgress = 0;
-    private Point mousePosition = new Point(0, 0);
-    private JButton continueButton;
-    private JButton newButton;
-    private JButton backButton;
+  private final MainFrame mainFrame;
+  private Timer animationTimer;
+  private float rotationAngle = 0;
+  private int fadeInProgress = 0;
+  private Point mousePosition = new Point(0, 0);
+  private JButton continueButton;
+  private JButton newButton;
+  private JButton backButton;
     
     /**
      * Constructs an ActionSelectionPanel with modern design.
@@ -31,24 +29,25 @@ public class ProjectSelectionPanel extends JPanel {
      * @param mainFrame the main application frame
      */
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
 
-    public ProjectSelectionPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
-        setLayout(null);
-        setBackground(new Color(10, 14, 39));
+public ProjectSelectionPanel(MainFrame mainFrame) {
+    this.mainFrame = mainFrame;
+    setLayout(null);
+    setBackground(new Color(10, 14, 39));
+    
+    createUI();
+    setupAnimations();
+    setupMouseTracking();
         
-        createUI();
-        setupAnimations();
-        setupMouseTracking();
-        
-        // Add component listener to reposition on resize
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                repositionComponents();
-            }
-        });
+    // Add component listener to reposition on resize
+    addComponentListener(new ComponentAdapter() {
+    
+     @Override
+    public void componentResized(ComponentEvent e) {
+        repositionComponents();
+    }
+});
     }
     
     /**
@@ -271,8 +270,21 @@ private void handleAction(String action) {
             }
         }
     } else {
+      try {
+        // Καλούμε τη μέθοδο για νέα προσομοίωση
+        SimulationService.startIfDatabaseMissing();
+                
         /**  Για το κουμπί "Συνέχεια Προσομοίωσης" */
         mainFrame.showPanel(MainFrame.YEAR_SELECTION);
+        
+      } catch (Exception ex) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Σφάλμα κατά την εκκίνηση νέας προσομοίωσης:\n" + ex.getMessage(),
+            "Σφάλμα",
+            JOptionPane.ERROR_MESSAGE
+        );
+            }
     }
 }
     /**
