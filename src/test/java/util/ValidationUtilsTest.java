@@ -92,7 +92,7 @@ public class ValidationUtilsTest {
                 () -> ValidationUtils.validatePositiveId(-1, "Foreas ID"));
   }
 
-  @Test
+ @Test
 public void testPrintBudgetStatusBalanced() {
 
     // Arrange
@@ -101,21 +101,37 @@ public void testPrintBudgetStatusBalanced() {
             new CashFlow(2, 2023, "Έξοδο", "Expense", 100.0)
     );
 
-    PrintStream originalOut = System.out;
-    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(outContent));
+    // Act
+    String result = ValidationUtils.calculateBudgetStatus(cashflows);
 
-    try {
-      // Act
-      ValidationUtils.printBudgetStatus(cashflows);
+    // Assert
+    assertEquals("Ο προϋπολογισμός είναι ΙΣΟΣΚΕΛΙΣΜΕΝΟΣ", result);
+}
 
-      // Assert
-      String output = outContent.toString().trim();
-      assertTrue(output.contains("ΙΣΟΣΚΕΛΙΣΜΕΝΟΣ"));
-    } finally {
-      // Restore System.out
-      System.setOut(originalOut);
-    }
-  }
+@Test
+public void testPrintBudgetStatusSurplus() {
+
+    List<CashFlow> cashflows = List.of(
+            new CashFlow(1, 2023, "Έσοδο", "Income", 200.0),
+            new CashFlow(2, 2023, "Έξοδο", "Expense", 100.0)
+    );
+
+    String result = ValidationUtils.calculateBudgetStatus(cashflows);
+
+    assertEquals("Ο προϋπολογισμός είναι ΠΛΕΟΝΑΣΜΑΤΙΚΟΣ", result);
+}
+
+@Test
+public void testPrintBudgetStatusDeficit() {
+
+    List<CashFlow> cashflows = List.of(
+            new CashFlow(1, 2023, "Έσοδο", "Income", 100.0),
+            new CashFlow(2, 2023, "Έξοδο", "Expense", 200.0)
+    );
+
+    String result = ValidationUtils.calculateBudgetStatus(cashflows);
+
+    assertEquals("Ο προϋπολογισμός είναι ΕΛΛΕΙΜΜΑΤΙΚΟΣ", result);
+}
 
 }

@@ -64,7 +64,7 @@ public class ValidationUtils {
    * ελλειμματικός ή ισοσκελισμένος.
    */
 
-  public static void printBudgetStatus(List<CashFlow> cashflows) {
+  public static String calculateBudgetStatus(List<CashFlow> cashflows) {
 
     double incomeSum = cashflows.stream()
                 .filter(cf -> "Έσοδο".equals(cf.getType()))
@@ -77,11 +77,11 @@ public class ValidationUtils {
                 .sum();
 
     if (Math.abs(incomeSum - expenseSum) < 1.0) {
-      System.out.println("Ο προϋπολογισμός είναι ΙΣΟΣΚΕΛΙΣΜΕΝΟΣ");
+      return "Ο προϋπολογισμός είναι ΙΣΟΣΚΕΛΙΣΜΕΝΟΣ";
     } else if (incomeSum > expenseSum) {
-      System.out.println("Ο προϋπολογισμός είναι ΠΛΕΟΝΑΣΜΑΤΙΚΟΣ");
+      return "Ο προϋπολογισμός είναι ΠΛΕΟΝΑΣΜΑΤΙΚΟΣ";
     } else {
-      System.out.println("Ο προϋπολογισμός είναι ΕΛΛΕΙΜΜΑΤΙΚΟΣ");
+      return "Ο προϋπολογισμός είναι ΕΛΛΕΙΜΜΑΤΙΚΟΣ";
     }
   }
 }

@@ -39,10 +39,10 @@ public class CashFlowDao {
    */
   public List<CashFlow> selectCashFlow(int year, String type) {
     List<CashFlow> cashflows = new ArrayList<>();
-    final String SQL = "SELECT * FROM cashflows WHERE year_id = ? AND type = ? "
+    final String sql = "SELECT * FROM cashflows WHERE year_id = ? AND type = ? "
                      + "ORDER BY year_id ASC, type ASC, name ASC;";
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setInt(1, year);
       statement.setString(2, type);
@@ -66,10 +66,10 @@ public class CashFlowDao {
    * @param cashflow το αντικείμενο προς εισαγωγή
    */
   public void addCashFlow(CashFlow cashflow) {
-    final String SQL = "INSERT INTO cashflows(year_id, type, name, amount) VALUES(?, ?, ?, ?)";
+    final String sql = "INSERT INTO cashflows(year_id, type, name, amount) VALUES(?, ?, ?, ?)";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
       preparedStatement.setInt(1, cashflow.getYearId());
       preparedStatement.setString(2, cashflow.getType());
@@ -88,10 +88,11 @@ public class CashFlowDao {
    * @param cashflow το αντικείμενο που περιέχει τα ενημερωμένα πεδία
    */
   public void updateCashFlow(CashFlow cashflow) {
-    final String SQL = "UPDATE cashflows SET year_id = ?, type = ?, name = ?, amount = ? WHERE id = ?";
+    final String sql = "UPDATE cashflows SET year_id = ?, "
+        + "type = ?, name = ?, amount = ? WHERE id = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
       preparedStatement.setInt(1, cashflow.getYearId());
       preparedStatement.setString(2, cashflow.getType());
@@ -111,10 +112,10 @@ public class CashFlowDao {
    * @param id το μοναδικό αναγνωριστικό της εγγραφής
    */
   public void deleteCashFlow(int id) {
-    final String SQL = "DELETE FROM cashflows WHERE id = ?";
+    final String sql = "DELETE FROM cashflows WHERE id = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
@@ -133,9 +134,9 @@ public class CashFlowDao {
    */
   
   public CashFlow selectCashFlowById(int id) {
-    final String SQL = "SELECT * FROM cashflows WHERE id = ?";
+    final String sql = "SELECT * FROM cashflows WHERE id = ?";
     try (Connection connection = DatabaseSetup.getConnection();
-         PreparedStatement statement = connection.prepareStatement(SQL)) {
+         PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, id);
       try (ResultSet rs = statement.executeQuery()) {
         if (rs.next()) {
