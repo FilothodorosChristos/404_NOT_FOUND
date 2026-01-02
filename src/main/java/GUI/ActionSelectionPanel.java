@@ -67,35 +67,35 @@ public class ActionSelectionPanel extends JPanel {
     int gapX = 40;
     int gapY = 30;
 
-    // 3 κουμπιά στην πρώτη σειρά, 2 στη δεύτερη
-    int columns = 3;
-    int rows = 2;
+    int firstRowButtons = 3;
+    int secondRowButtons = 2;
 
-    // Υπολόγισε συνολικό πλάτος για 3 κουμπιά και τα κενά
-    int totalWidth = columns * buttonWidth + (columns - 1) * gapX;
-
-    // Ορισε αρχικό x για κεντράρισμα
-    int startX = (width - totalWidth) / 2;
     int startY = 380;
 
-    for (int i = 0; i < 5; i++) {
-        int row = i / columns;    // 0 ή 1
-        int col = i % columns;    // 0,1,2
+    for (int i = 0; i < actionButtons.length; i++) {
+        int row = (i < 3) ? 0 : 1;  // Πρώτη σειρά για i=0..2, δεύτερη για i=3..4
+        int col;
 
-        // Προσοχή: στην 2η σειρά έχει μόνο 2 κουμπιά, το 3ο θα είναι κενό
-        // Μπορείς να αφήσεις κενό το 3ο ή να το τοποθετήσεις εκτός οθόνης αν θέλεις
-
-        // Βάλε κουμπί μόνο αν υπάρχει (π.χ. για 5 κουμπιά δεν χρειάζεται)
-        if (i < actionButtons.length) {
-            int x = startX + col * (buttonWidth + gapX);
-            int y = startY + row * (buttonHeight + gapY);
-            actionButtons[i].setBounds(x, y, buttonWidth, buttonHeight);
+        if (row == 0) {
+            col = i;  // 0,1,2
+        } else {
+            col = i - 3; // 0,1 για δεύτερη σειρά
         }
+
+        int buttonsInRow = (row == 0) ? firstRowButtons : secondRowButtons;
+        int totalWidth = buttonsInRow * buttonWidth + (buttonsInRow - 1) * gapX;
+        int startX = (width - totalWidth) / 2;
+
+        int x = startX + col * (buttonWidth + gapX);
+        int y = startY + row * (buttonHeight + gapY);
+
+        actionButtons[i].setBounds(x, y, buttonWidth, buttonHeight);
     }
 
-    // Back button όπως πριν
+    // Back button
     backButton.setBounds(30, height - 70, 150, 40);
 }
+
 
 
     
