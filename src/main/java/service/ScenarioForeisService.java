@@ -1,7 +1,6 @@
 package service;
 
 import dao.Foreis;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ScenarioForeisService {
@@ -9,7 +8,7 @@ public class ScenarioForeisService {
 
     /**
      * Επιστρέφει λίστα Foreis για το imported έτος και τύπο, με τροποποιημένο budget (PublicInvBudget ή RegularBudget) κατά το imported ποσοστό.
-     * Δεν αλλάζει τη βάση δεδομένων.
+     * Καλεί την updateForeis της ForeisService για να αποθηκεύσει τις αλλαγές στη βάση δεδομένων.
      *
      * @param year το έτος
      * @param type ο τύπος (π.χ. "Υπουργείο")
@@ -17,7 +16,7 @@ public class ScenarioForeisService {
      * @param percentageFactor ο συντελεστής τροποποίησης (αν δοθεί το 4, το budget θα γίνει 4% του αρχικού)
      * @return λίστα Foreis με τροποποιημένο budget
      */
-    public List<Foreis> getModifiedForeis(int year, String type, String category, double percentageFactor) {
+    public void getModifiedForeis(int year, String type, String category, double percentageFactor) {
         if (year < 2021 || year > 2026) {
             throw new IllegalArgumentException("Λαναθασμένο έτος: " + year + ". Επιτρέπονται μόνο έτη από 2021 έως 2026.");
         }
@@ -28,8 +27,6 @@ public class ScenarioForeisService {
             throw new IllegalArgumentException("Λαναθασμένος τύπος: " + type + ". Επιτρέπονται μόνο 'Υπουργείο', 'Κεντρική Διοίκηση' ή 'Αποκεντρωμένη Διοίκηση'");
         }
         List<Foreis> original = foreisService.getForeisByYearAndType(year, type);
-        List<Foreis> modified = new ArrayList<>();
-
         for (Foreis f : original) {
             double newRegularBudget = f.getRegularBudget();
             double newPublicInvBudget = f.getPublicInvBudget();
@@ -50,8 +47,7 @@ public class ScenarioForeisService {
                 newPublicInvBudget,
                 newTotal
             );
-            modified.add(modifiedF);
+            foreisService.updateForeis(modifiedF);
         }
-        return modified;
     }
 }

@@ -1,7 +1,6 @@
 package service;
 
 import dao.CashFlow;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ScenarioCashflowService {
@@ -9,7 +8,7 @@ public class ScenarioCashflowService {
 
 	/**
 	 * Επιστρέφει λίστα CashFlow για το δοσμένο έτος και τύπο, με το ποσό τροποποιημένο κατά το δοσμένο ποσοστό.
-	 * Δεν αλλάζει τη βάση δεδομένων.
+	 * Καλεί την updateCashflow της CashFlowService για να αποθηκεύσει τις αλλαγές στη βάση δεδομένων.
 	 *
 	 * @param year το έτος
 	 * @param type ο τύπος ("Έσοδο" ή "Έξοδο")
@@ -17,7 +16,7 @@ public class ScenarioCashflowService {
 	 * Γίνεται έλεγχος εγκυρότητας παραμέτρων
 	 * @return λίστα CashFlow με τροποποιημένα ποσά
 	 */
-	public List<CashFlow> getModifiedCashFlows(int year, String type, double percentageOfChange) {
+	public void getModifiedCashFlows(int year, String type, double percentageOfChange) {
 		if (!("Έσοδο".equals(type) || "Έξοδο".equals(type))) {
 			throw new IllegalArgumentException("Λαναθασμένος τύπος: " + type + ". Επιτρέπονται μόνο 'Έσοδο' ή 'Έξοδο'");
 		}
@@ -25,7 +24,6 @@ public class ScenarioCashflowService {
 			throw new IllegalArgumentException("Λαναθασμένο έτος: " + year + ". Επιτρέπονται μόνο έτη από 2021 έως 2026.");
 		}
 		List<CashFlow> original = cashFlowService.getCashflows(year, type);
-		List<CashFlow> modified = new ArrayList<>();
 		for (CashFlow cf : original) {
 			CashFlow modifiedCf = new CashFlow(
 				cf.getId(),
@@ -34,8 +32,7 @@ public class ScenarioCashflowService {
 				cf.getName(),
 				cf.getAmount() * (percentageOfChange/100) + cf.getAmount()
 			);
-			modified.add(modifiedCf);
+			cashFlowService.updateCashflow(modifiedCf);
 		}
-		return modified;
 	}
 }
