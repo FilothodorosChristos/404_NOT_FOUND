@@ -62,4 +62,31 @@ class DbExistsCheckerTest {
         DbExistsChecker.setDbFile(NON_EXISTENT_DB);
         assertFalse(DbExistsChecker.databaseExists(), "Η μέθοδος πρέπει να επιστρέφει false αν το αρχείο δεν υπάρχει");
     }
+
+
+    @Test
+    @DisplayName("Η setDbFile αλλάζει σωστά το dbFile")
+    void testSetDbFile() {
+        // Αρχικά δείχνει στο TEST_DB
+        DbExistsChecker.setDbFile(TEST_DB);
+        File testFile = new File(TEST_DB);
+        try {
+            if (!testFile.exists()) testFile.createNewFile();
+        } catch (Exception e) {
+            fail("Σφάλμα κατά τη δημιουργία test αρχείου: " + e.getMessage());
+        }
+        assertTrue(DbExistsChecker.databaseExists(), "Πρέπει να βλέπει το test αρχείο");
+
+        // Αλλάζουμε σε NON_EXISTENT_DB
+        DbExistsChecker.setDbFile(NON_EXISTENT_DB);
+        assertFalse(DbExistsChecker.databaseExists(), "Πρέπει να δείχνει σε αρχείο που δεν υπάρχει");
+
+        // Δοκιμή με null ή empty string δεν πρέπει να αλλάξει
+        DbExistsChecker.setDbFile("");
+        assertFalse(DbExistsChecker.databaseExists(), "Το empty string δεν πρέπει να αλλάξει το dbFile");
+
+        DbExistsChecker.setDbFile(null);
+        assertFalse(DbExistsChecker.databaseExists(), "Το null δεν πρέπει να αλλάξει το dbFile");
+    }
+
 }

@@ -3,7 +3,6 @@ package service;
 import dao.Foreis;
 import dao.ForeisDao;
 import dto.ForeasCompareDto;
-
 import java.util.List;
 import util.ValidationUtils;
 
@@ -14,7 +13,7 @@ import util.ValidationUtils;
  *
  * <p>Οι βασικοί κανόνες που εφαρμόζονται:
  * <ul>
- *   <li>Έλεγχος έτους (2023–2025)</li>
+ *   <li>Έλεγχος έτους (2021–2026)</li>
  *   <li>Έλεγχος θετικών/μη αρνητικών αριθμητικών πεδίων</li>
  *   <li>Έλεγχος ότι το total = regular_budget + public_inv_budget</li>
  *   <li>Έλεγχος επιτρεπτής μεταβολής συνολικού ποσού (±45%)</li>
@@ -119,7 +118,7 @@ public class ForeisService {
   /**
    * Επιστρέφει όλους τους Foreis για συγκεκριμένο έτος και τύπο.
    *
-   * @param year το έτος (2023–2025)
+   * @param year το έτος (2021–2026)
    * @param type ο τύπος (π.χ. "Τακτικός", "ΠΔΕ")
    * @return λίστα με Foreis
    * @throws IllegalArgumentException αν το έτος ή ο τύπος δεν είναι έγκυρα
@@ -145,18 +144,18 @@ public class ForeisService {
    * @throws IllegalArgumentException αν τα έτη είναι ίδια ή εκτός ορίων
    */
   public List<ForeasCompareDto> compareYears(int year1, int year2) {
-      // validation
-      if (year1 == year2) {
-          throw new IllegalArgumentException("Τα έτη πρέπει να είναι διαφορετικά");
-      }
-      ValidationUtils.validateYear(year1);
-      ValidationUtils.validateYear(year2);
+    // validation
+    if (year1 == year2) {
+      throw new IllegalArgumentException("Τα έτη πρέπει να είναι διαφορετικά");
+    }
+    ValidationUtils.validateYear(year1);
+    ValidationUtils.validateYear(year2);
 
-      try {
-          return foreisDao.compareYears(year1, year2);
-      } catch (Exception e) {
-          throw new RuntimeException("Σφάλμα κατά τη σύγκριση ετών", e);
-      }
+    try {
+      return foreisDao.compareYears(year1, year2);
+    } catch (Exception e) {
+      throw new RuntimeException("Σφάλμα κατά τη σύγκριση ετών", e);
+    }
   }
 
 }
