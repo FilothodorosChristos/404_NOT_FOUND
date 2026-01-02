@@ -369,16 +369,40 @@ public final class DataEditorPanel extends JPanel {
     panel.setBackground(new Color(240, 240, 240, 220));
     panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY));
 
-    JButton backButton = createStyledButton("← Πίσω", new Color(96, 125, 139));
+    // Δημιουργία backButton ακριβώς όπως το historyButton
+    JButton backButton = new JButton("← Πίσω");
+    backButton.setFont(new Font("Arial", Font.BOLD, 13));
+    backButton.setPreferredSize(new Dimension(180, 45));
+    backButton.setBackground(new Color(255, 255, 255, 200)); // λευκό ημιδιαφανές
+    backButton.setForeground(NAVY_BLUE); // μπλε γράμματα
+    backButton.setFocusPainted(false);
+    backButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.WHITE, 2),
+            BorderFactory.createEmptyBorder(8, 15, 8, 15)
+    ));
+    backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-    backButton.addActionListener(e -> {
-      mainFrame.showPanel(MainFrame.ACTION_SELECTION);
+    // Hover effect
+    backButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+            backButton.setBackground(new Color(230, 240, 255, 230));
+        }
+
+        @Override
+        public void mouseExited(java.awt.event.MouseEvent evt) {
+            backButton.setBackground(new Color(255, 255, 255, 200));
+        }
     });
+
+    // ActionListener
+    backButton.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
 
     panel.add(backButton);
 
     return panel;
-  }
+}
+
 
   /**
    * Δημιουργία styled button.
