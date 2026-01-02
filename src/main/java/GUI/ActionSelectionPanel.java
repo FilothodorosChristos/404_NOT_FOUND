@@ -260,12 +260,8 @@ public class ActionSelectionPanel extends JPanel {
     } else if (action.equals("Επεξεργασία")) {
         mainFrame.showDataEditor("cashflow");
     } else if (action.equals("Σύγκριση")) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Η λειτουργία 'Σύγκριση' δεν έχει υλοποιηθεί ακόμα.",
-            "Υπό Κατασκευή",
-            JOptionPane.INFORMATION_MESSAGE
-        );
+ mainFrame.showComparison();
+
     } else if (action.equals("Μαζικές Αλλαγές")) {
         JOptionPane.showMessageDialog(
             this,
