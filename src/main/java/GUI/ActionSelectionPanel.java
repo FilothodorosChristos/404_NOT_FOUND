@@ -58,48 +58,64 @@ public class ActionSelectionPanel extends JPanel {
     /**
      * Repositions all components to center of panel.
      */
-    private void repositionComponents() {
-        int width = getWidth();
-        int height = getHeight();
-        
-        // Position action buttons in 2x2 grid
-        int buttonWidth = 280;
-        int buttonHeight = 140;
-        int gapX = 40;
-        int gapY = 30;
-        
-        // Calculate center position
-        int totalWidth = 2 * buttonWidth + gapX;
-        int startX = (width - totalWidth) / 2;
-        int startY = 380;
-        
-        for (int i = 0; i < 4; i++) {
-            int row = i / 2;
-            int col = i % 2;
-            int x = startX + col * (buttonWidth + gapX);
-            int y = startY + row * (buttonHeight + gapY);
-            actionButtons[i].setBounds(x, y, buttonWidth, buttonHeight);
+ private void repositionComponents() {
+    int width = getWidth();
+    int height = getHeight();
+
+    int buttonWidth = 280;
+    int buttonHeight = 140;
+    int gapX = 40;
+    int gapY = 30;
+
+    int firstRowButtons = 3;
+    int secondRowButtons = 2;
+
+    int startY = 380;
+
+    for (int i = 0; i < actionButtons.length; i++) {
+        int row = (i < 3) ? 0 : 1;  // Πρώτη σειρά για i=0..2, δεύτερη για i=3..4
+        int col;
+
+        if (row == 0) {
+            col = i;  // 0,1,2
+        } else {
+            col = i - 3; // 0,1 για δεύτερη σειρά
         }
-        
-        // Position back button
-        backButton.setBounds(30, height - 70, 150, 40);
+
+        int buttonsInRow = (row == 0) ? firstRowButtons : secondRowButtons;
+        int totalWidth = buttonsInRow * buttonWidth + (buttonsInRow - 1) * gapX;
+        int startX = (width - totalWidth) / 2;
+
+        int x = startX + col * (buttonWidth + gapX);
+        int y = startY + row * (buttonHeight + gapY);
+
+        actionButtons[i].setBounds(x, y, buttonWidth, buttonHeight);
     }
+
+    // Back button
+    backButton.setBounds(30, height - 70, 150, 40);
+}
+
+
+
     
     /**
      * Creates the 4 action buttons.
      */
     private void createActionButtons() {
-        actionButtons = new JButton[4];
-        String[] titles = {"Προβολή", "Επεξεργασία", "Διαγράμματα", "Σύγκριση"};
-        String[] icons = {"👁️", "✏️", "📊", "⚖️"};
+        actionButtons = new JButton[5];
+        String[] titles = {"Προβολή", "Επεξεργασία", "Διαγράμματα", "Σύγκριση", "Μαζικές αλλαγές"};
+        String[] icons = {"👁️", "✏️", "📊", "⚖️", "🔄"};
         String[] descriptions = {
             "Προβολή προϋπολογισμού",
             "Επεξεργασία δεδομένων",
             "Οπτικοποίηση δεδομένων",
-            "Σύγκριση ετών"
+            "Σύγκριση ετών",
+            "Εφαρμογή μαζικών αλλαγών"
+
         };
         
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             actionButtons[i] = createActionButton(titles[i], icons[i], descriptions[i]);
             add(actionButtons[i]);
         }
@@ -136,25 +152,29 @@ public class ActionSelectionPanel extends JPanel {
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
                 
                 // Icon
-                g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
-                FontMetrics fmIcon = g2.getFontMetrics();
-                int iconX = (getWidth() - fmIcon.stringWidth(icon)) / 2;
-                g2.setColor(new Color(255, 255, 255, 230));
-                g2.drawString(icon, iconX, 55);
+                 g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
+                 FontMetrics fmIcon = g2.getFontMetrics();
+                 int iconX = (getWidth() - fmIcon.stringWidth(icon)) / 2;
+                 int iconY = (getHeight() / 2) - 20; 
+                 g2.setColor(new Color(255, 255, 255, 230));
+                 g2.drawString(icon, iconX, iconY);
+            
                 
                 // Title
                 g2.setFont(new Font("Arial", Font.BOLD, 18));
-                g2.setColor(new Color(226, 232, 240));
-                FontMetrics fmTitle = g2.getFontMetrics();
-                int titleX = (getWidth() - fmTitle.stringWidth(title)) / 2;
-                g2.drawString(title, titleX, 90);
+            g2.setColor(new Color(226, 232, 240));
+            FontMetrics fmTitle = g2.getFontMetrics();
+            int titleX = (getWidth() - fmTitle.stringWidth(title)) / 2;
+            int titleY = (getHeight() / 2) + 15; 
+            g2.drawString(title, titleX, titleY);
                 
                 // Description
-                g2.setFont(new Font("Arial", Font.PLAIN, 11));
-                g2.setColor(new Color(100, 116, 139));
-                FontMetrics fmDesc = g2.getFontMetrics();
-                int descX = (getWidth() - fmDesc.stringWidth(description)) / 2;
-                g2.drawString(description, descX, 110);
+               g2.setFont(new Font("Arial", Font.PLAIN, 11));
+            g2.setColor(new Color(100, 116, 139));
+            FontMetrics fmDesc = g2.getFontMetrics();
+            int descX = (getWidth() - fmDesc.stringWidth(description)) / 2;
+            int descY = (getHeight() / 2) + 40; 
+            g2.drawString(description, descX, descY);
                 
                 g2.dispose();
             }
@@ -240,10 +260,22 @@ public class ActionSelectionPanel extends JPanel {
     } else if (action.equals("Επεξεργασία")) {
         mainFrame.showDataEditor("cashflow");
     } else if (action.equals("Σύγκριση")) {
-        // Καλούμε τη νέα μέθοδο που φτιάξαμε στο MainFrame
-        mainFrame.showComparison(); 
+        JOptionPane.showMessageDialog(
+            this,
+            "Η λειτουργία 'Σύγκριση' δεν έχει υλοποιηθεί ακόμα.",
+            "Υπό Κατασκευή",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+    } else if (action.equals("Μαζικές Αλλαγές")) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Η λειτουργία 'Μαζικές Αλλαγές' δεν έχει υλοποιηθεί ακόμα.",
+            "Υπό Κατασκευή",
+            JOptionPane.INFORMATION_MESSAGE
+        );
     }
 }
+
     
     /**
      * Sets up animation timer.

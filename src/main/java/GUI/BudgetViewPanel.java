@@ -136,11 +136,13 @@ public class BudgetViewPanel extends JPanel {
         typeCombo.setFont(new Font("Tahoma", Font.PLAIN, 14));
         typeCombo.setPreferredSize(new Dimension(150, 30));
 
-        JButton loadButton = new JButton("Φόρτωση Δεδομένων");
-        loadButton.setFont(new Font("Tahoma", Font.BOLD, 14));
-        loadButton.setBackground(NAVY_BLUE);
-        loadButton.setForeground(Color.WHITE);
-        loadButton.setFocusPainted(false);
+       JButton loadButton = new JButton("Φόρτωση Δεδομένων");
+loadButton.setFont(new Font("Tahoma", Font.BOLD, 14));
+loadButton.setForeground(NAVY_BLUE);  // μπλε γράμματα
+loadButton.setBackground(Color.WHITE); // ανοιχτό background για ορατότητα
+loadButton.setFocusPainted(false);     // αφαιρεί το focus highlight
+loadButton.setOpaque(true);            // για να φαίνεται το background
+loadButton.setBorderPainted(true);     // για να φαίνεται σαν κουμπί
 
         loadButton.addActionListener(e -> {
             String selectedType = (String) typeCombo.getSelectedItem();
