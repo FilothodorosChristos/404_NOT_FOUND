@@ -368,7 +368,7 @@ public class WelcomePanel extends JPanel {
         // Title (moved up)
         g2.setColor(new Color(255, 255, 255, alpha));
         g2.setFont(new Font("Arial", Font.BOLD, 48));
-        String title = "GoverLens App";
+        String title = "GoverLens ";
         FontMetrics fm = g2.getFontMetrics();
         g2.drawString(title, width / 2 - fm.stringWidth(title) / 2, 270);
         
