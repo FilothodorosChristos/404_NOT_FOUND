@@ -58,48 +58,64 @@ public class ActionSelectionPanel extends JPanel {
     /**
      * Repositions all components to center of panel.
      */
-    private void repositionComponents() {
-        int width = getWidth();
-        int height = getHeight();
-        
-        // Position action buttons in 2x2 grid
-        int buttonWidth = 280;
-        int buttonHeight = 140;
-        int gapX = 40;
-        int gapY = 30;
-        
-        // Calculate center position
-        int totalWidth = 2 * buttonWidth + gapX;
-        int startX = (width - totalWidth) / 2;
-        int startY = 380;
-        
-        for (int i = 0; i < 4; i++) {
-            int row = i / 2;
-            int col = i % 2;
+ private void repositionComponents() {
+    int width = getWidth();
+    int height = getHeight();
+
+    int buttonWidth = 280;
+    int buttonHeight = 140;
+    int gapX = 40;
+    int gapY = 30;
+
+    // 3 κουμπιά στην πρώτη σειρά, 2 στη δεύτερη
+    int columns = 3;
+    int rows = 2;
+
+    // Υπολόγισε συνολικό πλάτος για 3 κουμπιά και τα κενά
+    int totalWidth = columns * buttonWidth + (columns - 1) * gapX;
+
+    // Ορισε αρχικό x για κεντράρισμα
+    int startX = (width - totalWidth) / 2;
+    int startY = 380;
+
+    for (int i = 0; i < 5; i++) {
+        int row = i / columns;    // 0 ή 1
+        int col = i % columns;    // 0,1,2
+
+        // Προσοχή: στην 2η σειρά έχει μόνο 2 κουμπιά, το 3ο θα είναι κενό
+        // Μπορείς να αφήσεις κενό το 3ο ή να το τοποθετήσεις εκτός οθόνης αν θέλεις
+
+        // Βάλε κουμπί μόνο αν υπάρχει (π.χ. για 5 κουμπιά δεν χρειάζεται)
+        if (i < actionButtons.length) {
             int x = startX + col * (buttonWidth + gapX);
             int y = startY + row * (buttonHeight + gapY);
             actionButtons[i].setBounds(x, y, buttonWidth, buttonHeight);
         }
-        
-        // Position back button
-        backButton.setBounds(30, height - 70, 150, 40);
     }
+
+    // Back button όπως πριν
+    backButton.setBounds(30, height - 70, 150, 40);
+}
+
+
     
     /**
      * Creates the 4 action buttons.
      */
     private void createActionButtons() {
         actionButtons = new JButton[5];
-        String[] titles = {"Προβολή", "Επεξεργασία", "Διαγράμματα", "Σύγκριση"};
-        String[] icons = {"👁️", "✏️", "📊", "⚖️"};
+        String[] titles = {"Προβολή", "Επεξεργασία", "Διαγράμματα", "Σύγκριση", "Μαζικές αλλαγές"};
+        String[] icons = {"👁️", "✏️", "📊", "⚖️", "🔄"};
         String[] descriptions = {
             "Προβολή προϋπολογισμού",
             "Επεξεργασία δεδομένων",
             "Οπτικοποίηση δεδομένων",
-            "Σύγκριση ετών"
+            "Σύγκριση ετών",
+            "Εφαρμογή μαζικών αλλαγών"
+
         };
         
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             actionButtons[i] = createActionButton(titles[i], icons[i], descriptions[i]);
             add(actionButtons[i]);
         }
@@ -236,26 +252,30 @@ public class ActionSelectionPanel extends JPanel {
     /**
      * Handles action button clicks.
      */
-    private void handleAction(String action) {
-        if (action.equals("Διαγράμματα")) {
-            
-            mainFrame.showFinanceChart();
-            
-        } else if (action.equals("Προβολή")) {
-            mainFrame.showBudgetView();
-            
-        } else if (action.equals("Επεξεργασία")) {
-            mainFrame.showDataEditor("cashflow");
-            
-        } else if (action.equals("Σύγκριση")) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Η λειτουργία 'Σύγκριση' δεν έχει υλοποιηθεί ακόμα.",
-                "Υπό Κατασκευή",
-                JOptionPane.INFORMATION_MESSAGE
-            );
-        }
+ private void handleAction(String action) {
+    if (action.equals("Διαγράμματα")) {
+        mainFrame.showFinanceChart();
+    } else if (action.equals("Προβολή")) {
+        mainFrame.showBudgetView();
+    } else if (action.equals("Επεξεργασία")) {
+        mainFrame.showDataEditor("cashflow");
+    } else if (action.equals("Σύγκριση")) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Η λειτουργία 'Σύγκριση' δεν έχει υλοποιηθεί ακόμα.",
+            "Υπό Κατασκευή",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+    } else if (action.equals("Μαζικές Αλλαγές")) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Η λειτουργία 'Μαζικές Αλλαγές' δεν έχει υλοποιηθεί ακόμα.",
+            "Υπό Κατασκευή",
+            JOptionPane.INFORMATION_MESSAGE
+        );
     }
+}
+
     
     /**
      * Sets up animation timer.
