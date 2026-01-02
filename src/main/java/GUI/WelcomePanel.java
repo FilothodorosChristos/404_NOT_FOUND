@@ -368,7 +368,7 @@ public class WelcomePanel extends JPanel {
         // Title (moved up)
         g2.setColor(new Color(255, 255, 255, alpha));
         g2.setFont(new Font("Arial", Font.BOLD, 48));
-        String title = "GoverLens Pro";
+        String title = "GoverLens App";
         FontMetrics fm = g2.getFontMetrics();
         g2.drawString(title, width / 2 - fm.stringWidth(title) / 2, 270);
         
@@ -431,7 +431,7 @@ public class WelcomePanel extends JPanel {
     private void drawFooter(Graphics2D g2, int width, int height) {
         g2.setColor(new Color(71, 85, 105));
         g2.setFont(new Font("Arial", Font.PLAIN, 10));
-        String footer = "© 2025 GoverLens Pro. Όλα τα δικαιώματα διατηρούνται.";
+        String footer = "© 2025 GoverLens . Όλα τα δικαιώματα διατηρούνται.";
         FontMetrics fm = g2.getFontMetrics();
         g2.drawString(footer, width / 2 - fm.stringWidth(footer) / 2, height - 15);
     }
