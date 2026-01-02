@@ -270,8 +270,21 @@ private void handleAction(String action) {
             }
         }
     } else {
+      try {
+        // Καλούμε τη μέθοδο για νέα προσομοίωση
+        SimulationService.startIfDatabaseMissing();
+                
         /**  Για το κουμπί "Συνέχεια Προσομοίωσης" */
         mainFrame.showPanel(MainFrame.YEAR_SELECTION);
+        
+      } catch (Exception ex) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Σφάλμα κατά την εκκίνηση νέας προσομοίωσης:\n" + ex.getMessage(),
+            "Σφάλμα",
+            JOptionPane.ERROR_MESSAGE
+        );
+            }
     }
 }
     /**
