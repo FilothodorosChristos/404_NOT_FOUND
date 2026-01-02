@@ -27,7 +27,6 @@ public class ActionSelectionPanel extends JPanel {
      * @param mainFrame the main application frame
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
-                   
     public ActionSelectionPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         setLayout(null);
@@ -61,45 +60,57 @@ public class ActionSelectionPanel extends JPanel {
     private void repositionComponents() {
         int width = getWidth();
         int height = getHeight();
-        
-        // Position action buttons in 2x2 grid
+
         int buttonWidth = 280;
         int buttonHeight = 140;
         int gapX = 40;
         int gapY = 30;
-        
-        // Calculate center position
-        int totalWidth = 2 * buttonWidth + gapX;
-        int startX = (width - totalWidth) / 2;
+
+        int firstRowButtons = 3;
+        int secondRowButtons = 2;
+
         int startY = 380;
-        
-        for (int i = 0; i < 4; i++) {
-            int row = i / 2;
-            int col = i % 2;
+
+        for (int i = 0; i < actionButtons.length; i++) {
+            int row = (i < 3) ? 0 : 1;  // Πρώτη σειρά για i=0..2, δεύτερη για i=3..4
+            int col;
+
+            if (row == 0) {
+                col = i;  // 0,1,2
+            } else {
+                col = i - 3; // 0,1 για δεύτερη σειρά
+            }
+
+            int buttonsInRow = (row == 0) ? firstRowButtons : secondRowButtons;
+            int totalWidth = buttonsInRow * buttonWidth + (buttonsInRow - 1) * gapX;
+            int startX = (width - totalWidth) / 2;
+
             int x = startX + col * (buttonWidth + gapX);
             int y = startY + row * (buttonHeight + gapY);
+
             actionButtons[i].setBounds(x, y, buttonWidth, buttonHeight);
         }
-        
-        // Position back button
+
+        // Back button
         backButton.setBounds(30, height - 70, 150, 40);
     }
     
     /**
-     * Creates the 4 action buttons.
+     * Creates the 5 action buttons.
      */
     private void createActionButtons() {
-        actionButtons = new JButton[4];
-        String[] titles = {"Προβολή", "Επεξεργασία", "Διαγράμματα", "Σύγκριση"};
-        String[] icons = {"👁️", "✏️", "📊", "⚖️"};
+        actionButtons = new JButton[5];
+        String[] titles = {"Προβολή", "Επεξεργασία", "Διαγράμματα", "Σύγκριση", "Μαζικές αλλαγές"};
+        String[] icons = {"👁️", "✏️", "📊", "⚖️", "🔄"};
         String[] descriptions = {
             "Προβολή προϋπολογισμού",
             "Επεξεργασία δεδομένων",
             "Οπτικοποίηση δεδομένων",
-            "Σύγκριση ετών"
+            "Σύγκριση ετών",
+            "Εφαρμογή μαζικών αλλαγών"
         };
         
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             actionButtons[i] = createActionButton(titles[i], icons[i], descriptions[i]);
             add(actionButtons[i]);
         }
@@ -118,7 +129,9 @@ public class ActionSelectionPanel extends JPanel {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 
-                // Background with gradient (same as WelcomePanel feature cards)
+                isHovered = Boolean.TRUE.equals(getClientProperty("hover"));
+
+                // Background with gradient
                 if (isHovered) {
                     GradientPaint gradient = new GradientPaint(
                         0, 0, new Color(99, 102, 241, 30),
@@ -130,7 +143,7 @@ public class ActionSelectionPanel extends JPanel {
                 }
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 
-                // Border (matching WelcomePanel cards)
+                // Border
                 g2.setColor(new Color(99, 102, 241, isHovered ? 100 : 50));
                 g2.setStroke(new BasicStroke(1));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
@@ -139,22 +152,25 @@ public class ActionSelectionPanel extends JPanel {
                 g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
                 FontMetrics fmIcon = g2.getFontMetrics();
                 int iconX = (getWidth() - fmIcon.stringWidth(icon)) / 2;
+                int iconY = (getHeight() / 2) - 20; 
                 g2.setColor(new Color(255, 255, 255, 230));
-                g2.drawString(icon, iconX, 55);
+                g2.drawString(icon, iconX, iconY);
                 
                 // Title
                 g2.setFont(new Font("Arial", Font.BOLD, 18));
                 g2.setColor(new Color(226, 232, 240));
                 FontMetrics fmTitle = g2.getFontMetrics();
                 int titleX = (getWidth() - fmTitle.stringWidth(title)) / 2;
-                g2.drawString(title, titleX, 90);
+                int titleY = (getHeight() / 2) + 15; 
+                g2.drawString(title, titleX, titleY);
                 
                 // Description
                 g2.setFont(new Font("Arial", Font.PLAIN, 11));
                 g2.setColor(new Color(100, 116, 139));
                 FontMetrics fmDesc = g2.getFontMetrics();
                 int descX = (getWidth() - fmDesc.stringWidth(description)) / 2;
-                g2.drawString(description, descX, 110);
+                int descY = (getHeight() / 2) + 40; 
+                g2.drawString(description, descX, descY);
                 
                 g2.dispose();
             }
@@ -168,18 +184,16 @@ public class ActionSelectionPanel extends JPanel {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                JButton btn = (JButton) e.getSource();
-                btn.putClientProperty("hover", true);
-                btn.setBounds(btn.getX(), btn.getY() - 3, btn.getWidth(), btn.getHeight());
-                btn.repaint();
+                button.putClientProperty("hover", true);
+                button.setBounds(button.getX(), button.getY() - 3, button.getWidth(), button.getHeight());
+                button.repaint();
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
-                JButton btn = (JButton) e.getSource();
-                btn.putClientProperty("hover", false);
+                button.putClientProperty("hover", false);
                 repositionComponents();
-                btn.repaint();
+                button.repaint();
             }
         });
         
@@ -198,16 +212,13 @@ public class ActionSelectionPanel extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                // Background (matching style)
                 g2.setColor(new Color(15, 23, 42, 128));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
                 
-                // Border
                 g2.setColor(new Color(99, 102, 241, 80));
                 g2.setStroke(new BasicStroke(1));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
                 
-                // Text
                 g2.setColor(new Color(226, 232, 240));
                 g2.setFont(new Font("Arial", Font.BOLD, 14));
                 FontMetrics fm = g2.getFontMetrics();
@@ -223,7 +234,6 @@ public class ActionSelectionPanel extends JPanel {
         backButton.setContentAreaFilled(false);
         backButton.setFocusPainted(false);
         backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
         backButton.addActionListener(e -> mainFrame.showPanel(MainFrame.YEAR_SELECTION));
         
         add(backButton);
@@ -232,18 +242,25 @@ public class ActionSelectionPanel extends JPanel {
     /**
      * Handles action button clicks.
      */
- private void handleAction(String action) {
-    if (action.equals("Διαγράμματα")) {
-        mainFrame.showFinanceChart();
-    } else if (action.equals("Προβολή")) {
-        mainFrame.showBudgetView();
-    } else if (action.equals("Επεξεργασία")) {
-        mainFrame.showDataEditor("cashflow");
-    } else if (action.equals("Σύγκριση")) {
-        // Καλούμε τη νέα μέθοδο που φτιάξαμε στο MainFrame
-        mainFrame.showComparison(); 
+    private void handleAction(String action) {
+        if (action.equals("Διαγράμματα")) {
+            mainFrame.showFinanceChart();
+        } else if (action.equals("Προβολή")) {
+            mainFrame.showBudgetView();
+        } else if (action.equals("Επεξεργασία")) {
+            mainFrame.showDataEditor("cashflow");
+        } else if (action.equals("Σύγκριση")) {
+            // Updated to call the actual method in MainFrame
+            mainFrame.showComparison(); 
+        } else if (action.equalsIgnoreCase("Μαζικές αλλαγές")) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Η λειτουργία 'Μαζικές Αλλαγές' δεν έχει υλοποιηθεί ακόμα.",
+                "Υπό Κατασκευή",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        }
     }
-}
     
     /**
      * Sets up animation timer.
@@ -284,16 +301,9 @@ public class ActionSelectionPanel extends JPanel {
         int width = getWidth();
         int height = getHeight();
         
-        // Draw animated grid (same as WelcomePanel)
         drawAnimatedGrid(g2, width, height);
-        
-        // Draw floating orbs (same as WelcomePanel)
         drawFloatingOrbs(g2, width, height);
-        
-        // Draw header with logo
         drawHeader(g2, width);
-        
-        // Draw footer
         drawFooter(g2, width, height);
         
         g2.dispose();
@@ -318,7 +328,6 @@ public class ActionSelectionPanel extends JPanel {
         float parallax1 = (mousePosition.x - width / 2f) * 0.01f;
         float parallax2 = (mousePosition.y - height / 2f) * 0.01f;
         
-        // Orb 1 (top-left)
         RadialGradientPaint gradient1 = new RadialGradientPaint(
             -200 + parallax1, -200 + parallax2, 250,
             new float[]{0f, 1f},
@@ -327,7 +336,6 @@ public class ActionSelectionPanel extends JPanel {
         g2.setPaint(gradient1);
         g2.fillOval((int)(-200 + parallax1), (int)(-200 + parallax2), 500, 500);
         
-        // Orb 2 (bottom-right)
         RadialGradientPaint gradient2 = new RadialGradientPaint(
             width - 150 + parallax1 * 1.5f, height - 150 + parallax2 * 1.5f, 200,
             new float[]{0f, 1f},
@@ -340,51 +348,40 @@ public class ActionSelectionPanel extends JPanel {
     private void drawHeader(Graphics2D g2, int width) {
         int alpha = Math.min(255, fadeInProgress * 255 / 100);
         
-        // Draw logo
         Image logo = mainFrame.getLogoImage();
         if (logo != null) {
             int logoSize = 100;
             int logoX = width / 2 - logoSize / 2;
             int logoY = 60;
-            
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f));
-            
-            // Create circular clip
             Shape oldClip = g2.getClip();
             g2.setClip(new Ellipse2D.Double(logoX, logoY, logoSize, logoSize));
             g2.drawImage(logo, logoX, logoY, logoSize, logoSize, this);
             g2.setClip(oldClip);
-            
-            // Draw border
             g2.setColor(new Color(99, 102, 241, alpha));
             g2.setStroke(new BasicStroke(2));
             g2.drawOval(logoX, logoY, logoSize, logoSize);
-            
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
         
-        // Title
         g2.setColor(new Color(255, 255, 255, alpha));
         g2.setFont(new Font("Arial", Font.BOLD, 32));
         String title = "GoverLens Pro";
         FontMetrics fm = g2.getFontMetrics();
         g2.drawString(title, width / 2 - fm.stringWidth(title) / 2, 195);
         
-        // Subtitle
         g2.setColor(new Color(148, 163, 184, alpha));
         g2.setFont(new Font("Arial", Font.PLAIN, 14));
         String subtitle = "Σύστημα Διαχείρισης Κρατικού Προϋπολογισμού";
         fm = g2.getFontMetrics();
         g2.drawString(subtitle, width / 2 - fm.stringWidth(subtitle) / 2, 220);
         
-        // Main instruction
         g2.setColor(new Color(226, 232, 240, alpha));
         g2.setFont(new Font("Arial", Font.BOLD, 28));
         String instruction = "Επιλέξτε Διαδικασία";
         fm = g2.getFontMetrics();
         g2.drawString(instruction, width / 2 - fm.stringWidth(instruction) / 2, 280);
         
-        // Year indicator
         String selectedYear = mainFrame.getSelectedYear();
         if (selectedYear != null) {
             g2.setColor(new Color(99, 102, 241, alpha));
