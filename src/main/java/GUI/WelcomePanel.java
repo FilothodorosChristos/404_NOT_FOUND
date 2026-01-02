@@ -380,34 +380,53 @@ public class WelcomePanel extends JPanel {
         g2.drawString(subtitle, width / 2 - fm.stringWidth(subtitle) / 2, 300);
     }
     
-    private void drawStatsBar(Graphics2D g2, int width) {
-        String[] values = {"99.9%", "24/7", "ISO"};
-        String[] labels = {"Ακρίβεια", "Διαθεσιμότητα", "Πιστοποίηση"};
-        
-        int startX = width / 2 - 300;
-        int y = 380;
-        int spacing = 200;
-        
-        for (int i = 0; i < 3; i++) {
-            int x = startX + i * spacing;
-            
-            // Value
-            g2.setFont(new Font("Arial", Font.BOLD, 28));
-            GradientPaint valueGradient = new GradientPaint(
-                x, y, new Color(99, 102, 241),
-                x + 100, y + 20, new Color(139, 92, 246)
-            );
-            g2.setPaint(valueGradient);
-            FontMetrics fm = g2.getFontMetrics();
-            g2.drawString(values[i], x + 50 - fm.stringWidth(values[i]) / 2, y);
-            
-            // Label
-            g2.setColor(new Color(100, 116, 139));
-            g2.setFont(new Font("Arial", Font.BOLD, 10));
-            fm = g2.getFontMetrics();
-            g2.drawString(labels[i].toUpperCase(), x + 50 - fm.stringWidth(labels[i]) / 2, y + 20);
-        }
+   private void drawStatsBar(Graphics2D g2, int width) {
+
+    String[] values = {"99.9%", "24/7", "ISO"};
+    String[] labels = {"Ακρίβεια", "Διαθεσιμότητα", "Πιστοποίηση"};
+
+    int itemWidth = 120;
+    int spacing = 80;
+    int totalWidth = values.length * itemWidth + (values.length - 1) * spacing;
+
+    int startX = (width - totalWidth) / 2;
+    int y = 380;
+
+    for (int i = 0; i < values.length; i++) {
+
+        int x = startX + i * (itemWidth + spacing);
+
+        // VALUE
+        g2.setFont(new Font("Arial", Font.BOLD, 28));
+        FontMetrics fmValue = g2.getFontMetrics();
+
+        GradientPaint gradient = new GradientPaint(
+                x, y - 20,
+                new Color(99, 102, 241),
+                x + itemWidth, y,
+                new Color(139, 92, 246)
+        );
+        g2.setPaint(gradient);
+
+        g2.drawString(
+                values[i],
+                x + (itemWidth - fmValue.stringWidth(values[i])) / 2,
+                y
+        );
+
+        // LABEL
+        g2.setFont(new Font("Arial", Font.BOLD, 10));
+        g2.setColor(new Color(100, 116, 139));
+        FontMetrics fmLabel = g2.getFontMetrics();
+
+        g2.drawString(
+                labels[i].toUpperCase(),
+                x + (itemWidth - fmLabel.stringWidth(labels[i])) / 2,
+                y + 18
+        );
     }
+}
+
     
     private void drawFooter(Graphics2D g2, int width, int height) {
         g2.setColor(new Color(71, 85, 105));

@@ -89,7 +89,7 @@ public class ActionSelectionPanel extends JPanel {
      * Creates the 4 action buttons.
      */
     private void createActionButtons() {
-        actionButtons = new JButton[4];
+        actionButtons = new JButton[5];
         String[] titles = {"Προβολή", "Επεξεργασία", "Διαγράμματα", "Σύγκριση"};
         String[] icons = {"👁️", "✏️", "📊", "⚖️"};
         String[] descriptions = {
@@ -136,25 +136,29 @@ public class ActionSelectionPanel extends JPanel {
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
                 
                 // Icon
-                g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
-                FontMetrics fmIcon = g2.getFontMetrics();
-                int iconX = (getWidth() - fmIcon.stringWidth(icon)) / 2;
-                g2.setColor(new Color(255, 255, 255, 230));
-                g2.drawString(icon, iconX, 55);
+                 g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
+                 FontMetrics fmIcon = g2.getFontMetrics();
+                 int iconX = (getWidth() - fmIcon.stringWidth(icon)) / 2;
+                 int iconY = (getHeight() / 2) - 20; 
+                 g2.setColor(new Color(255, 255, 255, 230));
+                 g2.drawString(icon, iconX, iconY);
+            
                 
                 // Title
                 g2.setFont(new Font("Arial", Font.BOLD, 18));
-                g2.setColor(new Color(226, 232, 240));
-                FontMetrics fmTitle = g2.getFontMetrics();
-                int titleX = (getWidth() - fmTitle.stringWidth(title)) / 2;
-                g2.drawString(title, titleX, 90);
+            g2.setColor(new Color(226, 232, 240));
+            FontMetrics fmTitle = g2.getFontMetrics();
+            int titleX = (getWidth() - fmTitle.stringWidth(title)) / 2;
+            int titleY = (getHeight() / 2) + 15; 
+            g2.drawString(title, titleX, titleY);
                 
                 // Description
-                g2.setFont(new Font("Arial", Font.PLAIN, 11));
-                g2.setColor(new Color(100, 116, 139));
-                FontMetrics fmDesc = g2.getFontMetrics();
-                int descX = (getWidth() - fmDesc.stringWidth(description)) / 2;
-                g2.drawString(description, descX, 110);
+               g2.setFont(new Font("Arial", Font.PLAIN, 11));
+            g2.setColor(new Color(100, 116, 139));
+            FontMetrics fmDesc = g2.getFontMetrics();
+            int descX = (getWidth() - fmDesc.stringWidth(description)) / 2;
+            int descY = (getHeight() / 2) + 40; 
+            g2.drawString(description, descX, descY);
                 
                 g2.dispose();
             }
