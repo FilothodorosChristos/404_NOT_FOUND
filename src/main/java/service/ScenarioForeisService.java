@@ -7,24 +7,23 @@ public class ScenarioForeisService {
     private final ForeisService foreisService = new ForeisService();
 
     /**
-     * Επιστρέφει λίστα Foreis για το imported έτος και τύπο, με τροποποιημένο budget (PublicInvBudget ή RegularBudget) κατά το imported ποσοστό.
+     * Δημιουργεί λίστα Foreis για το imported έτος και τύπο, με τροποποιημένο budget (PublicInvBudget ή RegularBudget) κατά το imported ποσοστό.
      * Καλεί την updateForeis της ForeisService για να αποθηκεύσει τις αλλαγές στη βάση δεδομένων.
      *
      * @param year το έτος
      * @param type ο τύπος (π.χ. "Υπουργείο")
      * @param category η κατηγορία budget προς τροποποίηση ("PublicInvBudget" ή "RegularBudget")
-     * @param percentageFactor ο συντελεστής τροποποίησης (αν δοθεί το 4, το budget θα γίνει 4% του αρχικού)
-     * @return λίστα Foreis με τροποποιημένο budget
+     * @param percentageFactor ο συντελεστής τροποποίησης (αν δοθεί το ±4, το budget θα τροποποιηθεί κατά ±4% του αρχικού)
      */
-    public void getModifiedForeis(int year, String type, String category, double percentageFactor) {
+    public void updateForeisWithModifiedBudget(int year, String type, String category, double percentageFactor) {
         if (year < 2021 || year > 2026) {
-            throw new IllegalArgumentException("Λαναθασμένο έτος: " + year + ". Επιτρέπονται μόνο έτη από 2021 έως 2026.");
+            throw new IllegalArgumentException("Λανθασμένο έτος: " + year + ". Επιτρέπονται μόνο έτη από 2021 έως 2026.");
         }
         if (!("PublicInvBudget".equals(category) || "RegularBudget".equals(category))) {
-            throw new IllegalArgumentException("Λαναθασμένη κατηγορία: " + category + ". Επιτρέπονται μόνο 'PublicInvBudget' ή 'RegularBudget'");
+            throw new IllegalArgumentException("Λανθασμένη κατηγορία: " + category + ". Επιτρέπονται μόνο 'PublicInvBudget' ή 'RegularBudget'");
         }
         if (!("Υπουργείο".equals(type) || "Κεντρική Διοίκηση".equals(type) || "Αποκεντρωμένη Διοίκηση".equals(type))) {
-            throw new IllegalArgumentException("Λαναθασμένος τύπος: " + type + ". Επιτρέπονται μόνο 'Υπουργείο', 'Κεντρική Διοίκηση' ή 'Αποκεντρωμένη Διοίκηση'");
+            throw new IllegalArgumentException("Λανθασμένος τύπος: " + type + ". Επιτρέπονται μόνο 'Υπουργείο', 'Κεντρική Διοίκηση' ή 'Αποκεντρωμένη Διοίκηση'");
         }
         List<Foreis> original = foreisService.getForeisByYearAndType(year, type);
         for (Foreis f : original) {
