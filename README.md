@@ -20,7 +20,7 @@
 
 ## UML Class Diagram
 
-### Πλήρες Class Diagram
+
 
 ![UML Class Diagram](docs/images/project_diagram.png) 
 
@@ -64,6 +64,18 @@
 - **Microsoft Teams**
   - Επικοινωνία και ανατροφοδότηση μεταξύ των μελών της ομάδας
 
+##  Οδηγίες μεταγλώττισης του προγράμματος
+
+```bash
+mvn clean package
+```
+
+## Αλγόριθμοι & Δομές Δεδομένων
+
+- **ArrayList/List**: Διαχείριση εσόδων, εξόδων, φορέων
+- **HashMap**: Caching και γρήγορη αναζήτηση
+- **Comparison Algorithm**: Υπολογισμός διαφορών και ποσοστών μεταβολής
+- **SQL Triggers**: Αυτόματη καταγραφή αλλαγών (logging)
 
 
 
