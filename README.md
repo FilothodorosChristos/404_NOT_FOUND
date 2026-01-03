@@ -1,59 +1,60 @@
-
+```text
 404_NOT_FOUND/
+│
 ├── src/
 │   ├── main/
 │   │   ├── java/
-│   │   │   └── GUI/
-│   │   │       ├── ActionSelectionPanel.java
-│   │   │       ├── BudgetViewPanel.java
-│   │   │       ├── ChartRenderer.java
-│   │   │       ├── ComparisonPanel.java
-│   │   │       ├── ComparisonService.java
-│   │   │       ├── DataEditorPanel.java
-│   │   │       ├── FinanceChartPanel.java
-│   │   │       ├── GraphDataImporter.java
-│   │   │       ├── LogViewerPanel.java
-│   │   │       ├── MainFrame.java
-│   │   │       ├── ProjectSelectionPanel.java
-│   │   │       ├── WelcomePanel.java
-│   │   │       └── YearSelectionPanel.java
-│   │   │
-│   │   │   └── dao/
-│   │   │       ├── CashFlow.java
-│   │   │       ├── CashFlowDao.java
-│   │   │       ├── Foreis.java
-│   │   │       ├── ForeisDao.java
-│   │   │       ├── Log.java
-│   │   │       └── LogDao.java
-│   │   │
-│   │   │   └── database/
-│   │   │       ├── DataImporter.java
-│   │   │       └── DatabaseSetup.java
-│   │   │
-│   │   │   └── dto/
-│   │   │       ├── CashFlowCompareDto.java
-│   │   │       └── ForeasCompareDto.java
-│   │   │
-│   │   │   └── service/
-│   │   │       ├── CashFlowService.java
-│   │   │       ├── ForeisService.java
-│   │   │       ├── LogService.java
-│   │   │       ├── ScenarioCashflowService.java
-│   │   │       ├── ScenarioForeisService.java
-│   │   │       └── SimulationService.java
-│   │   │
+│   │   │   ├── GUI/
+│   │   │   │   ├── ActionSelectionPanel.java
+│   │   │   │   ├── BudgetViewPanel.java
+│   │   │   │   ├── ChartRenderer.java
+│   │   │   │   ├── ComparisonPanel.java
+│   │   │   │   ├── ComparisonService.java
+│   │   │   │   ├── DataEditorPanel.java
+│   │   │   │   ├── FinanceChartPanel.java
+│   │   │   │   ├── GraphDataImporter.java
+│   │   │   │   ├── LogViewerPanel.java
+│   │   │   │   ├── MainFrame.java
+│   │   │   │   ├── ProjectSelectionPanel.java
+│   │   │   │   ├── WelcomePanel.java
+│   │   │   │   └── YearSelectionPanel.java
+│   │   │   │
+│   │   │   ├── dao/
+│   │   │   │   ├── CashFlow.java
+│   │   │   │   ├── CashFlowDao.java
+│   │   │   │   ├── Foreis.java
+│   │   │   │   ├── ForeisDao.java
+│   │   │   │   ├── Log.java
+│   │   │   │   └── LogDao.java
+│   │   │   │
+│   │   │   ├── database/
+│   │   │   │   ├── DataImporter.java
+│   │   │   │   └── DatabaseSetup.java
+│   │   │   │
+│   │   │   ├── dto/
+│   │   │   │   ├── CashFlowCompareDto.java
+│   │   │   │   └── ForeasCompareDto.java
+│   │   │   │
+│   │   │   ├── service/
+│   │   │   │   ├── CashFlowService.java
+│   │   │   │   ├── ForeisService.java
+│   │   │   │   ├── LogService.java
+│   │   │   │   ├── ScenarioCashflowService.java
+│   │   │   │   ├── ScenarioForeisService.java
+│   │   │   │   └── SimulationService.java
+│   │   │   │
 │   │   │   └── util/
 │   │   │       ├── DbExistsChecker.java
 │   │   │       └── ValidationUtils.java
 │   │   │
 │   │   └── resources/
-│   │       ├── data/                    # CSV Δεδομένα
+│   │       ├── data/
 │   │       │   ├── B21Esoda.csv - B26Esoda.csv
 │   │       │   ├── B21Exoda.csv - B26Exoda.csv
 │   │       │   └── B21Foreis.csv - B26Foreis.csv
 │   │       │
 │   │       └── db/
-│   │           └── originalDB.db        # SQLite Database
+│   │           └── originalDB.db
 │   │
 │   └── test/
 │       └── java/
@@ -82,19 +83,15 @@
 │           │   ├── DbExistsCheckerTest.java
 │           │   └── ValidationUtilsTest.java
 │           │
-│           └── resources/data/          # Test CSV
+│           └── resources/data/
 │               ├── B23EsodaTEST.csv
 │               ├── B23ExodaTEST.csv
 │               └── B23ForeisTEST.csv
 │
-├── .gitignore
-├── .gitignore
 ├── BackgroundPhoto.jpg
 ├── GoverLensLogo.jpg
 ├── README.md
 ├── checkstyle.xml
-└── pom.xml
+├── pom.xml
+└── .gitignore
 ```
-
-
-
