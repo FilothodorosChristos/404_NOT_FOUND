@@ -4,13 +4,10 @@ import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.util.List;
-import javax.imageio.ImageIO;
 import service.CashFlowService;
 import service.ForeisService;
 import util.ValidationUtils;
@@ -19,13 +16,11 @@ import util.ValidationUtils;
 
 /**
  * Panel για εμφάνιση και επεξεργασία δεδομένων από τη βάση.
- * Υποστηρίζει τόσο CashFlows όσο και Foreis με δύο πίνακες (Έσοδα/Έξοδα).
+ * Υποστηρίζει τόσο CashFlowς όσο και Foreis με δύο πίνακες (Έσοδα/Έξοδα).
  * Ενσωματώνεται στο MainFrame χωρίς να ανοίγει νέο παράθυρο.
  */
 public final class DataEditorPanel extends JPanel {
 
-  private static final Color NAVY_BLUE = new Color(0, 0, 128);
-  private static final Color LIGHT_BLUE = new Color(173, 216, 230);
   private static final Color LIGHT_GREEN = new Color(200, 230, 200);
   private static final Font TITLE_FONT = new Font("Tahoma", Font.BOLD, 18);
   private static final Font TABLE_FONT = new Font("Arial", Font.PLAIN, 12);
@@ -39,32 +34,17 @@ public final class DataEditorPanel extends JPanel {
 
   private final CashFlowService cashFlowService;
   private final ForeisService foreisService;
+
+  private static final Color DARK_BG = new Color(15, 23, 42);
+  private static final Color DARKER_BG = new Color(8, 15, 30);
+  private static final Color CARD_BG = new Color(30, 41, 59);
+  private static final Color ACCENT_BLUE = new Color(37, 99, 235);
+  private static final Color TEXT_PRIMARY = new Color(248, 250, 252);
+  private static final Color TEXT_SECONDARY = new Color(148, 163, 184);
+  private static final Color BORDER_COLOR = new Color(51, 65, 85);
+  private static final Color TABLE_HEADER_BG = new Color(30, 41, 59);
+  //private static final Color TABLE_ROW_ALT = new Color(20, 30, 48);
   
-  private BufferedImage backgroundImage;
-
-  /**
-   * Custom JPanel με background image
-   */
-  private static class BackgroundPanel extends JPanel {
-    private BufferedImage image;
-    
-    public BackgroundPanel(BufferedImage img) {
-      this.image = img;
-      setLayout(new BorderLayout(10, 10));
-    }
-    
-    @Override
-    protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
-      if (image != null) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, 
-                            RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.drawImage(image, 0, 0, getWidth(), getHeight(), this);
-      }
-    }
-  }
-
   /**
    * Constructor - Δέχεται MainFrame, έτος και κατηγορία δεδομένων.
    */
@@ -77,37 +57,8 @@ public final class DataEditorPanel extends JPanel {
     this.cashFlowService = new CashFlowService();
     this.foreisService = new ForeisService();
     
-    loadBackgroundImage();
     initializeUI();
     loadData();
-  }
-
-  /**
-   * Φόρτωση background image
-   */
-  private void loadBackgroundImage() {
-    try {
-      String[] possiblePaths = {
-        "BackroundPhoto.jpg",
-        "src/BackroundPhoto.jpg",
-        "resources/BackroundPhoto.jpg",
-        "GUI/BackroundPhoto.jpg"
-      };
-      
-      for (String path : possiblePaths) {
-        File imageFile = new File(path);
-        if (imageFile.exists()) {
-          backgroundImage = ImageIO.read(imageFile);
-          //System.out.println("Background image loaded from: " + path);
-          return;
-        }
-      }
-      
-      System.err.println("Warning: BackroundPhoto.jpg not found in common locations");
-      
-    } catch (Exception e) {
-      System.err.println("Error loading background image: " + e.getMessage());
-    }
   }
 
   /**
@@ -116,7 +67,8 @@ public final class DataEditorPanel extends JPanel {
   private void initializeUI() {
     setLayout(new BorderLayout());
     
-    BackgroundPanel mainPanel = new BackgroundPanel(backgroundImage);
+    JPanel mainPanel = new JPanel(new BorderLayout(0, 10));
+    mainPanel.setBackground(DARK_BG);
 
     // Header Panel
     JPanel headerPanel = createHeaderPanel();
@@ -136,9 +88,9 @@ public final class DataEditorPanel extends JPanel {
   /**
    * Δημιουργία header panel με τίτλο και πληροφορίες.
    */
- private JPanel createHeaderPanel() {
+  private JPanel createHeaderPanel() {
     JPanel panel = new JPanel(new BorderLayout());
-    panel.setBackground(new Color(0, 0, 128, 230));
+    panel.setBackground(CARD_BG);
     panel.setPreferredSize(new Dimension(0, 80));
     panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
@@ -147,13 +99,13 @@ public final class DataEditorPanel extends JPanel {
             : "Φορείς";
     JLabel titleLabel = new JLabel(title);
     titleLabel.setFont(new Font("Tahoma", Font.BOLD, 24));
-    titleLabel.setForeground(Color.WHITE);
+    titleLabel.setForeground(TEXT_PRIMARY);
 
     String info = String.format("<html>Έτος: <b>%d</b> | Εμφάνιση: <b>Έσοδα & Έξοδα</b></html>",
             selectedYear);
     JLabel infoLabel = new JLabel(info);
     infoLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-    infoLabel.setForeground(LIGHT_BLUE);
+    infoLabel.setForeground(TEXT_SECONDARY);
 
     JPanel textPanel = new JPanel(new GridLayout(2, 1, 5, 5));
     textPanel.setOpaque(false);
@@ -166,23 +118,20 @@ public final class DataEditorPanel extends JPanel {
     JButton historyButton = new JButton("📊 Ιστορικό Αλλαγών");
     historyButton.setFont(new Font("Arial", Font.BOLD, 13));
     historyButton.setPreferredSize(new Dimension(180, 45));
-    historyButton.setBackground(new Color(255, 255, 255, 200));
-    historyButton.setForeground(NAVY_BLUE);
+    historyButton.setBackground(ACCENT_BLUE);
+    historyButton.setForeground(Color.BLACK); // Updated to Black
     historyButton.setFocusPainted(false);
-    historyButton.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.WHITE, 2),
-            BorderFactory.createEmptyBorder(8, 15, 8, 15)
-    ));
+    historyButton.setBorder(BorderFactory.createCompoundBorder());
     historyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     
     historyButton.addMouseListener(new java.awt.event.MouseAdapter() {
       @Override
       public void mouseEntered(java.awt.event.MouseEvent evt) {
-        historyButton.setBackground(new Color(230, 240, 255, 230));
+        historyButton.setBackground(ACCENT_BLUE.brighter());
       }
       @Override
       public void mouseExited(java.awt.event.MouseEvent evt) {
-        historyButton.setBackground(new Color(255, 255, 255, 200));
+        historyButton.setBackground(ACCENT_BLUE);
       }
     });
     
@@ -219,7 +168,9 @@ public final class DataEditorPanel extends JPanel {
     JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, incomePanel, expensePanel);
     splitPane.setDividerLocation(350);
     splitPane.setResizeWeight(0.5);
-    splitPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+    splitPane.setBorder(BorderFactory.createCompoundBorder(
+    BorderFactory.createLineBorder(BORDER_COLOR, 1),
+    BorderFactory.createEmptyBorder(10, 10, 10, 10)));
     splitPane.setOpaque(false);
 
     return splitPane;
@@ -237,7 +188,7 @@ public final class DataEditorPanel extends JPanel {
             javax.swing.border.TitledBorder.LEFT,
             javax.swing.border.TitledBorder.TOP,
             TITLE_FONT,
-            Color.WHITE
+            TEXT_PRIMARY
     ));
 
     DefaultTableModel tableModel;
@@ -288,9 +239,13 @@ public final class DataEditorPanel extends JPanel {
     table.setFont(TABLE_FONT);
     table.setRowHeight(25);
     table.getTableHeader().setFont(HEADER_FONT);
-    table.getTableHeader().setBackground(isIncome ? LIGHT_GREEN : new Color(255, 200, 200));
+    table.getTableHeader().setForeground(Color.BLACK);
+    table.getTableHeader().setBackground(TABLE_HEADER_BG);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    table.setGridColor(Color.LIGHT_GRAY);
+    table.setGridColor(BORDER_COLOR);
+    table.setBackground(DARKER_BG);
+    table.setForeground(TEXT_PRIMARY);
+    table.setSelectionBackground(ACCENT_BLUE);
     table.setShowGrid(true);
     table.setOpaque(true);
 
@@ -305,27 +260,28 @@ public final class DataEditorPanel extends JPanel {
 
     adjustColumnWidths(table);
 
-    table.setSelectionBackground(new Color(184, 207, 229));
     table.setSelectionForeground(Color.BLACK);
 
     JScrollPane scrollPane = new JScrollPane(table);
     scrollPane.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-    scrollPane.setOpaque(false);
-    scrollPane.getViewport().setOpaque(false);
+    scrollPane.setOpaque(true);
+    scrollPane.getViewport().setOpaque(true);
+    scrollPane.getViewport().setBackground(DARKER_BG);
     panel.add(scrollPane, BorderLayout.CENTER);
 
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-    buttonPanel.setOpaque(false);
+    JPanel innerButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+    innerButtonPanel.setOpaque(true);
+    innerButtonPanel.setBackground(DARK_BG);
 
-    JButton addButton = createMiniButton("➕ Προσθήκη", new Color(33, 150, 243));
-    JButton deleteButton = createMiniButton("🗑️ Διαγραφή", new Color(244, 67, 54));
+    JButton addButton = createMiniButton("➕ Προσθήκη", ACCENT_BLUE);
+    JButton deleteButton = createMiniButton("🗑️ Διαγραφή", ACCENT_BLUE);
 
     addButton.addActionListener(e -> addNewRow(type));
     deleteButton.addActionListener(e -> deleteSelectedRow(table, tableModel, type));
 
-    buttonPanel.add(addButton);
-    buttonPanel.add(deleteButton);
-    panel.add(buttonPanel, BorderLayout.SOUTH);
+    innerButtonPanel.add(addButton);
+    innerButtonPanel.add(deleteButton);
+    panel.add(innerButtonPanel, BorderLayout.SOUTH);
 
     if (isIncome) {
       incomeTableModel = tableModel;
@@ -366,32 +322,29 @@ public final class DataEditorPanel extends JPanel {
    */
   private JPanel createButtonPanel() {
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
-    panel.setBackground(new Color(240, 240, 240, 220));
+    panel.setBackground(DARK_BG);
     panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY));
 
     // Δημιουργία backButton ακριβώς όπως το historyButton
-    JButton backButton = new JButton("← Πίσω");
+    JButton backButton = new JButton("← Προηγούμενο");
     backButton.setFont(new Font("Arial", Font.BOLD, 13));
-    backButton.setPreferredSize(new Dimension(180, 45));
-    backButton.setBackground(new Color(255, 255, 255, 200)); // λευκό ημιδιαφανές
-    backButton.setForeground(NAVY_BLUE); // μπλε γράμματα
+    backButton.setPreferredSize(new Dimension(160, 35));
+    backButton.setBackground(ACCENT_BLUE); 
+    backButton.setForeground(Color.BLACK); // Updated to Black
     backButton.setFocusPainted(false);
-    backButton.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.WHITE, 2),
-            BorderFactory.createEmptyBorder(8, 15, 8, 15)
-    ));
+    backButton.setBorder(BorderFactory.createCompoundBorder());
     backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
     // Hover effect
     backButton.addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
         public void mouseEntered(java.awt.event.MouseEvent evt) {
-            backButton.setBackground(new Color(230, 240, 255, 230));
+            backButton.setBackground(ACCENT_BLUE.brighter());
         }
 
         @Override
         public void mouseExited(java.awt.event.MouseEvent evt) {
-            backButton.setBackground(new Color(255, 255, 255, 200));
+            backButton.setBackground(ACCENT_BLUE);
         }
     });
 
@@ -403,46 +356,16 @@ public final class DataEditorPanel extends JPanel {
     return panel;
 }
 
-
-  /**
-   * Δημιουργία styled button.
-   */
-  private JButton createStyledButton(String text, Color bgColor) {
-    JButton button = new JButton(text);
-    button.setFont(new Font("Arial", Font.BOLD, 13));
-    button.setPreferredSize(new Dimension(170, 45));
-    button.setBackground(bgColor);
-    button.setForeground(Color.WHITE);
-    button.setFocusPainted(false);
-    button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(bgColor.darker(), 1),
-            BorderFactory.createEmptyBorder(8, 15, 8, 15)
-    ));
-    button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-    button.addMouseListener(new java.awt.event.MouseAdapter() {
-      public void mouseEntered(java.awt.event.MouseEvent evt) {
-        button.setBackground(bgColor.brighter());
-      }
-
-      public void mouseExited(java.awt.event.MouseEvent evt) {
-        button.setBackground(bgColor);
-      }
-    });
-
-    return button;
-  }
-
   /**
    * Δημιουργία mini button για τους πίνακες.
    */
-  private JButton createMiniButton(String text, Color borderColor) {
+  private JButton createMiniButton(String text, Color bgColor) {
     JButton button = new JButton(text);
     button.setFont(new Font("Arial", Font.BOLD, 11));
     button.setPreferredSize(new Dimension(120, 30));
-    button.setBackground(new Color(255, 255, 255, 120));
+    button.setBackground(bgColor);
     button.setOpaque(true);
-    button.setForeground(new Color(0,0,128));
+    button.setForeground(Color.BLACK); // Updated to Black
 
     return button;
   }
