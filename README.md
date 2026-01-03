@@ -1,37 +1,168 @@
 # GoverLens
-A **GUI-based state budget monitoring and editing system**.  
-This application allows users to view, edit, and track changes in the state budget through a graphical interface.
+
+Η GoverLens αποτελεί μια εφαρμογή η οποία δίνει την ευκαιρία στον απλό πολίτη να αναλάβει  προθυπουργικά καθήκοντα και να αισθανθεί την αίγλη της εξουσίας.Παρόλ’ αυτά,μια τέτοια θέση συνεπάγεται με ποικίλα εμπόδια και υποχρεώσεις όπου πρέπει να φέρει εις πέρας το άτομο.Άραγε,πόσο εύκολη είναι η διαχείριση μια τέτοιας θεσης η οποία επηρεάζει άμεσα την κοινωνικό-οικονομική πορεία ολόκληρης της χώρας ;Το άτομο,μέσω της εφαρμογής θα έχει πρόσβαση στους Ελληνικούς κρατικούς προϋπολογισμούς των τελευταίων έξη διαδοχικών ετών.Έχοντας μια εικόνα για την πρακτική διαχείρησης των εσόδων και των εξόδων της χώρας ,καθώς και τον τρόπο χρηματοδότησης των διάφορων φορέων,δίνεται η δυνατότητα στο άτομο να υφάνει τη μαεστρία του προϋπολογισμού.Με λίγα λόγια ,ο χρήστης πλέκει τον προϋπολογισμό  βάσει των προσωπικών του βιωμάτων και αντιλήψεων ώστε να σχεδιάσει μια υποθετική εικόνα της οικονομικης κατάστασης της χώρας .Πώς το άτομο θα δομήσει τον οικονομικό χάρτη της χώρας ;Ίσως  η ελευθερία του πολιτή στην αρχιτεκτονική του προϋπολογισμού επιφέρει ανεπανόρθωτες ζημίες στη σημερινή εικόνα της Ελλάδας ;
+
+## Οδηγίες Χρήσης
+
+1. **Εκκίνηση**: Επιλέξτε νέα προσομοίωση ή συνέχεια υπάρχουσας
+2. **Επιλογή Έτους**: Διαλέξτε έτος προϋπολογισμού (2021-2026)
+3. **Λειτουργίες**:
+   - **Προβολή**:απεικόνιση του Ελληνικού προύπολογισμού του εκάστοτε έτους με την επιλογή προβολής μεμονωμένα των εσόδων,εξόδων αλλά και των φορέων παίρνοντας μια ματιά για τον τρόπο χρηματοδότησης των κρατικών υποχρεώσεων και απαιτήσεων 
+
+   - **Διαγράμματα**: εμφανίζουν τα δεδομένα του κρατικού προϋπολογισμού  μέσω οριζόντιων ράβδων συνοδευόμενα με τα αντίστοιχα ποσά ,επιτρέποντας την οπτική σύγκριση(εμφανίζουν τα δεδομένα αναφερόμενα στην τρέχουσα μορφή τησ βάσης)
+
+   - **Επεξεργασία**:εκθέτει δυο λιστες ειδικά διαμορφωμένες για τα έσοδα/έξοδα μέσω των οποίων το άτομο έχει το «προνόμιο» μετασχιματισμού της οικονομικής αυτής πορείας της χώρας.Παρέχεται η δυνατότητασ τροποποίησης του προϋπολογισμού (προσθήκη για διαγραφή δεδομένων).Η επεξεργασία εξασφαλίζει την ευελιξία του συστήματος και την αξιοπιστία των οικονομικών αναφορών
+
+   - **Σύγκριση**:Σύγκριση των οικονομικών αναλύσεων μεταξύ δύο  ετών.Αυτή η διαδικασία(όπως γίνεται αντιληπτό) πραγματοποιείται αναφερόμενη στην τρέχουσα κατάστασης της βάσης .Επομένως, η παραμικρή επεξεργασία που ενδέχεται να πραγματοποιήσει ο χρήστης θα έχει επιπτώσεις στο τελικό αποτέλεσμα 
+
+   Αναμφισβήτητα σημαντικό είναι να υποθεί ότι το άτομο δεν περιορίζεται στην επιλογή ενός έτους ,αντιθέτως  μπορεί να επιλέξει οποιοδήποτε έτη από αυτά που παρέχονται από την εφαρμογή.Επομένως ,οι ενέργειες του χρήστη δεν έχουν περιορισμούς δίνοντας του απόλυτη ελευθερία στις επιλογές και πράξεις του.
 
 
-## Project Description
-"GoverLens" is a simulation tool, demonstrating how a state budget can be managed.  
-The system provides an easy-to-use GUI where users can:
+## UML Class Diagram
 
-- Display all budget items
-- Edit budget values
-- Add or delete budget entries
-- Validate changes against predefined constraints
-- Track and review all modifications
-- View charts based on budget values
+### Πλήρες Class Diagram
+
+![UML Class Diagram](docs/images/project_diagram.png) 
+
+## Τεχνολογικό Οικοσύστημα
+
+Η υλοποίηση της εργασίας βασίστηκε στη χρήση ενός ολοκληρωμένου τεχνολογικού οικοσυστήματος για την ανάπτυξη του έργου **GoverLens**.
+
+- **Git / GitHub**
+  - Διαχείριση εκδόσεων του κώδικα
+  - Συνεργασία και συγχρονισμός μεταξύ των μελών της ομάδας
+
+- **Eclipse** & **Visual Studio**
+  - Ανάπτυξη και εκτέλεση του απαιτούμενου κώδικα
+
+- **Maven**
+  - Διαχείριση του κύκλου ζωής του έργου
+  - Αυτοματοποίηση build και dependencies
+
+- **CLOC**
+  - Καταμέτρηση γραμμών κώδικα
+  - Ποσοτική αποτίμηση της ανάπτυξης
+
+- **SpotBugs**, **Checkstyle**, **JaCoCo**, **JUnit**
+  - Έλεγχος ποιότητας κώδικα
+  - Εντοπισμός πιθανών σφαλμάτων
+  - Διασφάλιση αξιοπιστίας και σωστής λειτουργίας των κλάσεων
+
+- **PlantUML** & **Canva**
+  - Δημιουργία διαγραμμάτων
+  - Οπτικοποίηση σχέσεων μεταξύ των κλάσεων
+  - Υποστήριξη παρουσιάσεων
+
+- **SQLite** & **Microsoft Excel**
+  - Αποθήκευση δεδομένων
+  - Οργάνωση και επεξεργασία πληροφοριών σχετικών με κρατικούς προϋπολογισμούς
+
+- **ChatGPT**, **Gemini**, **Claude**
+  - Υποστήριξη μέσω εργαλείων τεχνητής νοημοσύνης
+  - Καθοδήγηση στην επίλυση τεχνικών προβλημάτων
+
+- **Microsoft Teams**
+  - Επικοινωνία και ανατροφοδότηση μεταξύ των μελών της ομάδας
 
 
-## Features
-
-- **Graphical User Interface (GUI)** for intuitive interactions  
-- **Display budget details**: View all entries with current values  
-- **Edit budget items**: Make changes to budget entries  
-- **Constraint checks**: Ensure updates are valid  
-- **Change tracking**: Show all modifications made in the budget
 
 
-## Status
-Under development 
-
-
-## Ownership
-This project is a joint work created by multiple authors.
-Copyright is shared among the contributors.
-
-
-
-
+## Δομή Αποθετηρίου
+  
+```text
+404_NOT_FOUND/
+│
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   ├── GUI/
+│   │   │   │   ├── ActionSelectionPanel.java
+│   │   │   │   ├── BudgetViewPanel.java
+│   │   │   │   ├── ChartRenderer.java
+│   │   │   │   ├── ComparisonPanel.java
+│   │   │   │   ├── ComparisonService.java
+│   │   │   │   ├── DataEditorPanel.java
+│   │   │   │   ├── FinanceChartPanel.java
+│   │   │   │   ├── GraphDataImporter.java
+│   │   │   │   ├── LogViewerPanel.java
+│   │   │   │   ├── MainFrame.java
+│   │   │   │   ├── ProjectSelectionPanel.java
+│   │   │   │   ├── WelcomePanel.java
+│   │   │   │   └── YearSelectionPanel.java
+│   │   │   │
+│   │   │   ├── dao/
+│   │   │   │   ├── CashFlow.java
+│   │   │   │   ├── CashFlowDao.java
+│   │   │   │   ├── Foreis.java
+│   │   │   │   ├── ForeisDao.java
+│   │   │   │   ├── Log.java
+│   │   │   │   └── LogDao.java
+│   │   │   │
+│   │   │   ├── database/
+│   │   │   │   ├── DataImporter.java
+│   │   │   │   └── DatabaseSetup.java
+│   │   │   │
+│   │   │   ├── dto/
+│   │   │   │   ├── CashFlowCompareDto.java
+│   │   │   │   └── ForeasCompareDto.java
+│   │   │   │
+│   │   │   ├── service/
+│   │   │   │   ├── CashFlowService.java
+│   │   │   │   ├── ForeisService.java
+│   │   │   │   ├── LogService.java
+│   │   │   │   ├── ScenarioCashflowService.java
+│   │   │   │   ├── ScenarioForeisService.java
+│   │   │   │   └── SimulationService.java
+│   │   │   │
+│   │   │   └── util/
+│   │   │       ├── DbExistsChecker.java
+│   │   │       └── ValidationUtils.java
+│   │   │
+│   │   └── resources/
+│   │       ├── data/
+│   │       │   ├── B21Esoda.csv - B26Esoda.csv
+│   │       │   ├── B21Exoda.csv - B26Exoda.csv
+│   │       │   └── B21Foreis.csv - B26Foreis.csv
+│   │       │
+│   │       └── db/
+│   │           └── originalDB.db
+│   │
+│   └── test/
+│       └── java/
+│           ├── dao/
+│           │   ├── CashFlowDaoTest.java
+│           │   ├── CashFlowTest.java
+│           │   ├── ForeisDaoTest.java
+│           │   ├── ForeisTest.java
+│           │   └── LogDaoTest.java
+│           │
+│           ├── database/
+│           │   ├── DataImporterTest.java
+│           │   └── DatabaseSetupTest.java
+│           │
+│           ├── dto/
+│           │   ├── CashFlowCompareDto.java
+│           │   └── ForeasCompareDto.java
+│           │
+│           ├── service/
+│           │   ├── CashFlowServiceTest.java
+│           │   ├── ForeisServiceTest.java
+│           │   ├── LogServiceTest.java
+│           │   └── SimulationServiceTest.java
+│           │
+│           ├── util/
+│           │   ├── DbExistsCheckerTest.java
+│           │   └── ValidationUtilsTest.java
+│           │
+│           └── resources/data/
+│               ├── B23EsodaTEST.csv
+│               ├── B23ExodaTEST.csv
+│               └── B23ForeisTEST.csv
+│
+├── BackgroundPhoto.jpg
+├── GoverLensLogo.jpg
+├── README.md
+├── checkstyle.xml
+├── pom.xml
+└── .gitignore
+```
