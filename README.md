@@ -98,6 +98,10 @@ mvn clean package
 
 - **Πλήρης τεκμηρίωση classes**: Όλες οι κλάσεις περιέχουν JavaDoc comments με περιγραφή σκοπού
 - **Τεκμηρίωση μεθόδων**: Κάθε public/protected μέθοδος περιλαμβάνει:
+- Περιγραφές, @param, @return, @throws tags
+
+## Έλεγχος ποιότητας κώδικα (JACOCO)
+![alt text](image.png)
 
 
 ```text
