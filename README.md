@@ -64,6 +64,9 @@
 - **Microsoft Teams**
   - Επικοινωνία και ανατροφοδότηση μεταξύ των μελών της ομάδας
 
+## Οδηγίες εκτέλεσης του προγράμματος  
+
+
 ##  Οδηγίες μεταγλώττισης του προγράμματος
 
 ```bash
@@ -72,10 +75,22 @@ mvn clean package
 
 ## Αλγόριθμοι & Δομές Δεδομένων
 
-- **ArrayList/List**: Διαχείριση εσόδων, εξόδων, φορέων
-- **HashMap**: Caching και γρήγορη αναζήτηση
-- **Comparison Algorithm**: Υπολογισμός διαφορών και ποσοστών μεταβολής
+### Δομές Δεδομένων
+- **ArrayList/List**: Διαχείριση συλλογών δεδομένων (φορείς, έσοδα, έξοδα)
+- **DefaultTableModel**: Παρουσίαση δεδομένων σε πίνακες UI
+- **SQL Tables (B-tree indexes)**: Persistent storage με βελτιστοποιημένες αναζητήσεις
+
+### Αλγόριθμοι
+- **Linear Search (Stream API)**: Φιλτράρισμα και επεξεργασία δεδομένων, O(n)
+- **SQL Indexed Search**: Αναζήτηση με B-tree, O(log n)
+- **Map-Reduce (Streams)**: Υπολογισμός αθροισμάτων και aggregations
+- **Comparison Algorithm**: Υπολογισμός διαφορών και ποσοστιαίων μεταβολών
+- **Validation Checks**: Έλεγχος ορίων και constraints, O(1)
+
+### Patterns & Techniques
 - **SQL Triggers**: Αυτόματη καταγραφή αλλαγών (logging)
+- **SwingWorker**: Asynchronous processing για responsive UI
+- **DAO Pattern**: Διαχωρισμός data access από business logic
 
 
 
