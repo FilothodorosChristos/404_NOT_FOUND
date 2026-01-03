@@ -92,7 +92,12 @@ mvn clean package
 - **SwingWorker**: Asynchronous processing για responsive UI
 - **DAO Pattern**: Διαχωρισμός data access από business logic
 
+## Πρόσθετη Τεχνική Τεκμηρίωση
 
+### JavaDoc Documentation
+
+- **Πλήρης τεκμηρίωση classes**: Όλες οι κλάσεις περιέχουν JavaDoc comments με περιγραφή σκοπού
+- **Τεκμηρίωση μεθόδων**: Κάθε public/protected μέθοδος περιλαμβάνει:
 
 ## Δομή Αποθετηρίου
   
