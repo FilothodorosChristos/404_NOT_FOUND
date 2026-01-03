@@ -351,7 +351,7 @@ public class ComparisonPanel extends JPanel {
             }
         });
         combo.setBackground(CARD_BG);
-        combo.setForeground(Color.WHITE);
+        combo.setForeground(TABLE_ROW_ALT);
         combo.setBorder(BorderFactory.createLineBorder(BORDER_COLOR));
         combo.setPreferredSize(new Dimension(140, 38));
         
