@@ -3,6 +3,11 @@ package GUI;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.plaf.basic.ComboPopup;
 import java.awt.*;
 import java.util.List;
 import service.CashFlowService;
@@ -22,12 +27,15 @@ public class BudgetViewPanel extends JPanel {
     private final CashFlowService cashFlowService;
     private final ForeisService foreisService;
 
-    private static final Color NAVY_BLUE = new Color(0, 0, 128);
-    private static final Color LIGHT_BLUE = new Color(173, 216, 230);
-    private static final Font TITLE_FONT = new Font("Tahoma", Font.BOLD, 24);
-    private static final Font SECTION_FONT = new Font("Tahoma", Font.BOLD, 18);
-    private static final Font TABLE_HEADER_FONT = new Font("Tahoma", Font.BOLD, 12);
-    private static final Font TABLE_FONT = new Font("Tahoma", Font.PLAIN, 11);
+    private static final Color DARK_BG = new Color(15, 23, 42);
+    private static final Color DARKER_BG = new Color(8, 15, 30);
+    private static final Color CARD_BG = new Color(30, 41, 59);
+    private static final Color ACCENT_BLUE = new Color(37, 99, 235);
+    private static final Color TEXT_PRIMARY = new Color(248, 250, 252);
+    private static final Color TEXT_SECONDARY = new Color(148, 163, 184);
+    private static final Color BORDER_COLOR = new Color(51, 65, 85);
+    private static final Color TABLE_HEADER_BG = new Color(30, 41, 59);
+    private static final Color TABLE_ROW_ALT = new Color(20, 30, 48);
 
     private JTable dataTable;
     private DefaultTableModel tableModel;
@@ -48,6 +56,7 @@ public class BudgetViewPanel extends JPanel {
         this.cashFlowService = new CashFlowService();
         this.foreisService = new ForeisService();
         setLayout(new BorderLayout());
+        setBackground(DARK_BG);
         createUI();
         loadData();
     }
@@ -56,94 +65,83 @@ public class BudgetViewPanel extends JPanel {
      * Creates the user interface components.
      */
     private void createUI() {
-        // Background panel
-        JPanel backgroundPanel = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                if (mainFrame.getBackgroundImage() != null) {
-                    g.drawImage(mainFrame.getBackgroundImage(), 0, 0, getWidth(), getHeight(), this);
-                }
-            }
-        };
-
-        // Main content panel with white background
-        JPanel contentPanel = new JPanel(new BorderLayout(10, 10));
-        contentPanel.setOpaque(true);
-        contentPanel.setBackground(Color.WHITE);
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        // Main content panel
+        JPanel contentPanel = new JPanel(new BorderLayout(0, 10));
+        contentPanel.setBackground(DARK_BG);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         // Title panel
-        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        titlePanel.setOpaque(false);
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(DARK_BG);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        
         JLabel titleLabel = new JLabel("Προβολή Προϋπολογισμού - Έτος " + mainFrame.getSelectedYear());
-        titleLabel.setFont(TITLE_FONT);
-        titleLabel.setForeground(NAVY_BLUE);
-        titlePanel.add(titleLabel);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setForeground(TEXT_PRIMARY);
+        headerPanel.add(titleLabel, BorderLayout.NORTH);
 
         // Filter panel
         JPanel filterPanel = createFilterPanel();
+        headerPanel.add(filterPanel, BorderLayout.CENTER);
 
-        // Table section (initially empty, will be populated on selection)
-        tableSection = new JPanel(new BorderLayout(5, 5));
-        tableSection.setOpaque(false);
-        tableSection.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(NAVY_BLUE, 2),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        // Table section
+        tableSection = new JPanel(new BorderLayout(0, 10));
+        tableSection.setBackground(DARKER_BG);
+        tableSection.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
         sectionLabel = new JLabel("Επιλέξτε κατηγορία");
-        sectionLabel.setFont(SECTION_FONT);
-        sectionLabel.setForeground(NAVY_BLUE);
+        sectionLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        sectionLabel.setForeground(TEXT_PRIMARY);
         tableSection.add(sectionLabel, BorderLayout.NORTH);
 
-        // Add components to content panel
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setOpaque(false);
-        topPanel.add(titlePanel, BorderLayout.NORTH);
-        topPanel.add(filterPanel, BorderLayout.CENTER);
-
-        contentPanel.add(topPanel, BorderLayout.NORTH);
+        contentPanel.add(headerPanel, BorderLayout.NORTH);
         contentPanel.add(tableSection, BorderLayout.CENTER);
 
         // Previous button
-        JButton prevButton = new JButton("< Προηγούμενο");
-        prevButton.setPreferredSize(new Dimension(150, 40));
-        prevButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        JButton prevButton = new JButton("← Προηγούμενο");
+        prevButton.setUI(new BasicButtonUI());
+        prevButton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        prevButton.setPreferredSize(new Dimension(160, 38));
+        prevButton.setBackground(ACCENT_BLUE);
+        prevButton.setForeground(Color.WHITE);
+        prevButton.setOpaque(true);
+        prevButton.setBorder(BorderFactory.createEmptyBorder());
+        prevButton.setFocusPainted(false);
         prevButton.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
 
         JPanel prevButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        prevButtonPanel.setOpaque(false);
-        prevButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        prevButtonPanel.setBackground(DARK_BG);
+        prevButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         prevButtonPanel.add(prevButton);
 
         contentPanel.add(prevButtonPanel, BorderLayout.SOUTH);
 
-        backgroundPanel.add(contentPanel, BorderLayout.CENTER);
-        add(backgroundPanel);
+        add(contentPanel);
     }
 
     /**
      * Creates the filter panel with type selection combo box.
      */
     private JPanel createFilterPanel() {
-        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        filterPanel.setOpaque(false);
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        filterPanel.setBackground(DARK_BG);
 
         JLabel typeLabel = new JLabel("Κατηγορία:");
-        typeLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        typeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        typeLabel.setForeground(TEXT_SECONDARY);
 
         typeCombo = new JComboBox<>(new String[] { "Φορείς", "Έσοδα", "Έξοδα" });
-        typeCombo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        typeCombo.setPreferredSize(new Dimension(150, 30));
+        styleComboBox(typeCombo);
 
-       JButton loadButton = new JButton("Φόρτωση Δεδομένων");
-loadButton.setFont(new Font("Tahoma", Font.BOLD, 14));
-loadButton.setForeground(NAVY_BLUE);  // μπλε γράμματα
-loadButton.setBackground(Color.WHITE); // ανοιχτό background για ορατότητα
-loadButton.setFocusPainted(false);     // αφαιρεί το focus highlight
-loadButton.setOpaque(true);            // για να φαίνεται το background
-loadButton.setBorderPainted(true);     // για να φαίνεται σαν κουμπί
-
+        JButton loadButton = new JButton("ΦΟΡΤΩΣΗ ΔΕΔΟΜΕΝΩΝ");
+        loadButton.setUI(new BasicButtonUI());
+        loadButton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        loadButton.setPreferredSize(new Dimension(200, 38));
+        loadButton.setBackground(ACCENT_BLUE);
+        loadButton.setForeground(Color.WHITE);
+        loadButton.setOpaque(true);
+        loadButton.setBorder(BorderFactory.createEmptyBorder());
+        loadButton.setFocusPainted(false);
         loadButton.addActionListener(e -> {
             String selectedType = (String) typeCombo.getSelectedItem();
             loadDataBySelection(selectedType);
@@ -163,16 +161,16 @@ loadButton.setBorderPainted(true);     // για να φαίνεται σαν κ
         String[] columnNames;
 
         if (selection.equals("Φορείς")) {
-            columnNames = new String[] { "ID", "Foreas ID", "Year ID", "Type", "Name",
-                    "Regular Budget (€)", "Public Inv Budget (€)", "Total (€)" };
+            columnNames = new String[] { "ID", "ID Φορέα", "Έτος", "Τύπος", "Όνομα",
+                    "Τακτικός Π/Υ (€)", "Π/Υ Δημ. Επενδύσεων (€)", "Σύνολο (€)" };
         } else {
-            columnNames = new String[] { "ID", "Year ID", "Type", "Name", "Amount (€)" };
+            columnNames = new String[] { "ID", "Έτος", "Τύπος", "Όνομα", "Ποσό (€)" };
         }
 
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Make table read-only
+                return false;
             }
         };
 
@@ -199,6 +197,8 @@ loadButton.setBorderPainted(true);     // για να φαίνεται σαν κ
 
         JScrollPane scrollPane = new JScrollPane(dataTable);
         scrollPane.setPreferredSize(new Dimension(0, 400));
+        scrollPane.getViewport().setBackground(DARKER_BG);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         return scrollPane;
     }
 
@@ -206,16 +206,72 @@ loadButton.setBorderPainted(true);     // για να φαίνεται σαν κ
      * Applies consistent styling to a table.
      */
     private void styleTable(JTable table) {
-        table.setFont(TABLE_FONT);
-        table.setRowHeight(25);
-        table.setGridColor(LIGHT_BLUE);
-        table.setSelectionBackground(LIGHT_BLUE);
-        table.setSelectionForeground(NAVY_BLUE);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        table.setRowHeight(45);
+        table.setBackground(DARKER_BG);
+        table.setForeground(TEXT_PRIMARY);
+        table.setGridColor(BORDER_COLOR);
+        table.setFillsViewportHeight(true);
 
         JTableHeader header = table.getTableHeader();
-        header.setFont(TABLE_HEADER_FONT);
-        header.setBackground(NAVY_BLUE);
-        header.setForeground(Color.WHITE);
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object v, boolean isS, boolean hasF, int r, int c) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
+                label.setBackground(TABLE_HEADER_BG);
+                label.setForeground(Color.WHITE);
+                label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, BORDER_COLOR));
+                label.setOpaque(true);
+                return label;
+            }
+        });
+
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object v, boolean isS, boolean hasF, int r, int c) {
+                Component comp = super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
+                setForeground(TEXT_PRIMARY);
+                setBackground(r % 2 == 0 ? DARKER_BG : TABLE_ROW_ALT);
+                setHorizontalAlignment(c == 0 ? LEFT : (c >= 5 || (c == 4 && t.getColumnCount() == 5)) ? RIGHT : LEFT);
+                return comp;
+            }
+        });
+    }
+
+    private void styleComboBox(JComboBox<?> combo) {
+        combo.setUI(new BasicComboBoxUI() {
+            @Override
+            protected JButton createArrowButton() {
+                JButton b = super.createArrowButton();
+                b.setBackground(CARD_BG);
+                b.setBorder(BorderFactory.createEmptyBorder());
+                b.setContentAreaFilled(false);
+                return b;
+            }
+            @Override
+            protected ComboPopup createPopup() {
+                BasicComboPopup popup = (BasicComboPopup) super.createPopup();
+                popup.setBorder(BorderFactory.createLineBorder(BORDER_COLOR));
+                return popup;
+            }
+        });
+        combo.setBackground(TABLE_ROW_ALT);
+        combo.setForeground(TABLE_ROW_ALT);
+        combo.setBorder(BorderFactory.createLineBorder(BORDER_COLOR));
+        combo.setPreferredSize(new Dimension(140, 38));
+        
+        combo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel l = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                l.setForeground(Color.WHITE);
+                l.setBackground(isSelected ? ACCENT_BLUE : TABLE_ROW_ALT);
+                l.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+                return l;
+            }
+        });
     }
 
     /**
@@ -269,7 +325,7 @@ loadButton.setBorderPainted(true);     // για να φαίνεται σαν κ
      * Loads CashFlow data into the table.
      */
     private void loadCashFlowData(int year, String type) {
-        tableModel.setRowCount(0); // Clear existing data
+        tableModel.setRowCount(0);
 
         List<CashFlow> cashFlows = cashFlowService.getCashflows(year, type);
 
@@ -289,7 +345,7 @@ loadButton.setBorderPainted(true);     // για να φαίνεται σαν κ
      * Loads Foreis data into the table (all types).
      */
     private void loadForeisData(int year) {
-        tableModel.setRowCount(0); // Clear existing data
+        tableModel.setRowCount(0);
 
         // Φορτώνουμε όλους τους φορείς (Κεντρική Διοίκηση, Υπουργείο, Αποκεντρωμένη
         // Διοίκηση)
@@ -297,7 +353,7 @@ loadButton.setBorderPainted(true);     // για να φαίνεται σαν κ
         List<Foreis> foreisListDepartment = foreisService.getForeisByYearAndType(year, "Υπουργείο");
         List<Foreis> foreisListDecentered = foreisService.getForeisByYearAndType(year, "Αποκεντρωμένη Διοίκηση");
 
-        // Προσθήκη όλων των φορέων
+        // Addition of Foreis
         for (Foreis f : foreisListCentered) {
             Object[] row = {
                     f.getId(),
