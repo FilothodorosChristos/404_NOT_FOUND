@@ -22,7 +22,7 @@
 
 ### Πλήρες Class Diagram
 
-![UML Class Diagram](docs/project_diagram.png) 
+![UML Class Diagram](docs/images/project_diagram.png) 
 
 ## Τεχνολογικό Οικοσύστημα
 
