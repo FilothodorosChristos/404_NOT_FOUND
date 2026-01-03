@@ -18,11 +18,6 @@
    Αναμφισβήτητα σημαντικό είναι να υποθεί ότι το άτομο δεν περιορίζεται στην επιλογή ενός έτους ,αντιθέτως  μπορεί να επιλέξει οποιοδήποτε έτη από αυτά που παρέχονται από την εφαρμογή.Επομένως ,οι ενέργειες του χρήστη δεν έχουν περιορισμούς δίνοντας του απόλυτη ελευθερία στις επιλογές και πράξεις του.
 
 
-## UML Class Diagram
-
-### Πλήρες Class Diagram
-
-![UML Class Diagram](docs/images/project_diagram.png) 
 
 ## Τεχνολογικό Οικοσύστημα
 
@@ -64,8 +59,14 @@
 - **Microsoft Teams**
   - Επικοινωνία και ανατροφοδότηση μεταξύ των μελών της ομάδας
 
+## Οδηγίες εκτέλεσης του προγράμματος  
 
 
+##  Οδηγίες μεταγλώττισης του προγράμματος
+
+```bash
+mvn clean package
+```
 
 ## Δομή Αποθετηρίου
   
@@ -165,4 +166,51 @@
 ├── checkstyle.xml
 ├── pom.xml
 └── .gitignore
+```
+
+## UML Class Diagram
+
+![UML Class Diagram](docs/images/project_diagram.png) 
+
+## Αλγόριθμοι & Δομές Δεδομένων
+
+### Δομές Δεδομένων
+- **ArrayList/List**: Διαχείριση συλλογών δεδομένων (φορείς, έσοδα, έξοδα)
+- **DefaultTableModel**: Παρουσίαση δεδομένων σε πίνακες UI
+- **SQL Tables (B-tree indexes)**: Persistent storage με βελτιστοποιημένες αναζητήσεις
+
+### Αλγόριθμοι
+- **Linear Search (Stream API)**: Φιλτράρισμα και επεξεργασία δεδομένων, O(n)
+- **SQL Indexed Search**: Αναζήτηση με B-tree, O(log n)
+- **Map-Reduce (Streams)**: Υπολογισμός αθροισμάτων και aggregations
+- **Comparison Algorithm**: Υπολογισμός διαφορών και ποσοστιαίων μεταβολών
+- **Validation Checks**: Έλεγχος ορίων και constraints, O(1)
+
+### Patterns & Techniques
+- **SQL Triggers**: Αυτόματη καταγραφή αλλαγών (logging)
+- **SwingWorker**: Asynchronous processing για responsive UI
+- **DAO Pattern**: Διαχωρισμός data access από business logic
+
+## Πρόσθετη Τεχνική Τεκμηρίωση
+
+### JavaDoc Documentation
+
+- **Πλήρης τεκμηρίωση classes**: Όλες οι κλάσεις περιέχουν JavaDoc comments με περιγραφή σκοπού
+- **Τεκμηρίωση μεθόδων**: Κάθε public/protected μέθοδος περιλαμβάνει:
+- Περιγραφές, @param, @return, @throws tags
+
+## Έλεγχος ποιότητας κώδικα (JACOCO)
+![alt text](image.png)
+
+
+```text
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Java     |         44 |      5,885 |      1,454 |      1,529 |      8,868 |
+| XML      |          2 |        598 |         43 |         34 |        675 |
+| Markdown |          1 |        164 |          0 |         36 |        200 |
+| YAML     |          1 |         30 |          7 |         11 |         48 |
++----------+------------+------------+------------+------------+------------+
+
 ```
