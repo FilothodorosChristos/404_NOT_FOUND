@@ -1,5 +1,6 @@
 package dao;
 
+import database.DatabaseSetup;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,11 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.DatabaseSetup;
-
 public class LogDao {
 
-      private Log mapRow(ResultSet rs) throws SQLException {
+  private Log mapRow(ResultSet rs) throws SQLException {
     return new Log(
                 rs.getInt("id"),
                 rs.getString("table_name"),
@@ -24,25 +23,25 @@ public class LogDao {
   }
     
   public List<Log> selectLog(int index) {
-  List<Log> log = new ArrayList<>();
+    List<Log> log = new ArrayList<>();
 
-  final String SQL = "SELECT * FROM log WHERE id >= ? ORDER BY id";
+    final String SQL = "SELECT * FROM log WHERE id >= ? ORDER BY id";
 
-  try (Connection connection = DatabaseSetup.getConnection();
-    PreparedStatement statement = connection.prepareStatement(SQL)) {
+    try (Connection connection = DatabaseSetup.getConnection();
+        PreparedStatement statement = connection.prepareStatement(SQL)) {
 
-    statement.setInt(1, index);
+      statement.setInt(1, index);
 
-    try (ResultSet resultSet = statement.executeQuery()) {
+      try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-            log.add(mapRow(resultSet));
+          log.add(mapRow(resultSet));
         }
+      }
+
+    } catch (SQLException e) {
+      throw new RuntimeException("Σφάλμα στη βάση (selectLog): " + e.getMessage(), e);
     }
 
-  } catch (SQLException e) {
-    throw new RuntimeException("Σφάλμα στη βάση (selectLog): " + e.getMessage(), e);
+    return log;
   }
-
-  return log;
- }
 }

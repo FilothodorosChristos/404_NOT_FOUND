@@ -14,16 +14,18 @@ public class DatabaseSetup {
   /** 
    * @param url
    */
-  //setter για τα τεστ
+  // setter για τα τεστ
+  
   public static void setURL(String url) {
     URL = url;
   }
   /** 
    * Δημιουργεί τους πίνακες της βάσης δεδομένων μαζί με τα triggers για το log.
    */
+
   public static void setDatabase() {
     try (Connection conn = DriverManager.getConnection(URL);
-      Statement stmt = conn.createStatement()) {
+        Statement stmt = conn.createStatement()) {
 
       stmt.execute("PRAGMA foreign_keys = ON;");
 
@@ -40,7 +42,7 @@ public class DatabaseSetup {
             total REAL,
             UNIQUE(foreas_id, year_id)
         );
-        """;
+          """;
 
       // Πίνακας cashflows
       String createCashflowsTable = """
@@ -81,9 +83,9 @@ public class DatabaseSetup {
                   || ', public_inv_budget=' || NEW.public_inv_budget
                   || ', total=' || NEW.total);
           END;
-      """;
+          """;
 
-        // Trigger για UPDATE στον πίνακα foreis
+      // Trigger για UPDATE στον πίνακα foreis
       String triggerUpdateForeis = """
         CREATE TRIGGER IF NOT EXISTS log_update_foreis
         AFTER UPDATE ON foreis
@@ -101,7 +103,7 @@ public class DatabaseSetup {
                    || ', public_inv_budget=' || NEW.public_inv_budget
                    || ', total=' || NEW.total);
         END;
-      """;
+          """;
 
       // Trigger για DELETE στον πίνακα foreis
       String triggerDeleteForeis = """
@@ -116,7 +118,7 @@ public class DatabaseSetup {
                    || ', public_inv_budget=' || OLD.public_inv_budget
                    || ', total=' || OLD.total);
         END;
-      """;
+          """;
 
       stmt.execute(createLogTable);
       stmt.execute(triggerInsertForeis);
@@ -133,7 +135,7 @@ public class DatabaseSetup {
                     'year_id=' || NEW.year_id || ', type=' || NEW.type
                     || ', name=' || NEW.name || ', amount=' || NEW.amount);
           END;
-      """;
+          """;
       
 
       // Trigger για UPDATE στον πίνακα cashflows
@@ -148,7 +150,7 @@ public class DatabaseSetup {
                     'year_id=' || NEW.year_id || ', type=' || NEW.type
                     || ', name=' || NEW.name || ', amount=' || NEW.amount);
           END;
-      """;
+          """;
       
 
       // Trigger για DELETE στον πίνακα cashflows
@@ -161,7 +163,7 @@ public class DatabaseSetup {
                     'year_id=' || OLD.year_id || ', type=' || OLD.type
                     || ', name=' || OLD.name || ', amount=' || OLD.amount);
           END;
-      """;
+          """;
 
       stmt.execute(triggerInsertCashflows);
       stmt.execute(triggerUpdateCashflows);
@@ -169,40 +171,42 @@ public class DatabaseSetup {
 
 
     } catch (SQLException e) {
-      //e.printStackTrace();
+      // e.printStackTrace();
       System.err.println("Σφάλμα κατά τη δημιουργία των πινάκων: " + e.getMessage());
-      //throw new RuntimeException("Σφάλμα κατά τη δημιουργία των πινάκων", e);
+      // throw new RuntimeException("Σφάλμα κατά τη δημιουργία των πινάκων", e);
     }
-}
+  }
   /** 
    * Επαναφέρει τη βάση δεδομένων διαγράφοντας και δημιουργώντας ξανά τους πίνακες.
    */
+
   public static void resetTables() {
     cleanTables();
     setDatabase();
-}
+  }
   /** 
    * Διαγράφει τους πίνακες foreis, cashflows και log από τη βάση δεδομένων.
    * Διαγράφει επίσης τα αντίστοιχα triggers.
    * Απενεργοποιεί προσωρινά τους foreign keys για την αποφυγή σφαλμάτων.
    */
+
   public static void cleanTables() {
     try (Connection conn = DriverManager.getConnection(URL);
         Statement stmt = conn.createStatement()) {
 
-          stmt.execute("PRAGMA foreign_keys = OFF;");
+      stmt.execute("PRAGMA foreign_keys = OFF;");
 
-          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_insert_foreis;");
-          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_update_foreis;");
-          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_delete_foreis;");
+      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_insert_foreis;");
+      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_update_foreis;");
+      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_delete_foreis;");
 
-          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_insert_cashflows;");
-          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_update_cashflows;");
-          stmt.executeUpdate("DROP TRIGGER IF EXISTS log_delete_cashflows;");
+      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_insert_cashflows;");
+      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_update_cashflows;");
+      stmt.executeUpdate("DROP TRIGGER IF EXISTS log_delete_cashflows;");
 
-          stmt.executeUpdate("DROP TABLE IF EXISTS cashflows;");
-          stmt.executeUpdate("DROP TABLE IF EXISTS foreis;");
-          stmt.executeUpdate("DROP TABLE IF EXISTS log;");
+      stmt.executeUpdate("DROP TABLE IF EXISTS cashflows;");
+      stmt.executeUpdate("DROP TABLE IF EXISTS foreis;");
+      stmt.executeUpdate("DROP TABLE IF EXISTS log;");
 
 
       stmt.execute("PRAGMA foreign_keys = ON;");
@@ -212,9 +216,12 @@ public class DatabaseSetup {
     }
   }
   /** 
+   * 
    * @return Connection
+   * 
    * @throws SQLException
    */
+
   public static Connection getConnection() throws SQLException {
     return DriverManager.getConnection(URL);
   }
