@@ -13,25 +13,47 @@ public class ScenarioCashflowService {
 	 * @param year το έτος
 	 * @param type ο τύπος ("Έσοδο" ή "Έξοδο")
 	 * @param percentageOfChange ο συντελεστής τροποποίησης (αν δοθεί το ±4, θα γίνει τροποποίηση κατά ±4% του αρχικού)
+	 * @return πλήθος εγγραφών που ενημερώθηκαν
 	 * Γίνεται έλεγχος εγκυρότητας παραμέτρων
 	 */
-	public void updateCashflowWithModifiedAmount(int year, String type, double percentageOfChange) {
+	public int updateCashflowWithModifiedAmount(int year, String type, double percentageOfChange) {
+		
 		if (!("Έσοδο".equals(type) || "Έξοδο".equals(type))) {
-			throw new IllegalArgumentException("Λανθασμένος τύπος: " + type + ". Επιτρέπονται μόνο 'Έσοδο' ή 'Έξοδο'");
-		}
-		if (year < 2021 || year > 2026) {
-			throw new IllegalArgumentException("Λανθασμένο έτος: " + year + ". Επιτρέπονται μόνο έτη από 2021 έως 2026.");
-		}
+            throw new IllegalArgumentException(
+                "Λανθασμένος τύπος: " + type + ". Επιτρέπονται μόνο 'Έσοδο' ή 'Έξοδο'"
+            );
+        }
+
+        // Validation έτους
+        if (year < 2021 || year > 2026) {
+            throw new IllegalArgumentException(
+                "Λανθασμένο έτος: " + year + ". Επιτρέπονται μόνο έτη από 2021 έως 2026."
+            );
+        }
+
+        if (Double.isNaN(percentageOfChange) || Double.isInfinite(percentageOfChange)) {
+            throw new IllegalArgumentException(
+                "Μη έγκυρο ποσοστό μεταβολής: " + percentageOfChange
+            );
+        }
+
 		List<CashFlow> original = cashFlowService.getCashflows(year, type);
+		int updatedCount = 0;
+
 		for (CashFlow cf : original) {
-			CashFlow modifiedCf = new CashFlow(
+			double newAmount =
+                cf.getAmount() + (cf.getAmount() * percentageOfChange / 100);
+			
+				CashFlow modifiedCf = new CashFlow(
 				cf.getId(),
 				cf.getYearId(),
 				cf.getType(),
 				cf.getName(),
-				cf.getAmount() * (percentageOfChange/100) + cf.getAmount()
+				newAmount
 			);
 			cashFlowService.updateCashflow(modifiedCf);
+			updatedCount++;
 		}
+		return updatedCount;
 	}
 }
