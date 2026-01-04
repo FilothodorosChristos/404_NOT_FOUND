@@ -30,11 +30,20 @@ public class FinanceChartPanel extends JPanel {
     /** List of agency budget allocations for the fiscal year */
     private final List<DataItem> agencies;
     
-    /** Primary background color for the panel (dark blue: #14192D) */
-    private static final Color DARK_BACKGROUND = new Color(20, 25, 45); 
+    /** Primary background color matching the preview screen */
+    private static final Color DARK_BACKGROUND = new Color(26, 32, 46);
+    
+    /** Secondary background for cards and panels */
+    private static final Color CARD_BACKGROUND = new Color(35, 42, 58);
         
     /** Color used for text elements throughout the panel */
-    private static final Color TEXT_COLOR = Color.WHITE;
+    private static final Color TEXT_COLOR = new Color(220, 225, 235);
+    
+    /** Accent color for interactive elements */
+    private static final Color ACCENT_COLOR = new Color(59, 130, 246);
+    
+    /** Hover color for buttons */
+    private static final Color ACCENT_HOVER = new Color(96, 165, 250);
 
     /**
      * Private constructor to enforce factory method pattern.
@@ -84,24 +93,23 @@ public class FinanceChartPanel extends JPanel {
      * and agency visualizations.
      */
     private void initializeUI() {
-        // TOP PANEL: Back button + Title
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        // TOP PANEL: Professional header with back button
+        JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(true);
         topPanel.setBackground(DARK_BACKGROUND);
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 15, 25));
         
-        
-        JButton backButton = new JButton("← Πίσω");
-        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        // Back button - positioned at top-left (matching BudgetViewPanel style)
+        JButton backButton = new JButton("← Προηγούμενο");
+        backButton.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        backButton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        backButton.setPreferredSize(new Dimension(160, 38));
+        backButton.setBackground(new Color(37, 99, 235)); // ACCENT_BLUE
         backButton.setForeground(Color.WHITE);
-        backButton.setBackground(new Color(75, 150, 225));
-        backButton.setFocusPainted(false);
         backButton.setOpaque(true);
-        backButton.setBorderPainted(false);
+        backButton.setBorder(BorderFactory.createEmptyBorder());
+        backButton.setFocusPainted(false);
         backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        backButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        backButton.setPreferredSize(new Dimension(100, 35));
-        backButton.setMaximumSize(new Dimension(100, 35));
         
         backButton.addActionListener(e -> {
             Container parent = this.getParent();
@@ -116,52 +124,39 @@ public class FinanceChartPanel extends JPanel {
         backButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                backButton.setBackground(new Color(99, 170, 255));
+                backButton.setBackground(new Color(59, 130, 246)); // Lighter blue on hover
             }
             
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                backButton.setBackground(new Color(75, 150, 225));
+                backButton.setBackground(new Color(37, 99, 235));
             }
         });
         
-        JPanel buttonWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        buttonWrapper.setOpaque(false);
-        buttonWrapper.add(backButton);
-        buttonWrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Professional title - full width centered
+        JLabel mainHeader = new JLabel("Προβολή Προϋπολογισμού - Έτος " + year, SwingConstants.CENTER);
+        mainHeader.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        mainHeader.setForeground(new Color(248, 250, 252)); // TEXT_PRIMARY
         
-        /** Title label */
-        JLabel mainHeader = new JLabel("Προϋπολογισμός (" + year + ")", SwingConstants.CENTER);
-        mainHeader.setFont(new Font("Arial", Font.BOLD, 28));
-        mainHeader.setForeground(TEXT_COLOR);
-        mainHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainHeader.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        // Wrapper for back button
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        leftPanel.setBackground(DARK_BACKGROUND);
+        leftPanel.add(backButton);
         
-        topPanel.add(buttonWrapper);
-        topPanel.add(mainHeader);
+        topPanel.add(leftPanel, BorderLayout.WEST);
+        topPanel.add(mainHeader, BorderLayout.CENTER);
         
         add(topPanel, BorderLayout.NORTH);
         
-        // Create custom tab buttons panel with better styling
-        JPanel tabButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
+        // Create modern tab buttons panel
+        JPanel tabButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         tabButtonPanel.setBackground(DARK_BACKGROUND);
-        tabButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        tabButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
         
-        JButton revenueExpenseButton = new JButton("Έσοδα/Έξοδα");
-        JButton agenciesButton = new JButton("Φορείς");
+        JButton revenueExpenseButton = createTabButton("Έσοδα/Έξοδα", true);
+        JButton agenciesButton = createTabButton("Φορείς", false);
         
-        // Style buttons to match back button
-        for (JButton btn : new JButton[]{revenueExpenseButton, agenciesButton}) {
-            btn.setFont(new Font("Arial", Font.BOLD, 15));
-            btn.setForeground(Color.WHITE);
-            btn.setBackground(new Color(75, 150, 225));
-            btn.setFocusPainted(false);
-            btn.setOpaque(true);
-            btn.setBorderPainted(false);
-            btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            btn.setPreferredSize(new Dimension(180, 40));
-        }
-        
+        // Remove spacing between buttons for seamless look
         tabButtonPanel.add(revenueExpenseButton);
         tabButtonPanel.add(agenciesButton);
         
@@ -177,47 +172,15 @@ public class FinanceChartPanel extends JPanel {
         
         CardLayout cardLayout = (CardLayout) contentCardPanel.getLayout();
         
-        // Set initial selected state
-        revenueExpenseButton.setBackground(new Color(99, 170, 255));
-        
-        // Button actions
+        // Button actions with active state management
         revenueExpenseButton.addActionListener(e -> {
             cardLayout.show(contentCardPanel, "REVENUE_EXPENSE");
-            revenueExpenseButton.setBackground(new Color(99, 170, 255));
-            agenciesButton.setBackground(new Color(75, 150, 225));
+            setActiveTab(revenueExpenseButton, agenciesButton);
         });
         
         agenciesButton.addActionListener(e -> {
             cardLayout.show(contentCardPanel, "AGENCIES");
-            agenciesButton.setBackground(new Color(99, 170, 255));
-            revenueExpenseButton.setBackground(new Color(75, 150, 225));
-        });
-        
-        // Add hover effects
-        revenueExpenseButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                revenueExpenseButton.setBackground(new Color(99, 170, 255));
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                if (agenciesButton.getBackground().equals(new Color(99, 170, 255))) {
-                    revenueExpenseButton.setBackground(new Color(75, 150, 225));
-                }
-            }
-        });
-        
-        agenciesButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                agenciesButton.setBackground(new Color(99, 170, 255));
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                if (revenueExpenseButton.getBackground().equals(new Color(99, 170, 255))) {
-                    agenciesButton.setBackground(new Color(75, 150, 225));
-                }
-            }
+            setActiveTab(agenciesButton, revenueExpenseButton);
         });
         
         // Create main content panel
@@ -227,6 +190,48 @@ public class FinanceChartPanel extends JPanel {
         mainContentPanel.add(contentCardPanel, BorderLayout.CENTER);
         
         add(mainContentPanel, BorderLayout.CENTER);
+    }
+    
+    /**
+     * Creates a modern tab button with consistent styling (matching BudgetViewPanel)
+     */
+    private JButton createTabButton(String text, boolean isActive) {
+        JButton button = new JButton(text);
+        button.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        button.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        button.setPreferredSize(new Dimension(180, 38));
+        button.setBackground(isActive ? new Color(37, 99, 235) : new Color(30, 41, 59));
+        button.setForeground(Color.WHITE);
+        button.setOpaque(true);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                if (button.getBackground().equals(new Color(30, 41, 59))) {
+                    button.setBackground(new Color(45, 55, 72));
+                }
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                if (!button.getBackground().equals(new Color(37, 99, 235))) {
+                    button.setBackground(new Color(30, 41, 59));
+                }
+            }
+        });
+        
+        return button;
+    }
+    
+    /**
+     * Sets the active tab styling (matching BudgetViewPanel)
+     */
+    private void setActiveTab(JButton activeButton, JButton inactiveButton) {
+        activeButton.setBackground(new Color(37, 99, 235)); // ACCENT_BLUE
+        inactiveButton.setBackground(new Color(30, 41, 59)); // CARD_BG
     }
     
     /**
@@ -251,7 +256,6 @@ public class FinanceChartPanel extends JPanel {
         panel.setOpaque(true);
         panel.setBackground(DARK_BACKGROUND);
 
-      
         JPanel barPanel = ChartRenderer.createBarChartPanel(allItems, 
                                                             this::revenueGradient, 
                                                             this::expenseGradient, 
@@ -269,12 +273,12 @@ public class FinanceChartPanel extends JPanel {
         
         JPanel legendPanel = createLegendPanel(sortedRevenues, sortedExpenses);
         legendPanel.setOpaque(true); 
-        legendPanel.setBackground(DARK_BACKGROUND); 
+        legendPanel.setBackground(CARD_BACKGROUND); 
         
         JScrollPane legendScrollPane = new JScrollPane(legendPanel);
-        legendScrollPane.getViewport().setBackground(DARK_BACKGROUND); 
-        legendScrollPane.setPreferredSize(new Dimension(350, 0));
-        legendScrollPane.setBorder(null);
+        legendScrollPane.getViewport().setBackground(CARD_BACKGROUND); 
+        legendScrollPane.setPreferredSize(new Dimension(380, 0));
+        legendScrollPane.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(50, 60, 80)));
         legendScrollPane.getVerticalScrollBar().setUnitIncrement(20);
         panel.add(legendScrollPane, BorderLayout.EAST);
 
@@ -293,9 +297,9 @@ public class FinanceChartPanel extends JPanel {
             JPanel emptyPanel = new JPanel(new BorderLayout());
             emptyPanel.setOpaque(true);
             emptyPanel.setBackground(DARK_BACKGROUND);
-            JLabel msgLabel = new JLabel("No Agency data found for the year " + year, SwingConstants.CENTER);
-            msgLabel.setFont(new Font("Arial", Font.BOLD, 20));
-            msgLabel.setForeground(TEXT_COLOR); 
+            JLabel msgLabel = new JLabel("Δεν βρέθηκαν δεδομένα φορέων για το έτος " + year, SwingConstants.CENTER);
+            msgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            msgLabel.setForeground(new Color(150, 160, 180)); 
             emptyPanel.add(msgLabel, BorderLayout.CENTER);
             return emptyPanel;
         }
@@ -304,7 +308,6 @@ public class FinanceChartPanel extends JPanel {
         panel.setOpaque(true);
         panel.setBackground(DARK_BACKGROUND);
 
-        
         JPanel barPanel = ChartRenderer.createBarChartPanel(agencies, 
                                                             this::agencyBarGradient, 
                                                             null, 
@@ -334,15 +337,15 @@ public class FinanceChartPanel extends JPanel {
      */
     private String formatValueForAxis(double value) {
         if (value >= 1_000_000_000_000.0) {
-            return String.format("%,.0f Τρισ. €", value / 1_000_000_000_000.0);
+            return String.format("%.1f Τρισ. €", value / 1_000_000_000_000.0);
         } else if (value >= 1_000_000_000.0) {
-            return String.format("%,.0f Δισ. €", value / 1_000_000_000.0);
+            return String.format("%.1f Δισ. €", value / 1_000_000_000.0);
         } else if (value >= 1_000_000.0) {
-            return String.format("%,.0f Εκατ. €", value / 1_000_000.0);
+            return String.format("%.0f Εκατ. €", value / 1_000_000.0);
         } else if (value >= 1_000.0) {
-            return String.format("%,.0f Χιλ. €", value / 1_000.0);
+            return String.format("%.0f Χιλ. €", value / 1_000.0);
         } else {
-            return String.format("%,.0f €", value);
+            return String.format("%.0f €", value);
         }
     }
     
@@ -358,121 +361,163 @@ public class FinanceChartPanel extends JPanel {
     private JPanel createLegendPanel(List<DataItem> sortedRevenues, List<DataItem> sortedExpenses) {
         JPanel legendPanel = new JPanel();
         legendPanel.setLayout(new BoxLayout(legendPanel, BoxLayout.Y_AXIS));
-        legendPanel.setBorder(BorderFactory.createEmptyBorder(20, 15, 20, 15));
-        legendPanel.setBackground(DARK_BACKGROUND);
+        legendPanel.setBorder(BorderFactory.createEmptyBorder(25, 20, 25, 20));
+        legendPanel.setBackground(CARD_BACKGROUND);
 
         double totalRevenue = revenues.stream().mapToDouble(d -> d.amount).sum();
         double totalExpense = expenses.stream().mapToDouble(d -> d.amount).sum();
         double balance = totalRevenue - totalExpense;
 
-        // TOTAL RESULTS SECTION - More professional styling
+        // TOTAL RESULTS SECTION
         JLabel mainTitle = new JLabel("ΣΥΝΟΛΙΚΑ ΑΠΟΤΕΛΕΣΜΑΤΑ");
-        mainTitle.setFont(new Font("Arial", Font.BOLD, 16));
-        mainTitle.setForeground(new Color(99, 170, 255));
+        mainTitle.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        mainTitle.setForeground(new Color(150, 160, 180));
         mainTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         legendPanel.add(mainTitle);
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 12)));
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         
-        // Revenue total with better formatting
-        JLabel revenueTitle = new JLabel(String.format("▶ Έσοδα: €%,.0f", totalRevenue));
-        revenueTitle.setFont(new Font("Arial", Font.BOLD, 13));
-        revenueTitle.setForeground(new Color(120, 180, 255));
-        revenueTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
-        legendPanel.add(revenueTitle);
+        // Revenue total
+        JPanel revenuePanel = createSummaryRow("Έσοδα", totalRevenue, new Color(34, 197, 94));
+        legendPanel.add(revenuePanel);
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        // Expense total
+        JPanel expensePanel = createSummaryRow("Έξοδα", totalExpense, new Color(239, 68, 68));
+        legendPanel.add(expensePanel);
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         
-        // Expense total with better formatting
-        JLabel expenseTitle = new JLabel(String.format("▶ Έξοδα: €%,.0f", totalExpense));
-        expenseTitle.setFont(new Font("Arial", Font.BOLD, 13));
-        expenseTitle.setForeground(new Color(255, 140, 200));
-        expenseTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
-        legendPanel.add(expenseTitle);
-        
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 8)));
-        
-        // Balance with color coding and dynamic label
+        // Balance
         String balanceLabel;
         Color balanceColor;
         
         if (balance > 0) {
-            balanceLabel = String.format("▶ Πλεόνασμα: €%,.0f", balance);
-            balanceColor = new Color(100, 255, 150); // Green
+            balanceLabel = "Πλεόνασμα";
+            balanceColor = new Color(34, 197, 94);
         } else if (balance < 0) {
-            balanceLabel = String.format("▶ Έλλειμμα: €%,.0f", Math.abs(balance));
-            balanceColor = new Color(255, 100, 100); // Red
+            balanceLabel = "Έλλειμμα";
+            balanceColor = new Color(239, 68, 68);
         } else {
-            balanceLabel = "▶ Ισοσκελισμένος";
-            balanceColor = new Color(200, 200, 200); // Gray
+            balanceLabel = "Ισοσκελισμένος";
+            balanceColor = new Color(150, 160, 180);
         }
         
-        JLabel balanceLabelComponent = new JLabel(balanceLabel);
-        balanceLabelComponent.setFont(new Font("Arial", Font.BOLD, 13));
-        balanceLabelComponent.setForeground(balanceColor);
-        balanceLabelComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
-        legendPanel.add(balanceLabelComponent);
+        JPanel balancePanel = createSummaryRow(balanceLabel, Math.abs(balance), balanceColor);
+        legendPanel.add(balancePanel);
         
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 25)));
         
         // Separator line
         JSeparator separator1 = new JSeparator();
-        separator1.setForeground(new Color(75, 150, 225));
+        separator1.setForeground(new Color(50, 60, 80));
         separator1.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         legendPanel.add(separator1);
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Revenue group
-        JLabel revenueGroupTitle = new JLabel("I. Έσοδα (Revenues)");
-        revenueGroupTitle.setFont(new Font("Arial", Font.BOLD, 14));
-        revenueGroupTitle.setForeground(new Color(99, 170, 255));
+        // Revenue items
+        JLabel revenueGroupTitle = new JLabel("ΕΣΟΔΑ");
+        revenueGroupTitle.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        revenueGroupTitle.setForeground(new Color(150, 160, 180));
         revenueGroupTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         legendPanel.add(revenueGroupTitle);
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 12)));
         
         for (int i = 0; i < sortedRevenues.size(); i++) {
             DataItem item = sortedRevenues.get(i);
-            Color itemColor = revenueGradient(i, sortedRevenues.size());
-
-            JLabel label = new JLabel(String.format("%d. %s (€%,.0f)", i + 1, item.name, item.amount));
-            label.setForeground(itemColor); 
-            label.setFont(new Font("Arial", Font.PLAIN, 11));
-            label.setAlignmentX(Component.LEFT_ALIGNMENT);
-            legendPanel.add(label);
-            legendPanel.add(Box.createRigidArea(new Dimension(0, 3)));
+            JPanel itemPanel = createItemRow(item.name, item.amount, new Color(34, 197, 94));
+            legendPanel.add(itemPanel);
+            legendPanel.add(Box.createRigidArea(new Dimension(0, 8)));
         }
         
         legendPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         
         // Separator line
         JSeparator separator2 = new JSeparator();
-        separator2.setForeground(new Color(255, 105, 180));
+        separator2.setForeground(new Color(50, 60, 80));
         separator2.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         legendPanel.add(separator2);
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 20)));
        
-        // Expense group
-        JLabel expenseGroupTitle = new JLabel("II. Έξοδα (Expenses)");
-        expenseGroupTitle.setFont(new Font("Arial", Font.BOLD, 14));
-        expenseGroupTitle.setForeground(new Color(255, 140, 200));
+        // Expense items
+        JLabel expenseGroupTitle = new JLabel("ΕΞΟΔΑ");
+        expenseGroupTitle.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        expenseGroupTitle.setForeground(new Color(150, 160, 180));
         expenseGroupTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         legendPanel.add(expenseGroupTitle);
-        legendPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+        legendPanel.add(Box.createRigidArea(new Dimension(0, 12)));
 
-        int offset = sortedRevenues.size(); 
-        
         for (int i = 0; i < sortedExpenses.size(); i++) {
             DataItem item = sortedExpenses.get(i);
-            Color itemColor = expenseGradient(i, sortedExpenses.size()); 
-
-            JLabel label = new JLabel(String.format("%d. %s (€%,.0f)", i + offset + 1, item.name, item.amount));
-            label.setForeground(itemColor); 
-            label.setFont(new Font("Arial", Font.PLAIN, 11));
-            label.setAlignmentX(Component.LEFT_ALIGNMENT);
-            legendPanel.add(label);
-            legendPanel.add(Box.createRigidArea(new Dimension(0, 3)));
+            JPanel itemPanel = createItemRow(item.name, item.amount, new Color(239, 68, 68));
+            legendPanel.add(itemPanel);
+            legendPanel.add(Box.createRigidArea(new Dimension(0, 8)));
         }
         
         return legendPanel;
+    }
+    
+    /**
+     * Creates a summary row for totals display
+     */
+    private JPanel createSummaryRow(String label, double amount, Color accentColor) {
+        JPanel panel = new JPanel(new BorderLayout(5, 0));
+        panel.setOpaque(false);
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        
+        JLabel nameLabel = new JLabel(label);
+        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        nameLabel.setForeground(TEXT_COLOR);
+        
+        JLabel amountLabel = new JLabel(formatValueForDisplay(amount));
+        amountLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        amountLabel.setForeground(accentColor);
+        
+        panel.add(nameLabel, BorderLayout.WEST);
+        panel.add(amountLabel, BorderLayout.EAST);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        return panel;
+    }
+    
+    /**
+     * Creates an item row for individual entries
+     */
+    private JPanel createItemRow(String name, double amount, Color accentColor) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JLabel nameLabel = new JLabel(name);
+        nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        nameLabel.setForeground(TEXT_COLOR);
+        nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JLabel amountLabel = new JLabel(formatValueForDisplay(amount));
+        amountLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        amountLabel.setForeground(accentColor);
+        amountLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        panel.add(nameLabel);
+        panel.add(amountLabel);
+        
+        return panel;
+    }
+    
+    /**
+     * Formats values for display in legend with proper units
+     */
+    private String formatValueForDisplay(double value) {
+        if (value >= 1_000_000_000_000.0) {
+            return String.format("€%.2f Τρισ.", value / 1_000_000_000_000.0);
+        } else if (value >= 1_000_000_000.0) {
+            return String.format("€%.2f Δισ.", value / 1_000_000_000.0);
+        } else if (value >= 1_000_000.0) {
+            return String.format("€%.0f Εκατ.", value / 1_000_000.0);
+        } else if (value >= 1_000.0) {
+            return String.format("€%.0f Χιλ.", value / 1_000.0);
+        } else {
+            return String.format("€%.2f", value);
+        }
     }
     
     /**
@@ -484,42 +529,36 @@ public class FinanceChartPanel extends JPanel {
      * @return A Color object for the agency bar
      */
     private Color agencyBarGradient(int i, int total) {
-        float hue = 0.6f; 
-        
-        float saturation = 0.8f; 
-        float brightness = 0.7f; 
-        return Color.getHSBColor(hue, saturation, brightness);
+        return ACCENT_COLOR;
     }
 
     /**
      * Generates a gradient color for revenue bars using HSB color model.
-     * Creates a blue gradient that transitions from lighter to darker shades
-     * based on the item's position in the sorted list.
+     * Creates a green gradient for revenue items.
      * 
      * @param i The index of the revenue item in the list
      * @param total The total number of revenue items
      * @return A Color object with calculated HSB values for gradient effect
      */
     private Color revenueGradient(int i, int total) {
-        float hue = 0.6f; 
-        float saturation = 0.8f - 0.2f * i / Math.max(total - 1, 1); 
-        float brightness = 0.9f - 0.3f * i / Math.max(total - 1, 1); 
+        float hue = 0.33f; // Green
+        float saturation = 0.7f - 0.1f * i / Math.max(total - 1, 1); 
+        float brightness = 0.75f - 0.15f * i / Math.max(total - 1, 1); 
         return Color.getHSBColor(hue, saturation, brightness);
     }
     
     /**
      * Generates a gradient color for expense bars using HSB color model.
-     * Creates a pink/magenta gradient that transitions from lighter to darker shades
-     * based on the item's position in the sorted list.
+     * Creates a red gradient for expense items.
      * 
      * @param i The index of the expense item in the list
      * @param total The total number of expense items
      * @return A Color object with calculated HSB values for gradient effect
      */
     private Color expenseGradient(int i, int total) {
-        float hue = 0.9f; 
-        float saturation = 0.9f - 0.2f * i / Math.max(total - 1, 1); 
-        float brightness = 0.9f - 0.3f * i / Math.max(total - 1, 1); 
+        float hue = 0.0f; // Red
+        float saturation = 0.75f - 0.15f * i / Math.max(total - 1, 1); 
+        float brightness = 0.9f - 0.2f * i / Math.max(total - 1, 1); 
         return Color.getHSBColor(hue, saturation, brightness);
     }
     
