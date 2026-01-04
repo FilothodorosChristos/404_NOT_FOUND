@@ -264,6 +264,7 @@ public class FinanceChartPanel extends JPanel {
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER); 
         scrollPane.getViewport().setBackground(DARK_BACKGROUND); 
         scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         panel.add(scrollPane, BorderLayout.CENTER);
         
         JPanel legendPanel = createLegendPanel(sortedRevenues, sortedExpenses);
@@ -274,6 +275,7 @@ public class FinanceChartPanel extends JPanel {
         legendScrollPane.getViewport().setBackground(DARK_BACKGROUND); 
         legendScrollPane.setPreferredSize(new Dimension(350, 0));
         legendScrollPane.setBorder(null);
+        legendScrollPane.getVerticalScrollBar().setUnitIncrement(20);
         panel.add(legendScrollPane, BorderLayout.EAST);
 
         return panel;
@@ -316,6 +318,7 @@ public class FinanceChartPanel extends JPanel {
         scrollPane.getViewport().setOpaque(true); 
         scrollPane.getViewport().setBackground(DARK_BACKGROUND);
         scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         panel.add(scrollPane, BorderLayout.CENTER);
         
         return panel;
