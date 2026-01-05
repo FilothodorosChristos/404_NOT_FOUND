@@ -85,7 +85,7 @@ class DbExistsCheckerTest {
         DbExistsChecker.setDbFile("");
         assertFalse(DbExistsChecker.databaseExists(), "Το empty string δεν πρέπει να αλλάξει το dbFile");
 
-        DbExistsChecker.setDbFile(null);
+    DbExistsChecker.setDbFile(null);
         assertFalse(DbExistsChecker.databaseExists(), "Το null δεν πρέπει να αλλάξει το dbFile");
     }
 
