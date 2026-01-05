@@ -46,6 +46,15 @@ public class CashFlowDaoTest {
   }
 
   /**
+   * Εκτελείται μία φορά στο τέλος όλων των tests.
+   * Επαναφέρει το URL στην κύρια βάση.
+   */
+  @AfterAll
+    public static void restoreDatabaseURL() {
+    DatabaseSetup.setURL(REAL_DB_URL);
+  }
+
+  /**
    * Ελέγχει την εισαγωγή και επιλογή εγγραφής.
    */
   @Test
@@ -136,15 +145,6 @@ public void testSelectCashFlowById() {
     CashFlow notFound = dao.selectCashFlowById(9999);
     assertEquals(null, notFound);
   }
-
-  /**
-   * Εκτελείται μία φορά στο τέλος όλων των tests.
-   * Επαναφέρει το URL στην κύρια βάση.
-   */
-  @AfterAll
-    public static void restoreDatabaseURL() {
-    DatabaseSetup.setURL(REAL_DB_URL);
-  }
  
   @Test
 public void testSelectCashFlow_emptyResult() {
@@ -158,12 +158,25 @@ public void testDeleteCashFlow_nonExistingId() {
     dao.deleteCashFlow(9999);
 }
 
-@Test
-public void testUpdateCashFlow_nonExisting() {
+  @Test
+  public void testUpdateCashFlow_nonExisting() {
     CashFlow c = new CashFlow(9999, 2023, "income", "NonExisting", 100.0);
-    // Αν το update δεν βρει την εγγραφή, δεν κάνουμε τίποτα ή πετάει exception ανάλογα με την υλοποίηση
+    // Αν το update δεν βρει την εγγραφή, 
+    // δεν κάνουμε τίποτα ή πετάει exception ανάλογα με την υλοποίηση
     assertDoesNotThrow(() -> dao.updateCashFlow(c));
+
+  }
+  
+  @Test
+public void testSelectCashFlowById_returnNullExplicit() {
+    // Βάση άδεια
+    DatabaseSetup.resetTables();
+
+    CashFlow result = dao.selectCashFlowById(1);
+
+    assertEquals(null, result);
 }
+
 
 }
 
