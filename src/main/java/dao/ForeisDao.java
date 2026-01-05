@@ -113,34 +113,34 @@ public class ForeisDao {
     }
   }
 
-      /**
-       * Διαγράφει μια εγγραφή foreis με βάση το ID της.
-       */
-      public void deleteForeis(int id) {
-      final String SQL = "DELETE FROM foreis WHERE id = ?";
+  /**
+   * Διαγράφει μια εγγραφή foreis με βάση το ID της.
+   */
+  public void deleteForeis(int id) {
+    final String SQL = "DELETE FROM foreis WHERE id = ?";
 
-      try (Connection connection = DatabaseSetup.getConnection();
+    try (Connection connection = DatabaseSetup.getConnection();
               PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
 
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
 
-      } catch (SQLException e) {
+    } catch (SQLException e) {
       throw new RuntimeException("Σφάλμα στη βάση (deleteForeis): " + e.getMessage(), e);
-      }
-      }
-      /**
-       * Αναζητά και επιστρέφει ένα αντικείμενο Foreis από τη βάση δεδομένων
-       * με βάση το μοναδικό αναγνωριστικό (ID).
-       *
-       * @param id το μοναδικό αναγνωριστικό της εγγραφής foreis
-       * @return το αντικείμενο Foreis αν βρεθεί, αλλιώς null
-       * @throws RuntimeException αν προκύψει σφάλμα κατά την επικοινωνία με τη βάση
-       */
+    }
+  }
+  /**
+   * Αναζητά και επιστρέφει ένα αντικείμενο Foreis από τη βάση δεδομένων
+   * με βάση το μοναδικό αναγνωριστικό (ID).
+   *
+   * @param id το μοναδικό αναγνωριστικό της εγγραφής foreis
+   * @return το αντικείμενο Foreis αν βρεθεί, αλλιώς null
+   * @throws RuntimeException αν προκύψει σφάλμα κατά την επικοινωνία με τη βάση
+   */
 
-      public Foreis selectForeisById(int id) {
-      final String SQL = "SELECT * FROM foreis WHERE id = ?";
-      try (Connection connection = DatabaseSetup.getConnection();
+  public Foreis selectForeisById(int id) {
+    final String SQL = "SELECT * FROM foreis WHERE id = ?";
+    try (Connection connection = DatabaseSetup.getConnection();
           PreparedStatement statement = connection.prepareStatement(SQL)) {
 
       statement.setInt(1, id);
@@ -151,16 +151,16 @@ public class ForeisDao {
         }
       }
 
-      } catch (SQLException e) {
+    } catch (SQLException e) {
       throw new RuntimeException("Σφάλμα στη βάση (selectForeisById): " + e.getMessage(), e);
-      }
-      return null;
-      }
+    }
+    return null;
+  }
 
-      public List<ForeasCompareDto> compareYears(int year1, int year2) throws SQLException {
-      List<ForeasCompareDto> results = new ArrayList<>();
+    public List<ForeasCompareDto> compareYears(int year1, int year2) throws SQLException {
+    List<ForeasCompareDto> results = new ArrayList<>();
 
-      String sql = """
+    String sql = """
         SELECT
           f1.foreas_id,
           f1.name,
@@ -198,42 +198,42 @@ public class ForeisDao {
         WHERE f1.year_id = ?
           AND f2.year_id = ?
         ORDER BY f1.name;
-      """;
+          """;
 
-      try (Connection conn = DatabaseSetup.getConnection();
+    try (Connection conn = DatabaseSetup.getConnection();
           PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        ps.setInt(1, year1);
-        ps.setInt(2, year2);
+      ps.setInt(1, year1);
+      ps.setInt(2, year2);
 
-        ResultSet rs = ps.executeQuery();
+      ResultSet rs = ps.executeQuery();
 
-        while (rs.next()) {
-            ForeasCompareDto dto = new ForeasCompareDto();
+      while (rs.next()) {
+        ForeasCompareDto dto = new ForeasCompareDto();
 
-            dto.setForeasId(rs.getInt("foreas_id"));
-            dto.setName(rs.getString("name"));
+        dto.setForeasId(rs.getInt("foreas_id"));
+        dto.setName(rs.getString("name"));
 
-            // regular
-            dto.setRegularYear1(rs.getDouble("regular_year1"));
-            dto.setRegularYear2(rs.getDouble("regular_year2"));
-            dto.setRegularDiff(rs.getDouble("regular_diff"));
-            dto.setRegularPercentChange((Double) rs.getObject("regular_percent_change"));
+        // regular
+        dto.setRegularYear1(rs.getDouble("regular_year1"));
+        dto.setRegularYear2(rs.getDouble("regular_year2"));
+        dto.setRegularDiff(rs.getDouble("regular_diff"));
+        dto.setRegularPercentChange((Double) rs.getObject("regular_percent_change"));
 
-            // public investment
-            dto.setPublicInvYear1(rs.getDouble("public_inv_year1"));
-            dto.setPublicInvYear2(rs.getDouble("public_inv_year2"));
-            dto.setPublicInvDiff(rs.getDouble("public_inv_diff"));
-            dto.setPublicInvPercentChange((Double) rs.getObject("public_inv_percent_change"));
+        // public investment
+        dto.setPublicInvYear1(rs.getDouble("public_inv_year1"));
+        dto.setPublicInvYear2(rs.getDouble("public_inv_year2"));
+        dto.setPublicInvDiff(rs.getDouble("public_inv_diff"));
+        dto.setPublicInvPercentChange((Double) rs.getObject("public_inv_percent_change"));
 
-            // total
-            dto.setTotalYear1(rs.getDouble("total_year1"));
-            dto.setTotalYear2(rs.getDouble("total_year2"));
-            dto.setTotalDiff(rs.getDouble("total_diff"));
-            dto.setTotalPercentChange((Double) rs.getObject("total_percent_change"));
+        // total
+        dto.setTotalYear1(rs.getDouble("total_year1"));
+        dto.setTotalYear2(rs.getDouble("total_year2"));
+        dto.setTotalDiff(rs.getDouble("total_diff"));
+        dto.setTotalPercentChange((Double) rs.getObject("total_percent_change"));
 
-            results.add(dto);
-        }
+        results.add(dto);
+      }
     }
 
     return results;

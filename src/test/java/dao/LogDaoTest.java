@@ -57,7 +57,7 @@ public class LogDaoTest {
              "INSERT INTO log (table_name, operation, row_id, old_data, new_data, timestamp) " 
              + "VALUES (?, ?, ?, ?, ?, ?)"
          )) {
-      //stmt.setInt(1, 1);
+      // stmt.setInt(1, 1);
       stmt.setString(1, "cashflow");
       stmt.setString(2, "UPDATE");
       stmt.setInt(3, 101);
@@ -71,7 +71,7 @@ public class LogDaoTest {
 
     assertEquals(1, logs.size());
     Log log = logs.get(0);
-    //assertEquals(1, log.getId());
+    // assertEquals(1, log.getId());
     assertEquals("cashflow", log.getTableName());
     assertEquals("UPDATE", log.getOperation());
     assertEquals(101, log.getRowId());
@@ -93,40 +93,40 @@ public class LogDaoTest {
 public void testSelectLogRespectsIndex() throws Exception {
     try (Connection conn = DatabaseSetup.getConnection();
          PreparedStatement stmt = conn.prepareStatement(
-             "INSERT INTO log (table_name, operation, row_id, old_data, new_data, timestamp) " +
-             "VALUES (?, ?, ?, ?, ?, ?)"
+             "INSERT INTO log (table_name, operation, row_id, old_data, new_data, timestamp) " 
+            + "VALUES (?, ?, ?, ?, ?, ?)"
          )) {
 
-        // id = 1
-        stmt.setString(1, "table1");
-        stmt.setString(2, "INSERT");
-        stmt.setInt(3, 1);
-        stmt.setString(4, null);
-        stmt.setString(5, "{}");
-        stmt.setString(6, "2025-01-01 10:00:00");
-        stmt.executeUpdate();
+      // id = 1
+      stmt.setString(1, "table1");
+      stmt.setString(2, "INSERT");
+      stmt.setInt(3, 1);
+      stmt.setString(4, null);
+      stmt.setString(5, "{}");
+      stmt.setString(6, "2025-01-01 10:00:00");
+      stmt.executeUpdate();
 
-        // id = 2
-        stmt.setString(1, "table2");
-        stmt.setString(2, "UPDATE");
-        stmt.setInt(3, 2);
-        stmt.setString(4, "{}");
-        stmt.setString(5, "{x:1}");
-        stmt.setString(6, "2025-01-01 11:00:00");
-        stmt.executeUpdate();
+      // id = 2
+      stmt.setString(1, "table2");
+      stmt.setString(2, "UPDATE");
+      stmt.setInt(3, 2);
+      stmt.setString(4, "{}");
+      stmt.setString(5, "{x:1}");
+      stmt.setString(6, "2025-01-01 11:00:00");
+      stmt.executeUpdate();
     }
 
     List<Log> logs = dao.selectLog(2);
 
     assertEquals(1, logs.size());
     assertEquals("table2", logs.get(0).getTableName());
-}
+  }
 
-@Test
+  @Test
 public void testSelectLogIndexTooHighReturnsEmpty() {
     List<Log> logs = dao.selectLog(999);
     assertTrue(logs.isEmpty());
-}
+  }
 
   /**
    * Εκτελείται μία φορά στο τέλος όλων των tests.
