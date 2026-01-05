@@ -160,6 +160,11 @@
 │               ├── B23ExodaTEST.csv
 │               └── B23ForeisTEST.csv
 │
+├── docs/
+│   └── images/
+│       ├── Screenshot 2026-01-05 122437.png
+│       └── project_diagram.png
+│
 ├── BackgroundPhoto.jpg
 ├── GoverLensLogo.jpg
 ├── README.md
