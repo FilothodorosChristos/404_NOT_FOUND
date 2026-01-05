@@ -147,6 +147,8 @@
 │           │   ├── CashFlowServiceTest.java
 │           │   ├── ForeisServiceTest.java
 │           │   ├── LogServiceTest.java
+│           │   ├── ScenarioCashflowServiceTest.java
+│           │   ├── ScenarioForeisServiceTest.java
 │           │   └── SimulationServiceTest.java
 │           │
 │           ├── util/
@@ -157,6 +159,11 @@
 │               ├── B23EsodaTEST.csv
 │               ├── B23ExodaTEST.csv
 │               └── B23ForeisTEST.csv
+│
+├── docs/
+│   └── images/
+│       ├── Screenshot 2026-01-05 122437.png
+│       └── project_diagram.png
 │
 ├── BackgroundPhoto.jpg
 ├── GoverLensLogo.jpg
@@ -199,7 +206,7 @@
 
 
 ## Έλεγχος ποιότητας κώδικα (JACOCO)
-![alt text](image.png)
+![jacoco](./docs/images/Screenshot%202026-01-05%20122437.png)
 
 ### επιπρόσθετες  μετρήσεις
 
