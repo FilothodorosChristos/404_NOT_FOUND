@@ -201,7 +201,7 @@
 
 
 ## Έλεγχος ποιότητας κώδικα (JACOCO)
-![alt text](image.png)
+![jacoco](./docs/images/Screenshot%202026-01-05%20122437.png)
 
 ### επιπρόσθετες  μετρήσεις
 
