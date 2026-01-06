@@ -1,12 +1,15 @@
 package GUI;
 
+import service.ScenarioCashflowService;
+import service.ScenarioForeisService;
 import service.CashFlowService;
 import service.ForeisService;
-import dao.CashFlow;
 import dao.Foreis;
+import dao.CashFlow;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
@@ -14,15 +17,21 @@ import java.util.List;
 public class MassiveChangesPanel extends JPanel {
 
     private final MainFrame mainFrame;
+
     private final CashFlowService cashflowService;
     private final ForeisService foreisService;
+    private final ScenarioCashflowService scenarioCashflowService;
+    private final ScenarioForeisService scenarioForeisService;
 
     private JComboBox<String> categoryCombo;
     private JSlider percentageSlider;
     private JLabel percentageLabel;
 
-    private JTable cashflowTable;
     private JTable foreisTable;
+    private JTable cashflowTable;
+
+    private JScrollPane foreisScroll;
+    private JScrollPane cashflowScroll;
 
     private static final Color BG = new Color(15, 23, 42);
     private static final Color CARD = new Color(30, 41, 59);
@@ -31,23 +40,27 @@ public class MassiveChangesPanel extends JPanel {
 
     public MassiveChangesPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+
+        // Κανονικά services για ανάκτηση δεδομένων
         this.cashflowService = new CashFlowService();
         this.foreisService = new ForeisService();
+
+        // Scenario services για εφαρμογή ποσοστιαίων αλλαγών
+        this.scenarioCashflowService = new ScenarioCashflowService();
+        this.scenarioForeisService = new ScenarioForeisService();
 
         setLayout(new BorderLayout());
         setBackground(BG);
 
         createUI();
-        loadTables();
     }
 
     private void createUI() {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(BG);
-        content.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        content.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
-        // === Title ===
         JLabel title = new JLabel("Σενάρια Μεταβολής Προϋπολογισμού");
         title.setFont(new Font("Segoe UI", Font.BOLD, 28));
         title.setForeground(TEXT);
@@ -61,22 +74,25 @@ public class MassiveChangesPanel extends JPanel {
         content.add(title);
         content.add(Box.createVerticalStrut(10));
         content.add(yearLabel);
-        content.add(Box.createVerticalStrut(20));
+        content.add(Box.createVerticalStrut(30));
 
-        // === Card με Controls ===
+        // === CARD ===
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(CARD);
-        card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        card.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Κατηγορία
+        // Category
         JLabel catLabel = new JLabel("Κατηγορία:");
         catLabel.setForeground(TEXT);
 
         categoryCombo = new JComboBox<>(new String[]{
-                "Όλα", "Έσοδα", "Έξοδα", "Φορείς"
+                "Έσοδα",
+                "Έξοδα",
+                "Φορείς"
         });
+        categoryCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Slider
         JLabel sliderTitle = new JLabel("Ποσοστό Μεταβολής:");
@@ -89,6 +105,7 @@ public class MassiveChangesPanel extends JPanel {
         percentageSlider.setPaintLabels(true);
         percentageSlider.setBackground(CARD);
         percentageSlider.setForeground(TEXT);
+        percentageSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         percentageLabel = new JLabel("0 %");
         percentageLabel.setForeground(TEXT);
@@ -97,132 +114,164 @@ public class MassiveChangesPanel extends JPanel {
                 percentageLabel.setText(percentageSlider.getValue() + " %")
         );
 
+        // Apply button
         JButton applyButton = new JButton("Εφαρμογή Σεναρίου");
         applyButton.setUI(new BasicButtonUI());
         applyButton.setBackground(ACCENT);
         applyButton.setForeground(Color.WHITE);
         applyButton.setFocusPainted(false);
         applyButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        applyButton.addActionListener(e -> applyScenario());
 
-        applyButton.addActionListener(e -> {
-            applyScenario();
-            loadTables(); // refresh
-        });
+        // Δημιουργία πινάκων
+        createCashflowTable();
+        createForeisTable();
 
-        card.add(catLabel);
-        card.add(categoryCombo);
-        card.add(Box.createVerticalStrut(15));
-        card.add(sliderTitle);
-        card.add(percentageSlider);
-        card.add(percentageLabel);
-        card.add(Box.createVerticalStrut(20));
-        card.add(applyButton);
-
-        content.add(card);
-        content.add(Box.createVerticalStrut(20));
-
-        // === Πίνακες ===
-        cashflowTable = new JTable();
-        foreisTable = new JTable();
-
-        JScrollPane cashflowScroll = new JScrollPane(cashflowTable);
-        JScrollPane foreisScroll = new JScrollPane(foreisTable);
-
+        cashflowScroll = new JScrollPane(cashflowTable);
+        foreisScroll = new JScrollPane(foreisTable);
         cashflowScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
         foreisScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        content.add(new JLabel("Cashflows:"));
-        content.add(cashflowScroll);
-        content.add(Box.createVerticalStrut(15));
-        content.add(new JLabel("Φορείς:"));
-        content.add(foreisScroll);
-        content.add(Box.createVerticalStrut(15));
+        // Προσθήκη στοιχείων στο card
+        card.add(catLabel);
+        card.add(categoryCombo);
+        card.add(Box.createVerticalStrut(20));
+        card.add(sliderTitle);
+        card.add(percentageSlider);
+        card.add(percentageLabel);
+        card.add(Box.createVerticalStrut(25));
+        card.add(applyButton);
+        card.add(Box.createVerticalStrut(20));
+        card.add(new JLabel("Πίνακας Χρηματικών Ροών:") {{ setForeground(TEXT); }});
+        card.add(cashflowScroll);
+        card.add(Box.createVerticalStrut(15));
+        card.add(new JLabel("Πίνακας Εξόδων Φορέων:") {{ setForeground(TEXT); }});
+        card.add(foreisScroll);
 
-        // === Back button ===
+        content.add(card);
+
+        // Back button
         JButton back = new JButton("← Πίσω");
         back.setAlignmentX(Component.LEFT_ALIGNMENT);
-        back.addActionListener(e ->
-                mainFrame.showPanel(MainFrame.ACTION_SELECTION)
-        );
-
+        back.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
+        content.add(Box.createVerticalStrut(20));
         content.add(back);
 
-        add(content, BorderLayout.CENTER);
+        add(content);
+
+        // Refresh πίνακες όταν αλλάζει κατηγορία
+        categoryCombo.addActionListener(e -> refreshTables());
     }
 
-    private void loadTables() {
+    private void refreshTables() {
+        createCashflowTable();
+        cashflowScroll.setViewportView(cashflowTable);
+
+        createForeisTable();
+        foreisScroll.setViewportView(foreisTable);
+    }
+
+    private void createCashflowTable() {
+        int year = Integer.parseInt(mainFrame.getSelectedYear());
+        String category = (String) categoryCombo.getSelectedItem();
+
+        List<CashFlow> list;
+        if ("Έσοδα".equals(category)) {
+            list = cashflowService.getCashflows(year, "Έσοδο");
+        } else if ("Έξοδα".equals(category)) {
+            list = cashflowService.getCashflows(year, "Έξοδο");
+        } else {
+            list = List.of();
+        }
+
+        String[] columns = {"ID", "Όνομα", "Ποσό"};
+        Object[][] data = new Object[list.size()][3];
+
+        for (int i = 0; i < list.size(); i++) {
+            CashFlow cf = list.get(i);
+            data[i][0] = cf.getId();
+            data[i][1] = cf.getName();
+            data[i][2] = cf.getAmount();
+        }
+
+        DefaultTableModel model = new DefaultTableModel(data, columns);
+        cashflowTable = new JTable(model);
+        cashflowTable.setFillsViewportHeight(true);
+        cashflowTable.setEnabled(false);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < columns.length; i++) {
+            cashflowTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        cashflowTable.setBackground(new Color(248, 250, 252));
+        cashflowTable.setForeground(Color.BLACK);
+        cashflowTable.setRowHeight(25);
+    }
+
+    private void createForeisTable() {
         int year = Integer.parseInt(mainFrame.getSelectedYear());
 
-        // --- Cashflow Table ---
-        try {
-            List<CashFlow> cashflows = cashflowService.getCashflows(year, "Έσοδο");
-            cashflows.addAll(cashflowService.getCashflows(year, "Έξοδο"));
-            String[] columns = {"Τύπος", "Όνομα", "Ποσό"};
-            Object[][] data = new Object[cashflows.size()][3];
-            for (int i = 0; i < cashflows.size(); i++) {
-                CashFlow cf = cashflows.get(i);
-                data[i][0] = cf.getType();
-                data[i][1] = cf.getName();
-                data[i][2] = cf.getAmount();
-            }
-            cashflowTable.setModel(new DefaultTableModel(data, columns));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Σφάλμα φόρτωσης cashflows: " + e.getMessage());
+        // Εδώ χρησιμοποιούμε το ForeisService
+        List<Foreis> list = new java.util.ArrayList<>();
+
+        String[] types = {
+            "Κεντρική Διοίκηση",
+            "Υπουργείο",
+            "Αποκεντρωμένη Διοίκηση"
+        };
+
+        for (String type : types) {
+            list.addAll(foreisService.getForeisByYearAndType(year, type));
         }
 
-        // --- Foreis Table ---
-        try {
-            List<Foreis> foreisList = foreisService.getForeisByYearAndType(year, "RegularBudget");
-            String[] columns = {"Υπουργείο", "RegularBudget", "PublicInvBudget", "Total"};
-            Object[][] data = new Object[foreisList.size()][4];
-            for (int i = 0; i < foreisList.size(); i++) {
-                Foreis f = foreisList.get(i);
-                data[i][0] = f.getName();
-                data[i][1] = f.getRegularBudget();
-                data[i][2] = f.getPublicInvBudget();
-                data[i][3] = f.getTotal();
-            }
-            foreisTable.setModel(new DefaultTableModel(data, columns));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Σφάλμα φόρτωσης φορέων: " + e.getMessage());
+        String[] columns = {"ID", "Όνομα", "Τύπος", "Τακτικός Προϋπολογισμός", "Π/Υ Δημ. Επενδύσεων", "Σύνολο"};
+        Object[][] data = new Object[list.size()][6];
+
+        for (int i = 0; i < list.size(); i++) {
+            Foreis f = list.get(i);
+            data[i][0] = f.getForeasId();
+            data[i][1] = f.getName();
+            data[i][2] = f.getType();
+            data[i][3] = f.getRegularBudget();
+            data[i][4] = f.getPublicInvBudget();
+            data[i][5] = f.getTotal();
         }
+
+        DefaultTableModel model = new DefaultTableModel(data, columns);
+        foreisTable = new JTable(model);
+        foreisTable.setFillsViewportHeight(true);
+        foreisTable.setEnabled(false);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < columns.length; i++) {
+            foreisTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        foreisTable.setBackground(new Color(248, 250, 252));
+        foreisTable.setForeground(Color.BLACK);
+        foreisTable.setRowHeight(25);
     }
 
     private void applyScenario() {
         int year = Integer.parseInt(mainFrame.getSelectedYear());
         double percentage = percentageSlider.getValue();
         String category = (String) categoryCombo.getSelectedItem();
+
         int totalUpdates = 0;
 
         try {
-            if ("Όλα".equals(category) || "Έσοδα".equals(category)) {
-                for (CashFlow cf : cashflowService.getCashflows(year, "Έσοδο")) {
-                    double newAmount = cf.getAmount() * (1 + percentage / 100.0);
-                    cf.setAmount(newAmount);
-                    cashflowService.updateCashflow(cf);
-                    totalUpdates++;
-                }
-            }
-
-            if ("Όλα".equals(category) || "Έξοδα".equals(category)) {
-                for (CashFlow cf : cashflowService.getCashflows(year, "Έξοδο")) {
-                    double newAmount = cf.getAmount() * (1 + percentage / 100.0);
-                    cf.setAmount(newAmount);
-                    cashflowService.updateCashflow(cf);
-                    totalUpdates++;
-                }
-            }
-
-            if ("Όλα".equals(category) || "Φορείς".equals(category)) {
-                List<Foreis> foreisList = foreisService.getForeisByYearAndType(year, "RegularBudget");
-                for (Foreis f : foreisList) {
-                    double newRegular = f.getRegularBudget() * (1 + percentage / 100.0);
-                    double newPublic = f.getPublicInvBudget() * (1 + percentage / 100.0);
-                    f.setRegularBudget(newRegular);
-                    f.setPublicInvBudget(newPublic);
-                    f.setTotal(newRegular + newPublic);
-                    foreisService.updateForeis(f);
-                    totalUpdates++;
+            if ("Έσοδα".equals(category)) {
+                totalUpdates += scenarioCashflowService.updateCashflowWithModifiedAmount(year, "Έσοδο", percentage);
+            } else if ("Έξοδα".equals(category)) {
+                totalUpdates += scenarioCashflowService.updateCashflowWithModifiedAmount(year, "Έξοδο", percentage);
+            } else if ("Φορείς".equals(category)) {
+                String[] types = {"Υπουργείο", "Κεντρική Διοίκηση", "Αποκεντρωμένη Διοίκηση"};
+                for (String t : types) {
+                    totalUpdates += scenarioForeisService.updateForeisWithModifiedBudget(year, t, "RegularBudget", percentage);
+                    totalUpdates += scenarioForeisService.updateForeisWithModifiedBudget(year, t, "PublicInvBudget", percentage);
                 }
             }
 
@@ -232,6 +281,8 @@ public class MassiveChangesPanel extends JPanel {
                     "Επιτυχία",
                     JOptionPane.INFORMATION_MESSAGE
             );
+
+            refreshTables();
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(
