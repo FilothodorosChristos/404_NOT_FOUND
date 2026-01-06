@@ -45,8 +45,7 @@ public class CashFlowServiceTest {
   // -------------------------------------------------------------
   // ADD TESTS
   // -------------------------------------------------------------
-
-
+ 
   @Test
   void testAddCashflowInvalidAmount() {
     CashFlow c = new CashFlow(
@@ -204,34 +203,34 @@ void testCompareCashFlows() {
     assertEquals(4, comparison.size()); // Salary, Bonus, Other Income, Gift → 5 διαφορετικά ονόματα
 
     for (CashFlowCompareDto dto : comparison) {
-        switch (dto.getName()) {
-            case "Salary" -> {
-                assertEquals(2000.0, dto.getAmountYear1());
-                assertEquals(2200.0, dto.getAmountYear2());
-                assertFalse(dto.isMissingInYear1());
-                assertFalse(dto.isMissingInYear2());
-            }
-            case "Bonus" -> {
-                assertEquals(500.0, dto.getAmountYear1());
-                assertEquals(600.0, dto.getAmountYear2());
-                assertFalse(dto.isMissingInYear1());
-                assertFalse(dto.isMissingInYear2());
-            }
-            case "Other Income" -> {
-                assertEquals(300.0, dto.getAmountYear1());
-                assertEquals(0.0, dto.getAmountYear2());
-                assertFalse(dto.isMissingInYear1());
-                assertTrue(dto.isMissingInYear2());
-            }
-            case "Gift" -> {
-                assertEquals(0.0, dto.getAmountYear1());
-                assertEquals(400.0, dto.getAmountYear2());
-                assertTrue(dto.isMissingInYear1());
-                assertFalse(dto.isMissingInYear2());
-            }
-            default -> fail("Unexpected cashflow name: " + dto.getName());
+      switch (dto.getName()) {
+        case "Salary" -> {
+          assertEquals(2000.0, dto.getAmountYear1());
+          assertEquals(2200.0, dto.getAmountYear2());
+          assertFalse(dto.isMissingInYear1());
+          assertFalse(dto.isMissingInYear2());
         }
+        case "Bonus" -> {
+          assertEquals(500.0, dto.getAmountYear1());
+          assertEquals(600.0, dto.getAmountYear2());
+          assertFalse(dto.isMissingInYear1());
+          assertFalse(dto.isMissingInYear2());
+        }
+        case "Other Income" -> {
+          assertEquals(300.0, dto.getAmountYear1());
+          assertEquals(0.0, dto.getAmountYear2());
+          assertFalse(dto.isMissingInYear1());
+          assertTrue(dto.isMissingInYear2());
+        }
+        case "Gift" -> {
+          assertEquals(0.0, dto.getAmountYear1());
+          assertEquals(400.0, dto.getAmountYear2());
+          assertTrue(dto.isMissingInYear1());
+          assertFalse(dto.isMissingInYear2());
+        }
+        default -> fail("Unexpected cashflow name: " + dto.getName());
+      }
     }
-}
+  }
 
 }
