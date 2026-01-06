@@ -1,7 +1,8 @@
 package util;
 
-import org.junit.jupiter.api.*;
 import java.io.File;
+import org.junit.jupiter.api.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -11,82 +12,85 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DbExistsCheckerTest {
 
-    private static final String TEST_DB = "test_db_temp.db";
-    private static final String NON_EXISTENT_DB = "nonexistent.db";
-    private static final String ORIGINAL_DB = "budgetDB.db";
+  private static final String TEST_DB = "test_db_temp.db";
+  private static final String NON_EXISTENT_DB = "nonexistent.db";
+  private static final String ORIGINAL_DB = "budgetDB.db";
 
-    /**
-     * Πριν από κάθε τεστ, ρυθμίζουμε το DbExistsChecker να δείχνει στο test DB.
-     */
-    @BeforeEach
+  /**
+   * Πριν από κάθε τεστ, ρυθμίζουμε το DbExistsChecker να δείχνει στο test DB.
+   */
+  @BeforeEach
     void setup() {
-        DbExistsChecker.setDbFile(TEST_DB);
-    }
+    DbExistsChecker.setDbFile(TEST_DB);
+  }
 
-    /**
-     * Μετά από όλα τα τεστ, επαναφέρουμε το dbFile στην πραγματική βάση.
-     */
-    @AfterAll
+  /**
+   * Μετά από όλα τα τεστ, επαναφέρουμε το dbFile στην πραγματική βάση.
+   */
+  @AfterAll
     static void restoreDbFile() {
-        DbExistsChecker.setDbFile(ORIGINAL_DB);
-        File f = new File(TEST_DB);
-        if (f.exists()) f.delete();
+    DbExistsChecker.setDbFile(ORIGINAL_DB);
+    File f = new File(TEST_DB);
+    if (f.exists()) {
+      f.delete();
     }
+  }
+  /**
+   * Ελέγχουμε ότι η μέθοδος {@link DbExistsChecker#databaseExists()}
+   * επιστρέφει true όταν το αρχείο υπάρχει.
+   */
 
-    /**
-     * Ελέγχουμε ότι η μέθοδος {@link DbExistsChecker#databaseExists()}
-     * επιστρέφει true όταν το αρχείο υπάρχει.
-     */
-    @Test
-    @DisplayName("Η βάση υπάρχει")
+  @Test
+  @DisplayName("Η βάση υπάρχει")
     void testDatabaseExistsTrue() {
-        File file = new File(TEST_DB);
-        try {
-            if (!file.exists()) {
-                assertTrue(file.createNewFile(), "Δε μπόρεσε να δημιουργηθεί το test db αρχείο");
-            }
+    File file = new File(TEST_DB);
+    try {
+      if (!file.exists()) {
+        assertTrue(file.createNewFile(), "Δε μπόρεσε να δημιουργηθεί το test db αρχείο");
+      }
 
-            assertTrue(DbExistsChecker.databaseExists(), "Η μέθοδος πρέπει να επιστρέφει true αν υπάρχει το αρχείο");
-        } catch (Exception e) {
-            fail("Σφάλμα κατά τη δημιουργία του test αρχείου: " + e.getMessage());
-        }
+      assertTrue(DbExistsChecker.databaseExists(), "Η μέθοδος πρέπει να επιστρέφει true αν υπάρχει το αρχείο");
+    } catch (Exception e) {
+      fail("Σφάλμα κατά τη δημιουργία του test αρχείου: " + e.getMessage());
     }
+  }
 
-    /**
-     * Ελέγχουμε ότι η μέθοδος {@link DbExistsChecker#databaseExists()}
-     * επιστρέφει false όταν το αρχείο δεν υπάρχει.
-     */
-    @Test
-    @DisplayName("Η βάση δεν υπάρχει")
+  /**
+   * Ελέγχουμε ότι η μέθοδος {@link DbExistsChecker#databaseExists()}
+   * επιστρέφει false όταν το αρχείο δεν υπάρχει.
+   */
+  @Test
+  @DisplayName("Η βάση δεν υπάρχει")
     void testDatabaseExistsFalse() {
-        DbExistsChecker.setDbFile(NON_EXISTENT_DB);
-        assertFalse(DbExistsChecker.databaseExists(), "Η μέθοδος πρέπει να επιστρέφει false αν το αρχείο δεν υπάρχει");
-    }
+    DbExistsChecker.setDbFile(NON_EXISTENT_DB);
+    assertFalse(DbExistsChecker.databaseExists(), "Η μέθοδος πρέπει να επιστρέφει false αν το αρχείο δεν υπάρχει");
+  }
 
-
-    @Test
-    @DisplayName("Η setDbFile αλλάζει σωστά το dbFile")
+  @Test
+  @DisplayName("Η setDbFile αλλάζει σωστά το dbFile")
     void testSetDbFile() {
-        // Αρχικά δείχνει στο TEST_DB
-        DbExistsChecker.setDbFile(TEST_DB);
-        File testFile = new File(TEST_DB);
-        try {
-            if (!testFile.exists()) testFile.createNewFile();
-        } catch (Exception e) {
-            fail("Σφάλμα κατά τη δημιουργία test αρχείου: " + e.getMessage());
-        }
-        assertTrue(DbExistsChecker.databaseExists(), "Πρέπει να βλέπει το test αρχείο");
-
-        // Αλλάζουμε σε NON_EXISTENT_DB
-        DbExistsChecker.setDbFile(NON_EXISTENT_DB);
-        assertFalse(DbExistsChecker.databaseExists(), "Πρέπει να δείχνει σε αρχείο που δεν υπάρχει");
-
-        // Δοκιμή με null ή empty string δεν πρέπει να αλλάξει
-        DbExistsChecker.setDbFile("");
-        assertFalse(DbExistsChecker.databaseExists(), "Το empty string δεν πρέπει να αλλάξει το dbFile");
-
-        DbExistsChecker.setDbFile(null);
-        assertFalse(DbExistsChecker.databaseExists(), "Το null δεν πρέπει να αλλάξει το dbFile");
+    // Αρχικά δείχνει στο TEST_DB
+    DbExistsChecker.setDbFile(TEST_DB);
+    File testFile = new File(TEST_DB);
+    try {
+      if (!testFile.exists()) {
+        testFile.createNewFile();
+      }
+    } catch (Exception e) {
+      fail("Σφάλμα κατά τη δημιουργία test αρχείου: " + e.getMessage());
     }
+    assertTrue(DbExistsChecker.databaseExists(), "Πρέπει να βλέπει το test αρχείο");
+
+    // Αλλάζουμε σε NON_EXISTENT_DB
+    DbExistsChecker.setDbFile(NON_EXISTENT_DB);
+    assertFalse(DbExistsChecker.databaseExists(), "Πρέπει να δείχνει σε αρχείο που δεν υπάρχει");
+
+    // Δοκιμή με null ή empty string δεν πρέπει να αλλάξει
+    DbExistsChecker.setDbFile("");
+    assertFalse(DbExistsChecker.databaseExists(), "Το empty string δεν πρέπει να αλλάξει το dbFile");
+
+    DbExistsChecker.setDbFile(null);
+    assertFalse(DbExistsChecker.databaseExists(), "Το null δεν πρέπει να αλλάξει το dbFile");
+  }
 
 }

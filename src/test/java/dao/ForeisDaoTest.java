@@ -179,37 +179,32 @@ public void testCompareYears() throws Exception {
     assertEquals(300.0, dto.getTotalYear2());
     assertEquals(150.0, dto.getTotalDiff());
     assertEquals(100.0, dto.getTotalPercentChange());
-}
+  }
 
-@Test
+  @Test
 public void testSelectForeis_emptyResult() {
     List<Foreis> list = dao.selectForeis(2025, "NON_EXISTENT_TYPE");
     assertTrue(list.isEmpty());
-}
+  }
 
-@Test
+  @Test
 public void testDeleteForeis_nonExistingId() {
     // απλώς δεν πρέπει να πετάξει exception
     dao.deleteForeis(9999);
-}
+  }
 
-
-
-
-@Test
+  @Test
 public void testSelectForeis_multipleEntries() {
-  Foreis f1 = new Foreis(0, 401, 2023, "TYPE_MULTI", "Foreas 1", 10, 20, 30);
-  Foreis f2 = new Foreis(0, 402, 2023, "TYPE_MULTI", "Foreas 2", 15, 25, 40);
-  dao.addForeis(f1);
-  dao.addForeis(f2);
+    Foreis f1 = new Foreis(0, 401, 2023, "TYPE_MULTI", "Foreas 1", 10, 20, 30);
+    Foreis f2 = new Foreis(0, 402, 2023, "TYPE_MULTI", "Foreas 2", 15, 25, 40);
+    dao.addForeis(f1);
+    dao.addForeis(f2);
 
-  List<Foreis> list = dao.selectForeis(2023, "TYPE_MULTI");
-  assertEquals(2, list.size());
-  assertEquals("Foreas 1", list.get(0).getName());
-  assertEquals("Foreas 2", list.get(1).getName());
-}
-
-
+    List<Foreis> list = dao.selectForeis(2023, "TYPE_MULTI");
+    assertEquals(2, list.size());
+    assertEquals("Foreas 1", list.get(0).getName());
+    assertEquals("Foreas 2", list.get(1).getName());
+  }
 
   @Test
   public void testCompareYears_noEntries() throws Exception {

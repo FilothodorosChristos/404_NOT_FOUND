@@ -3,8 +3,6 @@ package util;
 import static org.junit.jupiter.api.Assertions.*;
 
 import dao.CashFlow;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -92,7 +90,7 @@ public class ValidationUtilsTest {
                 () -> ValidationUtils.validatePositiveId(-1, "Foreas ID"));
   }
 
- @Test
+  @Test
 public void testPrintBudgetStatusBalanced() {
 
     // Arrange
@@ -106,9 +104,9 @@ public void testPrintBudgetStatusBalanced() {
 
     // Assert
     assertEquals("Ο προϋπολογισμός είναι ΙΣΟΣΚΕΛΙΣΜΕΝΟΣ", result);
-}
+  }
 
-@Test
+  @Test
 public void testPrintBudgetStatusSurplus() {
 
     List<CashFlow> cashflows = List.of(
@@ -119,9 +117,9 @@ public void testPrintBudgetStatusSurplus() {
     String result = ValidationUtils.calculateBudgetStatus(cashflows);
 
     assertEquals("Ο προϋπολογισμός είναι ΠΛΕΟΝΑΣΜΑΤΙΚΟΣ", result);
-}
+  }
 
-@Test
+  @Test
 public void testPrintBudgetStatusDeficit() {
 
     List<CashFlow> cashflows = List.of(
@@ -132,6 +130,6 @@ public void testPrintBudgetStatusDeficit() {
     String result = ValidationUtils.calculateBudgetStatus(cashflows);
 
     assertEquals("Ο προϋπολογισμός είναι ΕΛΛΕΙΜΜΑΤΙΚΟΣ", result);
-}
+  }
 
 }

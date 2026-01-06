@@ -150,13 +150,13 @@ public void testSelectCashFlowById() {
 public void testSelectCashFlow_emptyResult() {
     List<CashFlow> list = dao.selectCashFlow(2025, "nonexistent");
     assertTrue(list.isEmpty());
-}
+  }
 
-@Test
+  @Test
 public void testDeleteCashFlow_nonExistingId() {
     // Δεν πρέπει να πετάξει exception αν το ID δεν υπάρχει
     dao.deleteCashFlow(9999);
-}
+  }
 
   @Test
   public void testUpdateCashFlow_nonExisting() {
@@ -175,8 +175,7 @@ public void testSelectCashFlowById_returnNullExplicit() {
     CashFlow result = dao.selectCashFlowById(1);
 
     assertEquals(null, result);
-}
-
+  }
 
 }
 
