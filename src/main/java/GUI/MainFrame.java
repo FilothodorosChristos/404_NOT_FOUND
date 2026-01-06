@@ -1,6 +1,6 @@
 package GUI;
 
-import javax.swing.*;
+import javax.swing.*; 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -51,6 +51,9 @@ public class MainFrame extends JFrame {
     
     /** Panel name constant for action selection screen. */
     public static final String ACTION_SELECTION = "actionSelection";
+
+    /** Panel name constant for massive changes */
+    public static final String MASSIVE_CHANGES = "massiveChanges";
 
     /** Panel name constant for finance chart screen. */
     public static final String FINANCE_CHART = "financeChart";
@@ -301,6 +304,31 @@ public void showComparison() {
     mainPanel.add(compPanel, COMPARISON);
     showPanel(COMPARISON);
 }
+
+public void showMassiveChanges() {
+    if (selectedYear == null) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Πρέπει να επιλέξετε πρώτα έτος.",
+            "Προειδοποίηση",
+            JOptionPane.WARNING_MESSAGE
+        );
+        return;
+    }
+
+    // Αφαίρεση παλιού panel αν υπάρχει
+    for (Component comp : mainPanel.getComponents()) {
+        if (comp instanceof MassiveChangesPanel) {
+            mainPanel.remove(comp);
+            break;
+        }
+    }
+
+    MassiveChangesPanel panel = new MassiveChangesPanel(this);
+    mainPanel.add(panel, MASSIVE_CHANGES);
+    showPanel(MASSIVE_CHANGES);
+}
+
     /**
      * Sets the selected budget year.
      *
