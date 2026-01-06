@@ -16,6 +16,7 @@ import java.util.List;
 
 public class MassiveChangesPanel extends JPanel {
 
+    @SuppressWarnings("EI_EXPOSE_REP2")
     private final MainFrame mainFrame;
 
     private final CashFlowService cashflowService;
