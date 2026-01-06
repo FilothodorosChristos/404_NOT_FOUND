@@ -18,6 +18,7 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Panel για την εφαρμογή μαζικών αλλαγών στον προϋπολογισμό.
@@ -25,13 +26,12 @@ import java.util.ArrayList;
  */
 public class MassiveChangesPanel extends JPanel {
 
-    @SuppressWarnings("EI_EXPOSE_REP2")
-    private final MainFrame mainFrame;
+    private final transient MainFrame mainFrame;
 
-    private final CashFlowService cashflowService;
-    private final ForeisService foreisService;
-    private final ScenarioCashflowService scenarioCashflowService;
-    private final ScenarioForeisService scenarioForeisService;
+    private final transient CashFlowService cashflowService;
+    private final transient ForeisService foreisService;
+    private final transient ScenarioCashflowService scenarioCashflowService;
+    private final transient ScenarioForeisService scenarioForeisService;
 
     private JComboBox<String> categoryCombo;
     private JSlider percentageSlider;
@@ -52,8 +52,13 @@ public class MassiveChangesPanel extends JPanel {
     private static final Color TABLE_HEADER_BG = new Color(30, 41, 59);
     private static final Color TABLE_ROW_ALT = new Color(20, 30, 48);
     private static final Color SUCCESS_GREEN = new Color(16, 185, 129);
-    private static final Color WARNING_ORANGE = new Color(245, 158, 11);
 
+    /**
+     * Constructor για το MassiveChangesPanel.
+     *
+     * @param mainFrame η κύρια φόρμα της εφαρμογής
+     */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "MainFrame reference needed for navigation")
     public MassiveChangesPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         this.cashflowService = new CashFlowService();
@@ -260,6 +265,8 @@ public class MassiveChangesPanel extends JPanel {
     private void createTable() {
         String[] columns = {"Όνομα", "Τρέχον Ποσό (€)", "Νέο Ποσό (€)", "Αλλαγή (€)"};
         tableModel = new DefaultTableModel(columns, 0) {
+            private static final long serialVersionUID = 1L;
+            
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -283,6 +290,8 @@ public class MassiveChangesPanel extends JPanel {
 
         JTableHeader header = table.getTableHeader();
         header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            
             @Override
             public Component getTableCellRendererComponent(JTable t, Object v, boolean isS, boolean hasF, int r, int c) {
                 JLabel label = (JLabel) super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
@@ -297,6 +306,8 @@ public class MassiveChangesPanel extends JPanel {
         });
 
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            
             @Override
             public Component getTableCellRendererComponent(JTable t, Object v, boolean isS, boolean hasF, int r, int c) {
                 Component comp = super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
@@ -342,6 +353,8 @@ public class MassiveChangesPanel extends JPanel {
         combo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         
         combo.setRenderer(new DefaultListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel l = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -491,7 +504,8 @@ public class MassiveChangesPanel extends JPanel {
             updateSummaryCards(totalCurrent, totalNew, totalNew - totalCurrent);
             
         } catch (Exception e) {
-            e.printStackTrace();
+            // Log error but don't crash
+            System.err.println("Error updating preview: " + e.getMessage());
         }
     }
 
@@ -547,7 +561,7 @@ public class MassiveChangesPanel extends JPanel {
         if (percentage == 0) {
             JOptionPane.showMessageDialog(
                 this,
-                "Το ποσοστό μεταβολής είναι 0%. Δεν θα γίνει καμία αλλαγή.",
+                "Το ποσοστό μεταβολής είναι 0%%. Δεν θα γίνει καμία αλλαγή.",
                 "Προειδοποίηση",
                 JOptionPane.WARNING_MESSAGE
             );
@@ -556,7 +570,7 @@ public class MassiveChangesPanel extends JPanel {
 
         int confirm = JOptionPane.showConfirmDialog(
             this,
-            String.format("Είστε σίγουροι ότι θέλετε να εφαρμόσετε μεταβολή %+.1f%% στην κατηγορία '%s';\n\n" +
+            String.format("Είστε σίγουροι ότι θέλετε να εφαρμόσετε μεταβολή %+.1f%%%% στην κατηγορία '%s';%n%n" +
                          "Αυτή η ενέργεια θα αλλάξει όλες τις εγγραφές της κατηγορίας.",
                          percentage, category),
             "Επιβεβαίωση Εφαρμογής",
@@ -585,9 +599,9 @@ public class MassiveChangesPanel extends JPanel {
 
             JOptionPane.showMessageDialog(
                 this,
-                String.format("Το σενάριο εφαρμόστηκε επιτυχώς!\n\n" +
-                             "Ενημερώθηκαν %d εγγραφές\n" +
-                             "Ποσοστό αλλαγής: %+.1f%%",
+                String.format("Το σενάριο εφαρμόστηκε επιτυχώς!%n%n" +
+                             "Ενημερώθηκαν %d εγγραφές%n" +
+                             "Ποσοστό αλλαγής: %+.1f%%%%",
                              totalUpdates, percentage),
                 "Επιτυχής Εφαρμογή",
                 JOptionPane.INFORMATION_MESSAGE
@@ -600,11 +614,10 @@ public class MassiveChangesPanel extends JPanel {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(
                 this,
-                "Σφάλμα κατά την εφαρμογή του σεναρίου:\n" + ex.getMessage(),
+                "Σφάλμα κατά την εφαρμογή του σεναρίου:%n" + ex.getMessage(),
                 "Σφάλμα",
                 JOptionPane.ERROR_MESSAGE
             );
-            ex.printStackTrace();
         }
     }
 }
