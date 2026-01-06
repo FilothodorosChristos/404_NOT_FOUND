@@ -104,7 +104,7 @@ public class ActionSelectionPanel extends JPanel {
      */
     private void createActionButtons() {
         actionButtons = new JButton[5];
-        String[] titles = {"Προβολή", "Επεξεργασία", "Διαγράμματα", "Σύγκριση", "Μαζικές αλλαγές"};
+        String[] titles = {"Προβολή", "Επεξεργασία", "Διαγράμματα", "Σύγκριση", "Μαζικές Αλλαγές"};
         String[] icons = {"👁️", "✏️", "📊", "⚖️", "🔄"};
         String[] descriptions = {
             "Προβολή προϋπολογισμού",
@@ -263,12 +263,7 @@ public class ActionSelectionPanel extends JPanel {
  mainFrame.showComparison();
 
     } else if (action.equals("Μαζικές Αλλαγές")) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Η λειτουργία 'Μαζικές Αλλαγές' δεν έχει υλοποιηθεί ακόμα.",
-            "Υπό Κατασκευή",
-            JOptionPane.INFORMATION_MESSAGE
-        );
+        mainFrame.showMassiveChanges();
     }
 }
 
