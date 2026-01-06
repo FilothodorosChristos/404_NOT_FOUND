@@ -145,15 +145,15 @@ public class MassiveChangesPanel extends JPanel {
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(BORDER_COLOR, 1),
-            BorderFactory.createEmptyBorder(25, 25, 25, 25)
+            BorderFactory.createEmptyBorder(15, 20, 15, 20)
         ));
 
         // Category Selection
-        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
+        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         categoryPanel.setBackground(CARD_BG);
 
         JLabel categoryLabel = new JLabel("Κατηγορία:");
-        categoryLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        categoryLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         categoryLabel.setForeground(TEXT_SECONDARY);
 
         categoryCombo = new JComboBox<>(new String[]{"Έσοδα", "Έξοδα", "Φορείς"});
@@ -168,7 +168,7 @@ public class MassiveChangesPanel extends JPanel {
 
         // Add to card
         card.add(categoryPanel);
-        card.add(Box.createVerticalStrut(20));
+        card.add(Box.createVerticalStrut(12));
         card.add(sliderPanel);
 
         return card;
@@ -183,7 +183,7 @@ public class MassiveChangesPanel extends JPanel {
         panel.setBackground(CARD_BG);
 
         JLabel sliderTitle = new JLabel("Ποσοστό Μεταβολής:");
-        sliderTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        sliderTitle.setFont(new Font("Segoe UI", Font.BOLD, 13));
         sliderTitle.setForeground(TEXT_PRIMARY);
         sliderTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -195,20 +195,21 @@ public class MassiveChangesPanel extends JPanel {
         percentageSlider.setBackground(CARD_BG);
         percentageSlider.setForeground(TEXT_SECONDARY);
         percentageSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+        percentageSlider.setFont(new Font("Segoe UI", Font.PLAIN, 10));
         percentageSlider.addChangeListener(e -> {
             updatePercentageLabel();
             updatePreview();
         });
 
         percentageLabel = new JLabel("0%", SwingConstants.CENTER);
-        percentageLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        percentageLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         percentageLabel.setForeground(ACCENT_BLUE);
         percentageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         panel.add(sliderTitle);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(5));
         panel.add(percentageSlider);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(5));
         panel.add(percentageLabel);
 
         return panel;
@@ -245,7 +246,7 @@ public class MassiveChangesPanel extends JPanel {
         tableScrollPane.setBackground(DARKER_BG);
         tableScrollPane.getViewport().setBackground(DARKER_BG);
         tableScrollPane.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
-        tableScrollPane.setPreferredSize(new Dimension(0, 350));
+        tableScrollPane.setPreferredSize(new Dimension(0, 400));
 
         panel.add(centerPanel, BorderLayout.NORTH);
         panel.add(tableScrollPane, BorderLayout.CENTER);
