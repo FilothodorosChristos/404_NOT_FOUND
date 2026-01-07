@@ -12,8 +12,6 @@ import service.CashFlowService;
 import service.ForeisService;
 import util.ValidationUtils;
 
-
-
 /**
  * Panel για εμφάνιση και επεξεργασία δεδομένων από τη βάση.
  * Υποστηρίζει τόσο CashFlowς όσο και Foreis με δύο πίνακες (Έσοδα/Έξοδα).
@@ -43,7 +41,8 @@ public final class DataEditorPanel extends JPanel {
   private static final Color TEXT_SECONDARY = new Color(148, 163, 184);
   private static final Color BORDER_COLOR = new Color(51, 65, 85);
   private static final Color TABLE_HEADER_BG = new Color(30, 41, 59);
-  //private static final Color TABLE_ROW_ALT = new Color(20, 30, 48);
+
+  
   
   /**
    * Constructor - Δέχεται MainFrame, έτος και κατηγορία δεδομένων.
@@ -129,7 +128,7 @@ public final class DataEditorPanel extends JPanel {
       public void mouseEntered(java.awt.event.MouseEvent evt) {
         historyButton.setBackground(ACCENT_BLUE.brighter());
       }
-      @Override
+     @Override
       public void mouseExited(java.awt.event.MouseEvent evt) {
         historyButton.setBackground(ACCENT_BLUE);
       }
@@ -142,10 +141,10 @@ public final class DataEditorPanel extends JPanel {
       } catch (Exception ex) {
         ex.printStackTrace();
         JOptionPane.showMessageDialog(
-          this,
-          "Σφάλμα κατά το άνοιγμα του ιστορικού: " + ex.getMessage(),
-          "Σφάλμα",
-          JOptionPane.ERROR_MESSAGE
+            this,
+            "Σφάλμα κατά το άνοιγμα του ιστορικού: " + ex.getMessage(),
+            "Σφάλμα",
+            JOptionPane.ERROR_MESSAGE
         );
       }
     });
@@ -157,10 +156,11 @@ public final class DataEditorPanel extends JPanel {
     panel.add(rightPanel, BorderLayout.EAST);
 
     return panel;
-}
+  }
   /**
    * Δημιουργία split panel με δύο πίνακες (Έσοδα & Έξοδα).
    */
+
   private JSplitPane createSplitTablePanel() {
     JPanel incomePanel = createTablePanel("Έσοδα", "Έσοδο", true);
     JPanel expensePanel = createTablePanel("Έξοδα", "Έξοδο", false);
@@ -169,8 +169,8 @@ public final class DataEditorPanel extends JPanel {
     splitPane.setDividerLocation(350);
     splitPane.setResizeWeight(0.5);
     splitPane.setBorder(BorderFactory.createCompoundBorder(
-    BorderFactory.createLineBorder(BORDER_COLOR, 1),
-    BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        BorderFactory.createLineBorder(BORDER_COLOR, 1),
+        BorderFactory.createEmptyBorder(10, 10, 10, 10)));
     splitPane.setOpaque(false);
 
     return splitPane;
@@ -215,7 +215,7 @@ public final class DataEditorPanel extends JPanel {
       };
     } else {
       String[] columnNames = {"ID", "Foreas ID", "Έτος", "Τύπος", "Όνομα",
-              "Τακτικός Π/Υ (€)", "Δημόσιες Επενδύσεις (€)", "Σύνολο (€)"};
+          "Τακτικός Π/Υ (€)", "Δημόσιες Επενδύσεις (€)", "Σύνολο (€)"};
       tableModel = new DefaultTableModel(columnNames, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
@@ -470,12 +470,12 @@ public final class DataEditorPanel extends JPanel {
     double amount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
     double newAmount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
 
-      if (name.isEmpty()) {
-        throw new IllegalArgumentException("Το όνομα δεν μπορεί να είναι κενό!");
-      }
+    if (name.isEmpty()) {
+      throw new IllegalArgumentException("Το όνομα δεν μπορεί να είναι κενό!");
+    }
 
-      ValidationUtils.validateYear(yearId);
-      ValidationUtils.validateNonNegative(newAmount);
+    ValidationUtils.validateYear(yearId);
+    ValidationUtils.validateNonNegative(newAmount);
 
     CashFlow cf = new CashFlow(id, yearId, type, name, amount);
     cashFlowService.updateCashflow(cf);
@@ -645,7 +645,8 @@ public final class DataEditorPanel extends JPanel {
   /**
    * Υπολογισμός συνολικού ποσού για Foreis.
    */
-  private void calculateTotal(JTextField regularField, JTextField publicField, JTextField totalField) {
+  private void calculateTotal(JTextField regularField,
+      JTextField publicField, JTextField totalField) {
     try {
       double regular = Double.parseDouble(regularField.getText().trim());
       double publicInv = Double.parseDouble(publicField.getText().trim());
@@ -699,7 +700,7 @@ public final class DataEditorPanel extends JPanel {
         foreisService.deleteForeis(id);
       }
 
-       showInfo("Η εγγραφή διαγράφηκε επιτυχώς!");
+      showInfo("Η εγγραφή διαγράφηκε επιτυχώς!");
       loadData();
       showBudgetStatus(); 
     } catch (Exception e) {
@@ -708,7 +709,7 @@ public final class DataEditorPanel extends JPanel {
     }
   }
 
-  //helper μέθοδος για εμφάνιση κατάστασης προϋπολογισμού
+  // helper μέθοδος για εμφάνιση κατάστασης προϋπολογισμού
   private void showBudgetStatus() {
     List<CashFlow> allCashflows = cashFlowService.getCashflows(selectedYear, "Έσοδο");
     allCashflows.addAll(cashFlowService.getCashflows(selectedYear, "Έξοδο"));

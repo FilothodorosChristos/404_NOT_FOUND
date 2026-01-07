@@ -48,12 +48,7 @@ public class ValidationUtils {
       throw new IllegalArgumentException("Το ποσό δεν μπορεί να είναι αρνητικό: " + amount);
     }
   }
-  /**
-   *  
-   * @param id να μην ειναι αρνητικο
-   * @throws IllegalArgumentException αν ειναι αρνητικο
-   */
-
+  
   public static void validatePositiveId(int id, String fieldName) {
     if (id <= 0) {
       throw new IllegalArgumentException(fieldName + " πρέπει να είναι θετικό (id: " + id + ")");
