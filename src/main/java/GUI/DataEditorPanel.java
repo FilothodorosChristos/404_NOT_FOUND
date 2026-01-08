@@ -16,11 +16,6 @@ import service.CashFlowService;
 import service.ForeisService;
 import util.PdfExporter;
 import util.ValidationUtils;
-import util.PdfExporter;
-import java.util.ArrayList;
-import java.io.File;
-import javax.swing.JFileChooser;
-
 
 /**
  * Panel για εμφάνιση και επεξεργασία δεδομένων από τη βάση.
@@ -331,15 +326,25 @@ public final class DataEditorPanel extends JPanel {
   /**
    * Δημιουργία button panel με λειτουργίες.
    */
- private JPanel createButtonPanel() {
+  private JPanel createButtonPanel() {
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
     panel.setBackground(DARK_BG);
     panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY));
 
+    // Δημιουργία backButton ακριβώς όπως το historyButton
+    JButton backButton = new JButton("← Προηγούμενο");
+    backButton.setFont(new Font("Arial", Font.BOLD, 13));
+    backButton.setPreferredSize(new Dimension(160, 35));
+    backButton.setBackground(ACCENT_BLUE); 
+    backButton.setForeground(Color.BLACK); // Updated to Black
+    backButton.setFocusPainted(false);
+    backButton.setBorder(BorderFactory.createCompoundBorder());
+    backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
     // Κουμπί Εξαγωγής PDF
     JButton exportPdfButton = new JButton("📄 Εξαγωγή PDF");
     exportPdfButton.setFont(new Font("Arial", Font.BOLD, 13));
-    exportPdfButton.setPreferredSize(new Dimension(180, 35));
+    exportPdfButton.setPreferredSize(new Dimension(160, 35));
     exportPdfButton.setBackground(SUCCESS_GREEN);
     exportPdfButton.setForeground(Color.BLACK);
     exportPdfButton.setFocusPainted(false);
@@ -359,12 +364,24 @@ public final class DataEditorPanel extends JPanel {
     
     exportPdfButton.addActionListener(e -> exportCurrentDataToPdf());
 
-    // Existing back button
-    JButton backButton = new JButton("← Προηγούμενο");
-    // ... existing backButton code ...
+    // Hover effect
+    backButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+            backButton.setBackground(ACCENT_BLUE.brighter());
+        }
 
-    panel.add(exportPdfButton);
+        @Override
+        public void mouseExited(java.awt.event.MouseEvent evt) {
+            backButton.setBackground(ACCENT_BLUE);
+        }
+    });
+
+    // ActionListener
+    backButton.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
+
     panel.add(backButton);
+    panel.add(exportPdfButton);
 
     return panel;
 }
@@ -754,7 +771,7 @@ public final class DataEditorPanel extends JPanel {
     JOptionPane.showMessageDialog(this, message, "Προειδοποίηση",
             JOptionPane.WARNING_MESSAGE);
   }
-  private void exportCurrentDataToPdf() {
+   private void exportCurrentDataToPdf() {
     try {
         // File chooser για επιλογή τοποθεσίας
         JFileChooser fileChooser = new JFileChooser();
