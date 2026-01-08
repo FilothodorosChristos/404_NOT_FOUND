@@ -4,13 +4,23 @@ import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.awt.*;
+import java.io.File;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+
+import java.util.ArrayList;
 import java.util.List;
 import service.CashFlowService;
 import service.ForeisService;
+import util.PdfExporter;
 import util.ValidationUtils;
+import util.PdfExporter;
+import java.util.ArrayList;
+import java.io.File;
+import javax.swing.JFileChooser;
+
 
 /**
  * Panel για εμφάνιση και επεξεργασία δεδομένων από τη βάση.
@@ -23,6 +33,7 @@ public final class DataEditorPanel extends JPanel {
   private static final Font TITLE_FONT = new Font("Tahoma", Font.BOLD, 18);
   private static final Font TABLE_FONT = new Font("Arial", Font.PLAIN, 12);
   private static final Font HEADER_FONT = new Font("Arial", Font.BOLD, 12);
+  private static final Color SUCCESS_GREEN = new Color(16, 185, 129);
 
   private DefaultTableModel incomeTableModel;
   private DefaultTableModel expenseTableModel;
@@ -320,37 +331,39 @@ public final class DataEditorPanel extends JPanel {
   /**
    * Δημιουργία button panel με λειτουργίες.
    */
-  private JPanel createButtonPanel() {
+ private JPanel createButtonPanel() {
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
     panel.setBackground(DARK_BG);
     panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY));
 
-    // Δημιουργία backButton ακριβώς όπως το historyButton
-    JButton backButton = new JButton("← Προηγούμενο");
-    backButton.setFont(new Font("Arial", Font.BOLD, 13));
-    backButton.setPreferredSize(new Dimension(160, 35));
-    backButton.setBackground(ACCENT_BLUE); 
-    backButton.setForeground(Color.BLACK); // Updated to Black
-    backButton.setFocusPainted(false);
-    backButton.setBorder(BorderFactory.createCompoundBorder());
-    backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-    // Hover effect
-    backButton.addMouseListener(new java.awt.event.MouseAdapter() {
+    // Κουμπί Εξαγωγής PDF
+    JButton exportPdfButton = new JButton("📄 Εξαγωγή PDF");
+    exportPdfButton.setFont(new Font("Arial", Font.BOLD, 13));
+    exportPdfButton.setPreferredSize(new Dimension(180, 35));
+    exportPdfButton.setBackground(SUCCESS_GREEN);
+    exportPdfButton.setForeground(Color.BLACK);
+    exportPdfButton.setFocusPainted(false);
+    exportPdfButton.setBorder(BorderFactory.createCompoundBorder());
+    exportPdfButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    
+    exportPdfButton.addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
         public void mouseEntered(java.awt.event.MouseEvent evt) {
-            backButton.setBackground(ACCENT_BLUE.brighter());
+            exportPdfButton.setBackground(SUCCESS_GREEN.brighter());
         }
-
         @Override
         public void mouseExited(java.awt.event.MouseEvent evt) {
-            backButton.setBackground(ACCENT_BLUE);
+            exportPdfButton.setBackground(SUCCESS_GREEN);
         }
     });
+    
+    exportPdfButton.addActionListener(e -> exportCurrentDataToPdf());
 
-    // ActionListener
-    backButton.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
+    // Existing back button
+    JButton backButton = new JButton("← Προηγούμενο");
+    // ... existing backButton code ...
 
+    panel.add(exportPdfButton);
     panel.add(backButton);
 
     return panel;
@@ -741,4 +754,61 @@ public final class DataEditorPanel extends JPanel {
     JOptionPane.showMessageDialog(this, message, "Προειδοποίηση",
             JOptionPane.WARNING_MESSAGE);
   }
+  private void exportCurrentDataToPdf() {
+    try {
+        // File chooser για επιλογή τοποθεσίας
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Αποθήκευση PDF");
+        fileChooser.setSelectedFile(new File("GoverLens_Editor_" + selectedYear + ".pdf"));
+        
+        int userSelection = fileChooser.showSaveDialog(this);
+        
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String path = fileToSave.getAbsolutePath();
+            
+            if (!path.toLowerCase().endsWith(".pdf")) {
+                path += ".pdf";
+            }
+
+            if ("cashflow".equalsIgnoreCase(dataType)) {
+                // Εξαγωγή Εσόδων
+                List<CashFlow> income = cashFlowService.getCashflows(selectedYear, "Έσοδο");
+                PdfExporter.exportCashFlowToPdf(income, selectedYear, "Έσοδα", 
+                    path.replace(".pdf", "_Esoda.pdf"));
+                
+                // Εξαγωγή Εξόδων
+                List<CashFlow> expense = cashFlowService.getCashflows(selectedYear, "Έξοδο");
+                PdfExporter.exportCashFlowToPdf(expense, selectedYear, "Έξοδα", 
+                    path.replace(".pdf", "_Exoda.pdf"));
+                
+                JOptionPane.showMessageDialog(this,
+                    "Δημιουργήθηκαν 2 PDF αρχεία:\n" + 
+                    path.replace(".pdf", "_Esoda.pdf") + "\n" +
+                    path.replace(".pdf", "_Exoda.pdf"),
+                    "Επιτυχία",
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                // Εξαγωγή Φορέων
+                List<Foreis> allForeis = new ArrayList<>();
+                allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Κεντρική Διοίκηση"));
+                allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Υπουργείο"));
+                allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Αποκεντρωμένη Διοίκηση"));
+                
+                PdfExporter.exportForeisToPdf(allForeis, selectedYear, "Όλοι οι Φορείς", path);
+                
+                JOptionPane.showMessageDialog(this,
+                    "Το PDF δημιουργήθηκε επιτυχώς!\n" + path,
+                    "Επιτυχία",
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this,
+            "Σφάλμα κατά τη δημιουργία του PDF:\n" + ex.getMessage(),
+            "Σφάλμα",
+            JOptionPane.ERROR_MESSAGE);
+        ex.printStackTrace();
+    }
+}
 }
