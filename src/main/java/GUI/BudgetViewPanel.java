@@ -15,6 +15,9 @@ import service.ForeisService;
 import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import util.PdfExporter;
+import java.util.ArrayList;
+import java.io.File;
 
 /**
  * BudgetViewPanel displays budget data in a single table.
@@ -35,7 +38,8 @@ public class BudgetViewPanel extends JPanel {
   private static final Color BORDER_COLOR = new Color(51, 65, 85);
   private static final Color TABLE_HEADER_BG = new Color(30, 41, 59);
   private static final Color TABLE_ROW_ALT = new Color(20, 30, 48);
-
+  private static final Color SUCCESS_GREEN = new Color(16, 185, 129);
+  
   private JTable dataTable;
   private DefaultTableModel tableModel;
   private JPanel tableSection;
@@ -145,6 +149,20 @@ public class BudgetViewPanel extends JPanel {
       String selectedType = (String) typeCombo.getSelectedItem();
       loadDataBySelection(selectedType);
     });
+    // Στο createFilterPanel() μετά το loadButton:
+
+JButton exportPdfButton = new JButton("ΕΞΑΓΩΓΗ PDF");
+exportPdfButton.setUI(new BasicButtonUI());
+exportPdfButton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+exportPdfButton.setPreferredSize(new Dimension(180, 38));
+exportPdfButton.setBackground(SUCCESS_GREEN);
+exportPdfButton.setForeground(Color.WHITE);
+exportPdfButton.setOpaque(true);
+exportPdfButton.setBorder(BorderFactory.createEmptyBorder());
+exportPdfButton.setFocusPainted(false);
+exportPdfButton.addActionListener(e -> exportCurrentDataToPdf());
+
+filterPanel.add(exportPdfButton);
 
     filterPanel.add(typeLabel);
     filterPanel.add(typeCombo);
@@ -403,4 +421,54 @@ public class BudgetViewPanel extends JPanel {
       tableModel.addRow(row);
     }
   }
+  private void exportCurrentDataToPdf() {
+    try {
+        String selectedType = (String) typeCombo.getSelectedItem();
+        String yearStr = mainFrame.getSelectedYear();
+        int year = Integer.parseInt(yearStr);
+
+        // File chooser για επιλογή τοποθεσίας
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Αποθήκευση PDF");
+        fileChooser.setSelectedFile(new File("GoverLens_" + selectedType + "_" + year + ".pdf"));
+        
+        int userSelection = fileChooser.showSaveDialog(this);
+        
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String path = fileToSave.getAbsolutePath();
+            
+            // Εξασφάλιση .pdf extension
+            if (!path.toLowerCase().endsWith(".pdf")) {
+                path += ".pdf";
+            }
+
+            if ("Φορείς".equals(selectedType)) {
+                List<Foreis> allForeis = new ArrayList<>();
+                allForeis.addAll(foreisService.getForeisByYearAndType(year, "Κεντρική Διοίκηση"));
+                allForeis.addAll(foreisService.getForeisByYearAndType(year, "Υπουργείο"));
+                allForeis.addAll(foreisService.getForeisByYearAndType(year, "Αποκεντρωμένη Διοίκηση"));
+                
+                PdfExporter.exportForeisToPdf(allForeis, year, "Όλοι οι Φορείς", path);
+            } else if ("Έσοδα".equals(selectedType)) {
+                List<CashFlow> cashFlows = cashFlowService.getCashflows(year, "Έσοδο");
+                PdfExporter.exportCashFlowToPdf(cashFlows, year, "Έσοδα", path);
+            } else if ("Έξοδα".equals(selectedType)) {
+                List<CashFlow> cashFlows = cashFlowService.getCashflows(year, "Έξοδο");
+                PdfExporter.exportCashFlowToPdf(cashFlows, year, "Έξοδα", path);
+            }
+
+            JOptionPane.showMessageDialog(this,
+                "Το PDF δημιουργήθηκε επιτυχώς!\n" + path,
+                "Επιτυχία",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this,
+            "Σφάλμα κατά τη δημιουργία του PDF:\n" + ex.getMessage(),
+            "Σφάλμα",
+            JOptionPane.ERROR_MESSAGE);
+        ex.printStackTrace();
+    }
+}
 }
