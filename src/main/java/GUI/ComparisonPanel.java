@@ -3,20 +3,20 @@ package GUI;
 import dto.CashFlowCompareDto;
 import dto.ForeasCompareDto;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.plaf.basic.BasicComboBoxUI;
-import javax.swing.plaf.basic.BasicButtonUI;
-import javax.swing.plaf.basic.BasicComboPopup;
-import javax.swing.plaf.basic.ComboPopup;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Year;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.plaf.basic.ComboPopup;
+import javax.swing.table.*;
 
 /** 
- class for  comparison between two years.
+ *class for  comparison between two years.
  */
 public class ComparisonPanel extends JPanel {
 
@@ -58,8 +58,9 @@ public class ComparisonPanel extends JPanel {
       this.hasData = hasData;
     }
   }
+
   /** 
-   kataskeyasths klashs.
+   *kataskeyasths klashs.
    */
 
   @SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -73,7 +74,7 @@ public class ComparisonPanel extends JPanel {
   }
 
   /** 
-   set selected year method.
+   *set selected year method.
    */
   public void setSelectedYear(int year) {
     this.selectedYear = year;
@@ -171,7 +172,7 @@ public class ComparisonPanel extends JPanel {
     bottom.setBorder(BorderFactory.createEmptyBorder(10, 25, 15, 25));
     bottom.add(backBtn);
     add(bottom, BorderLayout.SOUTH);
-    }
+  }
 
   private void performComparison() {
     int y1 = (year1Combo.getSelectedItem() != null) ? (int) year1Combo.getSelectedItem() : 0;
@@ -204,7 +205,8 @@ public class ComparisonPanel extends JPanel {
             if ("Φορείς".equals(type)) {
             List<ForeasCompareDto> data = comparisonService.compareForeis(y1, y2);
             if (data != null && !data.isEmpty()) {
-            for (ForeasCompareDto d : data) { s1 += d.getTotalYear1(); s2 += d.getTotalYear2(); }
+            for (ForeasCompareDto d : data) {
+                s1 += d.getTotalYear1(); s2 += d.getTotalYear2(); }
                 model = createForeisModel(data, y1, y2);
                 dataFound = true;
             }
@@ -212,7 +214,8 @@ public class ComparisonPanel extends JPanel {
             String dbType = "Έσοδα".equals(type) ? "Έσοδο" : "Έξοδο";
             List<CashFlowCompareDto> data = comparisonService.compareCashFlows(y1, y2, dbType);
             if (data != null && !data.isEmpty()) {
-              for (CashFlowCompareDto d : data) { s1 += d.getAmountYear1(); s2 += d.getAmountYear2();}
+              for (CashFlowCompareDto d : data) {
+                  s1 += d.getAmountYear1(); s2 += d.getAmountYear2();}
                 model = createCashFlowModel(data, y1, y2, type);
                 dataFound = true;
               }
@@ -271,14 +274,16 @@ public class ComparisonPanel extends JPanel {
     JLabel v = new JLabel(val); v.setFont(new Font("Segoe UI",
         Font.BOLD, 18)); 
     v.setForeground(valueColor);
-    card.add(t); card.add(v);
+    card.add(t); 
+    card.add(v);
     return card;
   }
 
   private JTable setupTable(DefaultTableModel model) {
     JTable table = new JTable(model) {
         @Override public boolean isCellEditable(int r, int c) {
-            return false; }
+            return false; 
+          }
         };
     table.setRowHeight(45);
     table.setBackground(DARKER_BG);
@@ -310,9 +315,12 @@ public class ComparisonPanel extends JPanel {
             setHorizontalAlignment(c == 0 ? LEFT : RIGHT);
             if (c >= 3 && v != null) {
             String str = v.toString();
-              if (str.startsWith("+")) setForeground(SUCCESS_GREEN);
-            else if (str.startsWith("-")) setForeground(DANGER_RED);
-              else setForeground(TEXT_PRIMARY);
+              if (str.startsWith("+")) {  
+                setForeground(SUCCESS_GREEN);
+            } else if (str.startsWith("-")) { 
+              setForeground(DANGER_RED);
+            } else { 
+              setForeground(TEXT_PRIMARY);}
             } else {
             setForeground(TEXT_PRIMARY);
             }
