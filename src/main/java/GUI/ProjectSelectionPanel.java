@@ -22,11 +22,11 @@ public class ProjectSelectionPanel extends JPanel {
   private JButton newButton;
   private JButton backButton;
     
-    /**
-     * Constructs an ActionSelectionPanel with modern design.
-     *
-     * @param mainFrame the main application frame
-     */
+  /**
+   * Constructs an ActionSelectionPanel with modern design.
+   *
+   * @param mainFrame the main application frame
+   */
 
   @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
 
@@ -45,9 +45,9 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
       @Override
     public void componentResized(ComponentEvent e) {
         repositionComponents();
-    }
-     });
-    }
+      }
+    });
+  }
     
   /**
    * Creates all UI components.
@@ -100,7 +100,7 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
         
     add(continueButton);
     add(newButton);
-    }
+  }
     
   /**
    * Creates a single action button with unified styling.
@@ -170,7 +170,7 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
             btn.putClientProperty("hover", true);
             btn.setBounds(btn.getX(), btn.getY() - 5, btn.getWidth(), btn.getHeight());
             btn.repaint();
-            }
+          }
             
         @Override
             public void mouseExited(MouseEvent e) {
@@ -225,7 +225,7 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
     backButton.addActionListener(e -> mainFrame.showPanel(MainFrame.WELCOME));
         
     add(backButton);
-    }
+  }
     
   /**
    * Handles action button clicks.
@@ -348,7 +348,7 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
     g2.setStroke(new BasicStroke(1));
         
     int gridSize = 50;
-    int offset = (int)(rotationAngle % gridSize);
+    int offset = (int) (rotationAngle % gridSize);
         
     for (int x = -offset; x < width; x += gridSize) {
       g2.drawLine(x, 0, x, height);
@@ -363,13 +363,13 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
     float parallax2 = (mousePosition.y - height / 2f) * 0.01f;
         
     // Orb 1 (top-left)
-     RadialGradientPaint gradient1 = new RadialGradientPaint(
+    RadialGradientPaint gradient1 = new RadialGradientPaint(
             -200 + parallax1, -200 + parallax2, 250,
             new float[]{0f, 1f},
             new Color[]{new Color(99, 102, 241, 76), new Color(99, 102, 241, 0)}
         );
     g2.setPaint(gradient1);
-    g2.fillOval((int)(-200 + parallax1), (int)(-200 + parallax2), 500, 500);
+    g2.fillOval((int) (-200 + parallax1), (int) (-200 + parallax2), 500, 500);
         
     // Orb 2 (bottom-right)
     RadialGradientPaint gradient2 = new RadialGradientPaint(
@@ -378,8 +378,8 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
             new Color[]{new Color(139, 92, 246, 76), new Color(139, 92, 246, 0)}
         );
     g2.setPaint(gradient2);
-    g2.fillOval((int)(width - 350 + parallax1 * 1.5f),
-            (int)(height - 350 + parallax2 * 1.5f), 400, 400);
+    g2.fillOval((int) (width - 350 + parallax1 * 1.5f),
+            (int) (height - 350 + parallax2 * 1.5f), 400, 400);
   }
     
   private void drawHeader(Graphics2D g2, int width) {
@@ -436,5 +436,5 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
     String footer = "© 2025 GoverLens. Όλα τα δικαιώματα διατηρούνται.";
     FontMetrics fm = g2.getFontMetrics();
     g2.drawString(footer, width / 2 - fm.stringWidth(footer) / 2, height - 15);
-    }
+  }
 }

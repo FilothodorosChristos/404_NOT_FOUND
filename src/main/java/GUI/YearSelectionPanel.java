@@ -1,11 +1,10 @@
 package GUI;
 
-import javax.swing.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import javax.swing.*;
 
 /**
  * Modern YearSelectionPanel with unified aesthetic matching WelcomePanel.
@@ -13,13 +12,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class YearSelectionPanel extends JPanel {
 
-    private final MainFrame mainFrame;
-    private Timer animationTimer;
-    private float rotationAngle = 0;
-    private int fadeInProgress = 0;
-    private Point mousePosition = new Point(0, 0);
-    private JButton[] yearButtons;
-    private JButton backButton;
+  private final MainFrame mainFrame;
+  private Timer animationTimer;
+  private float rotationAngle = 0;
+  private int fadeInProgress = 0;
+  private Point mousePosition = new Point(0, 0);
+  private JButton[] yearButtons;
+  private JButton backButton;
 
   /**
    * Constructs a YearSelectionPanel with modern design.

@@ -3,13 +3,11 @@ package GUI;
 import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.*;
 import java.io.File;
-
 import javax.swing.*;
+import java.awt.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-
 import java.util.ArrayList;
 import java.util.List;
 import service.CashFlowService;
@@ -356,6 +354,7 @@ public final class DataEditorPanel extends JPanel {
         public void mouseEntered(java.awt.event.MouseEvent evt) {
             exportPdfButton.setBackground(SUCCESS_GREEN.brighter());
         }
+
         @Override
         public void mouseExited(java.awt.event.MouseEvent evt) {
             exportPdfButton.setBackground(SUCCESS_GREEN);
@@ -384,7 +383,7 @@ public final class DataEditorPanel extends JPanel {
     panel.add(exportPdfButton);
 
     return panel;
-}
+  }
 
   /**
    * Δημιουργία mini button για τους πίνακες.
@@ -459,8 +458,6 @@ public final class DataEditorPanel extends JPanel {
       tableModel.addRow(row);
     }
   }
-
-
 
   /**
    * Αυτόματη αποθήκευση γραμμής κατά την επεξεργασία.
@@ -752,8 +749,7 @@ public final class DataEditorPanel extends JPanel {
             "Κατάσταση Προϋπολογισμού",
             JOptionPane.INFORMATION_MESSAGE
     );
-}
-
+  }
 
   /**
    * Helper methods για εμφάνιση μηνυμάτων.
@@ -771,61 +767,63 @@ public final class DataEditorPanel extends JPanel {
     JOptionPane.showMessageDialog(this, message, "Προειδοποίηση",
             JOptionPane.WARNING_MESSAGE);
   }
-   private void exportCurrentDataToPdf() {
-    try {
-        // File chooser για επιλογή τοποθεσίας
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Αποθήκευση PDF");
-        fileChooser.setSelectedFile(new File("GoverLens_Editor_" + selectedYear + ".pdf"));
-        
-        int userSelection = fileChooser.showSaveDialog(this);
-        
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
-            String path = fileToSave.getAbsolutePath();
-            
-            if (!path.toLowerCase().endsWith(".pdf")) {
-                path += ".pdf";
-            }
 
-            if ("cashflow".equalsIgnoreCase(dataType)) {
-                // Εξαγωγή Εσόδων
-                List<CashFlow> income = cashFlowService.getCashflows(selectedYear, "Έσοδο");
-                PdfExporter.exportCashFlowToPdf(income, selectedYear, "Έσοδα", 
+  private void exportCurrentDataToPdf() {
+    try {
+      // File chooser για επιλογή τοποθεσίας
+      JFileChooser fileChooser = new JFileChooser();
+      fileChooser.setDialogTitle("Αποθήκευση PDF");
+      fileChooser.setSelectedFile(new File("GoverLens_Editor_" + selectedYear + ".pdf"));
+        
+      int userSelection = fileChooser.showSaveDialog(this);
+        
+      if (userSelection == JFileChooser.APPROVE_OPTION) {
+        File fileToSave = fileChooser.getSelectedFile();
+        String path = fileToSave.getAbsolutePath();
+            
+        if (!path.toLowerCase().endsWith(".pdf")) {
+          path += ".pdf";
+        }
+
+        if ("cashflow".equalsIgnoreCase(dataType)) {
+          // Εξαγωγή Εσόδων
+          List<CashFlow> income = cashFlowService.getCashflows(selectedYear, "Έσοδο");
+          PdfExporter.exportCashFlowToPdf(income, selectedYear, "Έσοδα", 
                     path.replace(".pdf", "_Esoda.pdf"));
                 
-                // Εξαγωγή Εξόδων
-                List<CashFlow> expense = cashFlowService.getCashflows(selectedYear, "Έξοδο");
-                PdfExporter.exportCashFlowToPdf(expense, selectedYear, "Έξοδα", 
+          // Εξαγωγή Εξόδων
+          List<CashFlow> expense = cashFlowService.getCashflows(selectedYear, "Έξοδο");
+          PdfExporter.exportCashFlowToPdf(expense, selectedYear, "Έξοδα", 
                     path.replace(".pdf", "_Exoda.pdf"));
                 
-                JOptionPane.showMessageDialog(this,
+          JOptionPane.showMessageDialog(this,
                     "Δημιουργήθηκαν 2 PDF αρχεία:\n" + 
                     path.replace(".pdf", "_Esoda.pdf") + "\n" +
                     path.replace(".pdf", "_Exoda.pdf"),
                     "Επιτυχία",
                     JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                // Εξαγωγή Φορέων
-                List<Foreis> allForeis = new ArrayList<>();
-                allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Κεντρική Διοίκηση"));
-                allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Υπουργείο"));
-                allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Αποκεντρωμένη Διοίκηση"));
+        } else {
+          // Εξαγωγή Φορέων
+          List<Foreis> allForeis = new ArrayList<>();
+          allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Κεντρική Διοίκηση"));
+          allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Υπουργείο"));
+          allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear,
+              "Αποκεντρωμένη Διοίκηση"));
                 
-                PdfExporter.exportForeisToPdf(allForeis, selectedYear, "Όλοι οι Φορείς", path);
+          PdfExporter.exportForeisToPdf(allForeis, selectedYear, "Όλοι οι Φορείς", path);
                 
-                JOptionPane.showMessageDialog(this,
+          JOptionPane.showMessageDialog(this,
                     "Το PDF δημιουργήθηκε επιτυχώς!\n" + path,
                     "Επιτυχία",
                     JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
+          }
+      }
     } catch (Exception ex) {
-        JOptionPane.showMessageDialog(this,
+      JOptionPane.showMessageDialog(this,
             "Σφάλμα κατά τη δημιουργία του PDF:\n" + ex.getMessage(),
             "Σφάλμα",
             JOptionPane.ERROR_MESSAGE);
-        ex.printStackTrace();
+      ex.printStackTrace();
     }
 }
 }

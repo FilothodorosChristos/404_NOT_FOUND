@@ -1,12 +1,11 @@
 package GUI;
 
-import service.ScenarioCashflowService;
-import service.ScenarioForeisService;
-import service.CashFlowService;
-import service.ForeisService;
-import dao.Foreis;
 import dao.CashFlow;
-
+import dao.Foreis;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicComboBoxUI;
@@ -15,10 +14,10 @@ import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.util.List;
-import java.util.ArrayList;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import service.CashFlowService;
+import service.ForeisService;
+import service.ScenarioCashflowService;
+import service.ScenarioForeisService;
 
 /**
  * Panel για την εφαρμογή μαζικών αλλαγών στον προϋπολογισμό.
@@ -58,7 +57,8 @@ public class MassiveChangesPanel extends JPanel {
      *
      * @param mainFrame η κύρια φόρμα της εφαρμογής
      */
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "MainFrame reference needed for navigation")
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+        justification = "MainFrame reference needed for navigation")
     public MassiveChangesPanel(MainFrame mainFrame) {
     this.mainFrame = mainFrame;
     this.cashflowService = new CashFlowService();
@@ -70,7 +70,7 @@ public class MassiveChangesPanel extends JPanel {
     setBackground(DARK_BG);
 
     createUI();
-    }
+  }
 
   /**
    * Δημιουργία του UI.
@@ -93,7 +93,7 @@ public class MassiveChangesPanel extends JPanel {
     mainContent.add(bottomPanel, BorderLayout.SOUTH);
 
     add(mainContent);
-    }
+  }
 
   /**
    * Δημιουργία header panel.
@@ -275,7 +275,7 @@ public class MassiveChangesPanel extends JPanel {
 
     previewTable = new JTable(tableModel);
     styleTable(previewTable);
-    }
+  }
 
   /**
    * Styling του πίνακα.
@@ -303,7 +303,7 @@ public class MassiveChangesPanel extends JPanel {
             label.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 1, BORDER_COLOR));
             label.setOpaque(true);
             return label;
-            }
+          }
         });
 
     table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
@@ -320,10 +320,10 @@ public class MassiveChangesPanel extends JPanel {
             setHorizontalAlignment(LEFT);
             } else {
             setHorizontalAlignment(RIGHT);
-                }
+            }
                 
             return comp;
-            }
+          }
         });
   }
 
@@ -588,7 +588,7 @@ public class MassiveChangesPanel extends JPanel {
 
     if (confirm != JOptionPane.YES_OPTION) {
       return;
-        }
+    }
 
     int totalUpdates = 0;
 

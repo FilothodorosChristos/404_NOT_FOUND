@@ -1,10 +1,10 @@
 package GUI;
 
-import javax.swing.*; 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import javax.swing.*; 
 
 /**
  * Main GUI application class for GoverLens.
