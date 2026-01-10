@@ -3,13 +3,29 @@ package GUI;
 import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.io.File;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import service.CashFlowService;
 import service.ForeisService;
 import util.PdfExporter;
@@ -767,7 +783,8 @@ public final class DataEditorPanel extends JPanel {
 
     int confirm = JOptionPane.showConfirmDialog(
             this,
-            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n" +
+            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n"
+             +
                     "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί!", rowInfo),
             "Επιβεβαίωση Διαγραφής",
             JOptionPane.YES_NO_OPTION,

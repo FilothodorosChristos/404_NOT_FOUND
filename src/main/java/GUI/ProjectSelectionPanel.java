@@ -1,11 +1,31 @@
 package GUI;
 
-import javax.swing.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.RadialGradientPaint;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.Ellipse2D;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 import service.SimulationService;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
 
 /**
  * Modern ActionSelectionPanel with unified aesthetic matching WelcomePanel.
@@ -22,11 +42,11 @@ public class ProjectSelectionPanel extends JPanel {
   private JButton newButton;
   private JButton backButton;
     
-    /**
-     * Constructs an ActionSelectionPanel with modern design.
-     *
-     * @param mainFrame the main application frame
-     */
+  /**
+   * Constructs an ActionSelectionPanel with modern design.
+   *
+   * @param mainFrame the main application frame
+   */
 
   @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
 
@@ -45,9 +65,9 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
       @Override
     public void componentResized(ComponentEvent e) {
         repositionComponents();
-    }
-     });
-    }
+      }
+    });
+  }
     
   /**
    * Creates all UI components.
@@ -100,7 +120,7 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
         
     add(continueButton);
     add(newButton);
-    }
+  }
     
   /**
    * Creates a single action button with unified styling.
@@ -170,7 +190,7 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
             btn.putClientProperty("hover", true);
             btn.setBounds(btn.getX(), btn.getY() - 5, btn.getWidth(), btn.getHeight());
             btn.repaint();
-            }
+          }
             
         @Override
             public void mouseExited(MouseEvent e) {
@@ -225,7 +245,7 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
     backButton.addActionListener(e -> mainFrame.showPanel(MainFrame.WELCOME));
         
     add(backButton);
-    }
+  }
     
   /**
    * Handles action button clicks.
@@ -235,7 +255,8 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
       
       int response = JOptionPane.showConfirmDialog(
             this,
-            "Θέλετε να ξεκινήσετε νέα προσομοίωση?\n" +
+            "Θέλετε να ξεκινήσετε νέα προσομοίωση?\n" 
+            +
             "ΠΡΟΣΟΧΗ: Όλες οι τρέχουσες αλλαγές θα χαθούν!",
             "Επιβεβαίωση Νέας Προσομοίωσης",
             JOptionPane.YES_NO_OPTION,
@@ -250,7 +271,8 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
             
           JOptionPane.showMessageDialog(
                     this,
-                    "Η νέα προσομοίωση ξεκίνησε επιτυχώς!\n" +
+                    "Η νέα προσομοίωση ξεκίνησε επιτυχώς!\n"
+                     +
                     "Τα δεδομένα επαναφέρθηκαν στην αρχική τους κατάσταση.",
                     "Επιτυχία",
                     JOptionPane.INFORMATION_MESSAGE
@@ -294,7 +316,9 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
   private void setupAnimations() {
     animationTimer = new Timer(30, e -> {
       rotationAngle += 0.5f;
-        if (rotationAngle >= 360) rotationAngle = 0;
+        if (rotationAngle >= 360) {
+          rotationAngle = 0;
+        } 
             
       if (fadeInProgress < 100) {
         fadeInProgress += 2;
@@ -348,7 +372,7 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
     g2.setStroke(new BasicStroke(1));
         
     int gridSize = 50;
-    int offset = (int)(rotationAngle % gridSize);
+    int offset = (int) (rotationAngle % gridSize);
         
     for (int x = -offset; x < width; x += gridSize) {
       g2.drawLine(x, 0, x, height);
@@ -363,13 +387,13 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
     float parallax2 = (mousePosition.y - height / 2f) * 0.01f;
         
     // Orb 1 (top-left)
-     RadialGradientPaint gradient1 = new RadialGradientPaint(
+    RadialGradientPaint gradient1 = new RadialGradientPaint(
             -200 + parallax1, -200 + parallax2, 250,
             new float[]{0f, 1f},
             new Color[]{new Color(99, 102, 241, 76), new Color(99, 102, 241, 0)}
         );
     g2.setPaint(gradient1);
-    g2.fillOval((int)(-200 + parallax1), (int)(-200 + parallax2), 500, 500);
+    g2.fillOval((int) (-200 + parallax1), (int) (-200 + parallax2), 500, 500);
         
     // Orb 2 (bottom-right)
     RadialGradientPaint gradient2 = new RadialGradientPaint(
@@ -378,8 +402,8 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
             new Color[]{new Color(139, 92, 246, 76), new Color(139, 92, 246, 0)}
         );
     g2.setPaint(gradient2);
-    g2.fillOval((int)(width - 350 + parallax1 * 1.5f),
-            (int)(height - 350 + parallax2 * 1.5f), 400, 400);
+    g2.fillOval((int) (width - 350 + parallax1 * 1.5f),
+            (int) (height - 350 + parallax2 * 1.5f), 400, 400);
   }
     
   private void drawHeader(Graphics2D g2, int width) {
@@ -436,5 +460,5 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
     String footer = "© 2025 GoverLens. Όλα τα δικαιώματα διατηρούνται.";
     FontMetrics fm = g2.getFontMetrics();
     g2.drawString(footer, width / 2 - fm.stringWidth(footer) / 2, height - 15);
-    }
+  }
 }

@@ -3,20 +3,40 @@ package GUI;
 import dto.CashFlowCompareDto;
 import dto.ForeasCompareDto;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.plaf.basic.BasicComboBoxUI;
-import javax.swing.plaf.basic.BasicButtonUI;
-import javax.swing.plaf.basic.BasicComboPopup;
-import javax.swing.plaf.basic.ComboPopup;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.text.DecimalFormat;
 import java.time.Year;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
+import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.plaf.basic.ComboPopup;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 /** 
- class for  comparison between two years.
+ * Comparison between two years 
+ * based on their economic status and the currentn form of the database.
  */
 public class ComparisonPanel extends JPanel {
 
@@ -58,10 +78,13 @@ public class ComparisonPanel extends JPanel {
       this.hasData = hasData;
     }
   }
-  /** 
-   kataskeyasths klashs.
-   */
 
+  /**
+   * Constructs a new ComparisonPanel.
+   * Initializes the comparison service and sets up the user interface components.
+   *
+   * @param mainFrame the main application frame used for navigation and shared data
+   */
   @SuppressFBWarnings("EI_EXPOSE_REP2")
   public ComparisonPanel(MainFrame mainFrame) {
     this.mainFrame = mainFrame;
@@ -72,8 +95,11 @@ public class ComparisonPanel extends JPanel {
     initComponents();
   }
 
-  /** 
-   set selected year method.
+  /**
+   * Sets the primary selected year for comparison.
+   * Updates the corresponding combo box selection and triggers a new data comparison.
+   *
+   * @param year the year to be set for the comparison
    */
   public void setSelectedYear(int year) {
     this.selectedYear = year;
@@ -171,7 +197,7 @@ public class ComparisonPanel extends JPanel {
     bottom.setBorder(BorderFactory.createEmptyBorder(10, 25, 15, 25));
     bottom.add(backBtn);
     add(bottom, BorderLayout.SOUTH);
-    }
+  }
 
   private void performComparison() {
     int y1 = (year1Combo.getSelectedItem() != null) ? (int) year1Combo.getSelectedItem() : 0;
@@ -185,11 +211,11 @@ public class ComparisonPanel extends JPanel {
       return;
     }
         
-    String type = (String) dataTypeCombo.getSelectedItem();
     resultsPanel.removeAll();
     JLabel loadingLabel = new JLabel("Ανάκτηση δεδομένων...", SwingConstants.CENTER);
     loadingLabel.setForeground(TEXT_PRIMARY);
     resultsPanel.add(loadingLabel, BorderLayout.CENTER);
+    String type = (String) dataTypeCombo.getSelectedItem();
     resultsPanel.revalidate();
     resultsPanel.repaint();
 
@@ -204,7 +230,9 @@ public class ComparisonPanel extends JPanel {
             if ("Φορείς".equals(type)) {
             List<ForeasCompareDto> data = comparisonService.compareForeis(y1, y2);
             if (data != null && !data.isEmpty()) {
-            for (ForeasCompareDto d : data) { s1 += d.getTotalYear1(); s2 += d.getTotalYear2(); }
+            for (ForeasCompareDto d : data) {
+                s1 += d.getTotalYear1(); s2 += d.getTotalYear2();
+                }
                 model = createForeisModel(data, y1, y2);
                 dataFound = true;
             }
@@ -212,7 +240,10 @@ public class ComparisonPanel extends JPanel {
             String dbType = "Έσοδα".equals(type) ? "Έσοδο" : "Έξοδο";
             List<CashFlowCompareDto> data = comparisonService.compareCashFlows(y1, y2, dbType);
             if (data != null && !data.isEmpty()) {
-              for (CashFlowCompareDto d : data) { s1 += d.getAmountYear1(); s2 += d.getAmountYear2();}
+              for (CashFlowCompareDto d : data) {
+                  s1 += d.getAmountYear1();
+                  s2 += d.getAmountYear2(); 
+                }
                 model = createCashFlowModel(data, y1, y2, type);
                 dataFound = true;
               }
@@ -251,7 +282,8 @@ public class ComparisonPanel extends JPanel {
   private void updateSummaryCards(double t1, double t2, double diff, int y1, int y2) {
     cardsPanel.removeAll();
         
-    String winnerTitle = (diff > 0) ? "Υψηλότερο Έτος: " + y1 + " ↑" : (diff < 0) ? "Υψηλότερο Έτος: " + y2 + " ↓" : "Ισοπαλία";
+    String winnerTitle = (diff > 0) 
+        ? "Υψηλότερο Έτος: " + y1 + " ↑" : (diff < 0) ? "Υψηλότερο Έτος: " + y2 + " ↓" : "Ισοπαλία";
     Color winnerColor = (diff > 0) ? SUCCESS_GREEN : (diff < 0) ? DANGER_RED : TEXT_SECONDARY;
         
     cardsPanel.add(createCard("Έτος Βάσης (" + y1 + ")", decimalFormat.format(t1), TEXT_PRIMARY));
@@ -263,7 +295,8 @@ public class ComparisonPanel extends JPanel {
   }
 
   private JPanel createCard(String title, String val, Color valueColor) {
-    JPanel card = new JPanel(new GridLayout(2, 1));card.setBackground(CARD_BG);
+    JPanel card = new JPanel(new GridLayout(2, 1)); 
+    card.setBackground(CARD_BG);
     card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(BORDER_COLOR, 1),
             BorderFactory.createEmptyBorder(15, 18, 15, 18)));
@@ -271,14 +304,16 @@ public class ComparisonPanel extends JPanel {
     JLabel v = new JLabel(val); v.setFont(new Font("Segoe UI",
         Font.BOLD, 18)); 
     v.setForeground(valueColor);
-    card.add(t); card.add(v);
+    card.add(t); 
+    card.add(v);
     return card;
   }
 
   private JTable setupTable(DefaultTableModel model) {
     JTable table = new JTable(model) {
         @Override public boolean isCellEditable(int r, int c) {
-            return false; }
+            return false; 
+          }
         };
     table.setRowHeight(45);
     table.setBackground(DARKER_BG);
@@ -310,9 +345,13 @@ public class ComparisonPanel extends JPanel {
             setHorizontalAlignment(c == 0 ? LEFT : RIGHT);
             if (c >= 3 && v != null) {
             String str = v.toString();
-              if (str.startsWith("+")) setForeground(SUCCESS_GREEN);
-            else if (str.startsWith("-")) setForeground(DANGER_RED);
-              else setForeground(TEXT_PRIMARY);
+              if (str.startsWith("+")) {  
+                setForeground(SUCCESS_GREEN);
+            } else if (str.startsWith("-")) { 
+              setForeground(DANGER_RED);
+            } else { 
+              setForeground(TEXT_PRIMARY); 
+            }
             } else {
             setForeground(TEXT_PRIMARY);
             }
