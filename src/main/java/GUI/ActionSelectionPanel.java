@@ -1,11 +1,29 @@
 package GUI;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.RadialGradientPaint;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.Ellipse2D;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  * Modern ActionSelectionPanel with unified aesthetic matching WelcomePanel.
@@ -80,7 +98,7 @@ public class ActionSelectionPanel extends JPanel {
         col = i;  // 0,1,2
       } else {
         col = i - 3; // 0,1 για δεύτερη σειρά
-        }
+      }
 
       int buttonsInRow = (row == 0) ? firstRowButtons : secondRowButtons;
       int totalWidth = buttonsInRow * buttonWidth + (buttonsInRow - 1) * gapX;
@@ -271,8 +289,9 @@ public class ActionSelectionPanel extends JPanel {
   private void setupAnimations() {
     animationTimer = new Timer(30, e -> {
       rotationAngle += 0.5f;
-      if (rotationAngle >= 360) rotationAngle = 0;
-            
+      if (rotationAngle >= 360) {
+        rotationAngle = 0;
+      }     
       if (fadeInProgress < 100) {
         fadeInProgress += 2;
       }

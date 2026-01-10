@@ -118,6 +118,7 @@
 │   │   │   │
 │   │   │   └── util/
 │   │   │       ├── DbExistsChecker.java
+│   │   │       ├── PdfExporter.java
 │   │   │       └── ValidationUtils.java
 │   │   │
 │   │   └── resources/
@@ -156,6 +157,7 @@
 │           │
 │           ├── util/
 │           │   ├── DbExistsCheckerTest.java
+│           │   ├── PdfExporterTest.java
 │           │   └── ValidationUtilsTest.java
 │           │
 │           └── resources/data/

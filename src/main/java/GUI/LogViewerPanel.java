@@ -3,9 +3,24 @@ package GUI;
 import dao.Log;
 import dao.LogDao;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.AbstractBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -323,8 +338,12 @@ public final class LogViewerPanel extends JPanel {
    * @return the truncated text
    */
   private String truncateText(String text, int maxLength) {
-    if (text == null) return "N/A";
-    if (text.length() <= maxLength)  return text;
+    if (text == null) {
+      return "N/A"; 
+    }
+    if (text.length() <= maxLength) {
+      return text;
+    }
     return text.substring(0, maxLength) + "...";
   }
     

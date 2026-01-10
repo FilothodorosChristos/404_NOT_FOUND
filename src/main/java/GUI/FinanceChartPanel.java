@@ -1,11 +1,28 @@
 package GUI;
 
-import java.awt.*;
-import java.util.List;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 
 /**
  * A JPanel component that visualizes financial data through bar charts.
@@ -41,9 +58,6 @@ public class FinanceChartPanel extends JPanel {
     
   /** Accent color for interactive elements.*/
   private static final Color ACCENT_COLOR = new Color(59, 130, 246);
-    
-  /** Hover color for buttons.*/
-  private static final Color ACCENT_HOVER = new Color(96, 165, 250);
 
   /**
    * Private constructor to enforce factory method pattern.
@@ -83,7 +97,7 @@ public class FinanceChartPanel extends JPanel {
             importer.getAgencies()
         );
         
-    panel.initializeUI();
+    panel.initializeUi();
         
     return panel;
   }
@@ -93,7 +107,7 @@ public class FinanceChartPanel extends JPanel {
    * with back button and title, and the tabbed pane containing revenue/expense
    * and agency visualizations.
    */
-  private void initializeUI() {
+  private void initializeUi() {
     // TOP PANEL: Professional header with back button
     JPanel topPanel = new JPanel(new BorderLayout());
     topPanel.setOpaque(true);
@@ -244,14 +258,16 @@ public class FinanceChartPanel extends JPanel {
    */
   private JPanel createRevenueExpensePanel() {
     List<DataItem> sortedRevenues = revenues.stream()
-                                               .sorted(Comparator.comparingDouble((DataItem d) -> d.amount).reversed()) 
+        .sorted(Comparator.comparingDouble((DataItem d) -> d.amount)
+        .reversed()) 
                                                .toList();
         
     List<DataItem> sortedExpenses = expenses.stream()
-                                               .sorted(Comparator.comparingDouble((DataItem d) -> d.amount).reversed()) 
+        .sorted(Comparator.comparingDouble((DataItem d) -> d.amount).reversed()) 
                                                .toList();
         
-        List<DataItem> allItems = Stream.concat(sortedRevenues.stream(), sortedExpenses.stream()).toList();
+    List<DataItem> allItems = Stream.concat(sortedRevenues.stream(),
+             sortedExpenses.stream()).toList();
 
     JPanel panel = new JPanel(new BorderLayout());
     panel.setOpaque(true);

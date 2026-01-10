@@ -3,13 +3,29 @@ package GUI;
 import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.io.File;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import service.CashFlowService;
 import service.ForeisService;
 import util.PdfExporter;
@@ -132,7 +148,8 @@ public final class DataEditorPanel extends JPanel {
       public void mouseEntered(java.awt.event.MouseEvent evt) {
         historyButton.setBackground(ACCENT_BLUE.brighter());
       }
-     @Override
+      
+      @Override
       public void mouseExited(java.awt.event.MouseEvent evt) {
         historyButton.setBackground(ACCENT_BLUE);
       }
@@ -494,9 +511,8 @@ public final class DataEditorPanel extends JPanel {
     int yearId = Integer.parseInt(tableModel.getValueAt(row, 1).toString());
     String type = tableModel.getValueAt(row, 2).toString();
     String name = tableModel.getValueAt(row, 3).toString().trim();
-    double amount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
     double newAmount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
-
+    double amount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
     if (name.isEmpty()) {
       throw new IllegalArgumentException("Το όνομα δεν μπορεί να είναι κενό!");
     }
@@ -707,7 +723,8 @@ public final class DataEditorPanel extends JPanel {
 
     int confirm = JOptionPane.showConfirmDialog(
             this,
-            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n" +
+            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n"
+             +
                     "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί!", rowInfo),
             "Επιβεβαίωση Διαγραφής",
             JOptionPane.YES_NO_OPTION,
@@ -797,8 +814,10 @@ public final class DataEditorPanel extends JPanel {
                     path.replace(".pdf", "_Exoda.pdf"));
                 
           JOptionPane.showMessageDialog(this,
-                    "Δημιουργήθηκαν 2 PDF αρχεία:\n" + 
-                    path.replace(".pdf", "_Esoda.pdf") + "\n" +
+                    "Δημιουργήθηκαν 2 PDF αρχεία:\n"
+                     + 
+                    path.replace(".pdf", "_Esoda.pdf") + "\n" 
+                    +
                     path.replace(".pdf", "_Exoda.pdf"),
                     "Επιτυχία",
                     JOptionPane.INFORMATION_MESSAGE);
@@ -816,7 +835,7 @@ public final class DataEditorPanel extends JPanel {
                     "Το PDF δημιουργήθηκε επιτυχώς!\n" + path,
                     "Επιτυχία",
                     JOptionPane.INFORMATION_MESSAGE);
-          }
+        }
       }
     } catch (Exception ex) {
       JOptionPane.showMessageDialog(this,
@@ -825,5 +844,5 @@ public final class DataEditorPanel extends JPanel {
             JOptionPane.ERROR_MESSAGE);
       ex.printStackTrace();
     }
-}
+  }
 }
