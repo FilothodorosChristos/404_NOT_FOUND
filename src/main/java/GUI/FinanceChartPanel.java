@@ -97,7 +97,7 @@ public class FinanceChartPanel extends JPanel {
             importer.getAgencies()
         );
         
-    panel.initializeUI();
+    panel.initializeUi();
         
     return panel;
   }
@@ -107,7 +107,7 @@ public class FinanceChartPanel extends JPanel {
    * with back button and title, and the tabbed pane containing revenue/expense
    * and agency visualizations.
    */
-  private void initializeUI() {
+  private void initializeUi() {
     // TOP PANEL: Professional header with back button
     JPanel topPanel = new JPanel(new BorderLayout());
     topPanel.setOpaque(true);
@@ -258,14 +258,16 @@ public class FinanceChartPanel extends JPanel {
    */
   private JPanel createRevenueExpensePanel() {
     List<DataItem> sortedRevenues = revenues.stream()
-                                               .sorted(Comparator.comparingDouble((DataItem d) -> d.amount).reversed()) 
+        .sorted(Comparator.comparingDouble((DataItem d) -> d.amount)
+        .reversed()) 
                                                .toList();
         
     List<DataItem> sortedExpenses = expenses.stream()
-                                               .sorted(Comparator.comparingDouble((DataItem d) -> d.amount).reversed()) 
+        .sorted(Comparator.comparingDouble((DataItem d) -> d.amount).reversed()) 
                                                .toList();
         
-        List<DataItem> allItems = Stream.concat(sortedRevenues.stream(), sortedExpenses.stream()).toList();
+    List<DataItem> allItems = Stream.concat(sortedRevenues.stream(),
+             sortedExpenses.stream()).toList();
 
     JPanel panel = new JPanel(new BorderLayout());
     panel.setOpaque(true);

@@ -76,14 +76,14 @@ public class BudgetViewPanel extends JPanel {
     this.foreisService = new ForeisService();
     setLayout(new BorderLayout());
     setBackground(DARK_BG);
-    createUI();
+    createUi();
     loadData();
   }
 
   /**
    * Creates the user interface components.
    */
-  private void createUI() {
+  private void createUi() {
     // Main content panel
     JPanel contentPanel = new JPanel(new BorderLayout(0, 10));
     contentPanel.setBackground(DARK_BG);
@@ -266,9 +266,9 @@ public class BudgetViewPanel extends JPanel {
         @Override
             public Component getTableCellRendererComponent(JTable t, Object v,
                  boolean isS, boolean hasF, int r, int c) {
-            Component comp = super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
             setForeground(TEXT_PRIMARY);
             setBackground(r % 2 == 0 ? DARKER_BG : TABLE_ROW_ALT);
+            Component comp = super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
             setHorizontalAlignment(c == 0 ? LEFT : (c >= 5 || (c == 4 && t.getColumnCount() == 5))
                 ? RIGHT : LEFT);
             return comp;

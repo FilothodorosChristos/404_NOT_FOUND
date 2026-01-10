@@ -79,10 +79,12 @@ public class ComparisonPanel extends JPanel {
     }
   }
 
-  /** 
-   *kataskeuasths klashs aparaithtos gia thn xrhsimopoish metablhtwn.
+  /**
+   * Constructs a new ComparisonPanel.
+   * Initializes the comparison service and sets up the user interface components.
+   *
+   * @param mainFrame the main application frame used for navigation and shared data
    */
-
   @SuppressFBWarnings("EI_EXPOSE_REP2")
   public ComparisonPanel(MainFrame mainFrame) {
     this.mainFrame = mainFrame;
@@ -93,9 +95,11 @@ public class ComparisonPanel extends JPanel {
     initComponents();
   }
 
-  /** 
-   *set selected year method specfically 
-   *used for the comparison.
+  /**
+   * Sets the primary selected year for comparison.
+   * Updates the corresponding combo box selection and triggers a new data comparison.
+   *
+   * @param year the year to be set for the comparison
    */
   public void setSelectedYear(int year) {
     this.selectedYear = year;
@@ -207,11 +211,11 @@ public class ComparisonPanel extends JPanel {
       return;
     }
         
-    String type = (String) dataTypeCombo.getSelectedItem();
     resultsPanel.removeAll();
     JLabel loadingLabel = new JLabel("Ανάκτηση δεδομένων...", SwingConstants.CENTER);
     loadingLabel.setForeground(TEXT_PRIMARY);
     resultsPanel.add(loadingLabel, BorderLayout.CENTER);
+    String type = (String) dataTypeCombo.getSelectedItem();
     resultsPanel.revalidate();
     resultsPanel.repaint();
 
@@ -237,7 +241,8 @@ public class ComparisonPanel extends JPanel {
             List<CashFlowCompareDto> data = comparisonService.compareCashFlows(y1, y2, dbType);
             if (data != null && !data.isEmpty()) {
               for (CashFlowCompareDto d : data) {
-                  s1 += d.getAmountYear1(); s2 += d.getAmountYear2(); 
+                  s1 += d.getAmountYear1();
+                  s2 += d.getAmountYear2(); 
                 }
                 model = createCashFlowModel(data, y1, y2, type);
                 dataFound = true;
