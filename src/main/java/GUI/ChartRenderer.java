@@ -99,9 +99,9 @@ public class ChartRenderer {
         .mapToDouble(d -> d.amount).filter(a -> a > 0).min().orElse(1.0);
     double maxAmount = allItems.stream().mapToDouble(d -> d.amount).max().orElse(1.0);
         
-    final double LOG_MIN = Math.log10(Math.max(1.0, minAmount));
-    final double LOG_MAX = Math.log10(Math.max(1.0, maxAmount));
-    final double LOG_RANGE = LOG_MAX - LOG_MIN;
+    final double logmin = Math.log10(Math.max(1.0, minAmount));
+    final double logmax = Math.log10(Math.max(1.0, maxAmount));
+    final double logrange = logmax - logmin;
         
     // Calculate required panel height based on number of items
     int preferredHeight = allItems.size() * (BAR_HEIGHT + BAR_SPACING) + 60; 
@@ -136,7 +136,7 @@ public class ChartRenderer {
             final int paddingX = allItems.stream()
                 .anyMatch(d -> d.type.equals("Revenue") || d.type.equals("Expense")) ? 80 : 20;
             final int axisMarginBottom = 30; 
-            final int MIN_VISIBLE_BAR_WIDTH = 5;
+            final int minvisiblebarwidth = 5;
                 
             int graphWidth = width - paddingX - 20; 
             int chartBottomY = getHeight() - axisMarginBottom;
@@ -151,8 +151,8 @@ public class ChartRenderer {
             g2.setColor(Color.LIGHT_GRAY);
                 
             // Draw logarithmic scale tick marks and labels
-            for (double logVal = Math.ceil(LOG_MIN); logVal <= LOG_MAX; logVal++) {
-            double ratio = (logVal - LOG_MIN) / LOG_RANGE;
+            for (double logVal = Math.ceil(logmin); logVal <= logmax; logVal++) {
+            double ratio = (logVal - logmin) / logrange;
             int x = paddingX + (int) (ratio * graphWidth);
                     
             if (x > paddingX) { 
@@ -177,12 +177,12 @@ public class ChartRenderer {
             // Calculate bar width using logarithmic scale
             if (item.amount > 0) {
                 double logValue = Math.log10(item.amount);
-                double ratio = (logValue - LOG_MIN) / LOG_RANGE;
+                double ratio = (logValue - logmin) / logrange;
                 barWidth = (int) (ratio * graphWidth);
                         
             // Ensure minimum visibility for very small values
-            if (barWidth < MIN_VISIBLE_BAR_WIDTH) {
-                barWidth = MIN_VISIBLE_BAR_WIDTH; 
+            if (barWidth < minvisiblebarwidth) {
+                barWidth = minvisiblebarwidth; 
             }
             }
 

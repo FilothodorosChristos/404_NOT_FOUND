@@ -316,7 +316,9 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
   private void setupAnimations() {
     animationTimer = new Timer(30, e -> {
       rotationAngle += 0.5f;
-        if (rotationAngle >= 360) rotationAngle = 0;
+        if (rotationAngle >= 360) {
+          rotationAngle = 0;
+        } 
             
       if (fadeInProgress < 100) {
         fadeInProgress += 2;

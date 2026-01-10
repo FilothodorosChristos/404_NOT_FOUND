@@ -185,7 +185,7 @@ public class BudgetViewPanel extends JPanel {
     filterPanel.add(loadButton);
 
     return filterPanel;
-    }
+  }
 
   /**
    * Creates and configures a table based on the selection.
@@ -266,10 +266,11 @@ public class BudgetViewPanel extends JPanel {
         @Override
             public Component getTableCellRendererComponent(JTable t, Object v,
                  boolean isS, boolean hasF, int r, int c) {
-              Component comp = super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
+            Component comp = super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
             setForeground(TEXT_PRIMARY);
             setBackground(r % 2 == 0 ? DARKER_BG : TABLE_ROW_ALT);
-            setHorizontalAlignment(c == 0 ? LEFT : (c >= 5 || (c == 4 && t.getColumnCount() == 5)) ? RIGHT : LEFT);
+            setHorizontalAlignment(c == 0 ? LEFT : (c >= 5 || (c == 4 && t.getColumnCount() == 5))
+                ? RIGHT : LEFT);
             return comp;
           }
         });
@@ -308,7 +309,7 @@ public class BudgetViewPanel extends JPanel {
             l.setBackground(isSelected ? ACCENT_BLUE : TABLE_ROW_ALT);
             l.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
             return l;
-            }
+          }
         });
   }
 
@@ -334,7 +335,7 @@ public class BudgetViewPanel extends JPanel {
       // Remove old table if exists
       if (tableSection.getComponentCount() > 1) {
         tableSection.remove(1);
-          }
+      }
 
       // Create new table based on selection
       JScrollPane scrollPane = createTable(selection);
