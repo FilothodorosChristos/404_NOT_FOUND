@@ -1,31 +1,13 @@
 package GUI;
 
-import dao.CashFlow;
+import service.ScenarioCashflowService;
+import service.ScenarioForeisService;
+import service.CashFlowService;
+import service.ForeisService;
 import dao.Foreis;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
+import dao.CashFlow;
+
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
@@ -33,10 +15,10 @@ import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import service.CashFlowService;
-import service.ForeisService;
-import service.ScenarioCashflowService;
-import service.ScenarioForeisService;
+import java.awt.*;
+import java.util.List;
+import java.util.ArrayList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Panel για την εφαρμογή μαζικών αλλαγών στον προϋπολογισμό.
@@ -71,13 +53,12 @@ public class MassiveChangesPanel extends JPanel {
   private static final Color TABLE_ROW_ALT = new Color(20, 30, 48);
   private static final Color SUCCESS_GREEN = new Color(16, 185, 129);
 
-  /**
-   * Constructor για το MassiveChangesPanel.
-   *
-   * @param mainFrame η κύρια φόρμα της εφαρμογής
-   */
-  @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
-        justification = "MainFrame reference needed for navigation")
+    /**
+     * Constructor για το MassiveChangesPanel.
+     *
+     * @param mainFrame η κύρια φόρμα της εφαρμογής
+     */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "MainFrame reference needed for navigation")
     public MassiveChangesPanel(MainFrame mainFrame) {
     this.mainFrame = mainFrame;
     this.cashflowService = new CashFlowService();
@@ -89,7 +70,7 @@ public class MassiveChangesPanel extends JPanel {
     setBackground(DARK_BG);
 
     createUI();
-  }
+    }
 
   /**
    * Δημιουργία του UI.
@@ -112,7 +93,7 @@ public class MassiveChangesPanel extends JPanel {
     mainContent.add(bottomPanel, BorderLayout.SOUTH);
 
     add(mainContent);
-  }
+    }
 
   /**
    * Δημιουργία header panel.
@@ -294,7 +275,7 @@ public class MassiveChangesPanel extends JPanel {
 
     previewTable = new JTable(tableModel);
     styleTable(previewTable);
-  }
+    }
 
   /**
    * Styling του πίνακα.
@@ -322,7 +303,7 @@ public class MassiveChangesPanel extends JPanel {
             label.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 1, BORDER_COLOR));
             label.setOpaque(true);
             return label;
-          }
+            }
         });
 
     table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
@@ -339,10 +320,10 @@ public class MassiveChangesPanel extends JPanel {
             setHorizontalAlignment(LEFT);
             } else {
             setHorizontalAlignment(RIGHT);
-            }
+                }
                 
             return comp;
-          }
+            }
         });
   }
 
@@ -436,7 +417,7 @@ public class MassiveChangesPanel extends JPanel {
     panel.add(rightPanel, BorderLayout.EAST);
 
     return panel;
-  }
+    }
 
   /**
    * Ενημέρωση του label ποσοστού.
@@ -544,9 +525,7 @@ public class MassiveChangesPanel extends JPanel {
     summaryPanel.add(createSummaryCard("Νέο Σύνολο",
         String.format("€%,.2f", newAmount), TEXT_PRIMARY));
         
-    Color changeColor = change > 0 
-        ? SUCCESS_GREEN : (change < 0  
-        ? new Color(239, 68, 68) : TEXT_SECONDARY);
+    Color changeColor = change > 0 ? SUCCESS_GREEN : (change < 0 ? new Color(239, 68, 68) : TEXT_SECONDARY);
     summaryPanel.add(createSummaryCard("Αλλαγή",
         String.format("%+,.2f €", change), changeColor));
         
@@ -599,8 +578,7 @@ public class MassiveChangesPanel extends JPanel {
 
     int confirm = JOptionPane.showConfirmDialog(
             this,
-        String.format("Είστε σίγουροι ότι θέλετε να εφαρμόσετε μεταβολή %+.1f%%%% στην κατηγορία '%s';%n%n"
-        +
+    String.format("Είστε σίγουροι ότι θέλετε να εφαρμόσετε μεταβολή %+.1f%%%% στην κατηγορία '%s';%n%n" +
                          "Αυτή η ενέργεια θα αλλάξει όλες τις εγγραφές της κατηγορίας.",
                          percentage, category),
             "Επιβεβαίωση Εφαρμογής",
@@ -610,7 +588,7 @@ public class MassiveChangesPanel extends JPanel {
 
     if (confirm != JOptionPane.YES_OPTION) {
       return;
-    }
+        }
 
     int totalUpdates = 0;
 
@@ -633,10 +611,8 @@ public class MassiveChangesPanel extends JPanel {
 
       JOptionPane.showMessageDialog(
                 this,
-                String.format("Το σενάριο εφαρμόστηκε επιτυχώς!%n%n" 
-                +
-                             "Ενημερώθηκαν %d εγγραφές%n" 
-                             +
+                String.format("Το σενάριο εφαρμόστηκε επιτυχώς!%n%n" +
+                             "Ενημερώθηκαν %d εγγραφές%n" +
                              "Ποσοστό αλλαγής: %+.1f%%%%",
                              totalUpdates, percentage),
                 "Επιτυχής Εφαρμογή",

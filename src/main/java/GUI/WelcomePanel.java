@@ -1,10 +1,11 @@
 package GUI;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javax.swing.*;
 
 /**
  * Modern WelcomePanel with animated background and professional design.
@@ -127,19 +128,19 @@ public class WelcomePanel extends JPanel {
             public void mouseEntered(MouseEvent e) {
             JButton btn = (JButton) e.getSource();
             btn.setBounds(btn.getX(), btn.getY() - 3, btn.getWidth(), btn.getHeight());
-          }
+            }
             
         @Override
             public void mouseExited(MouseEvent e) {
             repositionComponents();
-          }
+            }
         });
         
     button.addActionListener(e -> 
             mainFrame.showPanel(MainFrame.PROJECT_SELECTION)
     );
     return button;
-  }
+    }
     
   /**
    * Creates the 3 feature cards.
@@ -306,7 +307,7 @@ public class WelcomePanel extends JPanel {
     g2.setStroke(new BasicStroke(1));
         
     int gridSize = 50;
-    int offset = (int) (rotationAngle % gridSize);
+    int offset = (int)(rotationAngle % gridSize);
         
     for (int x = -offset; x < width; x += gridSize) {
       g2.drawLine(x, 0, x, height);
@@ -327,7 +328,7 @@ public class WelcomePanel extends JPanel {
             new Color[]{new Color(99, 102, 241, 76), new Color(99, 102, 241, 0)}
         );
     g2.setPaint(gradient1);
-    g2.fillOval((int) (-200 + parallax1), (int) (-200 + parallax2), 500, 500);
+    g2.fillOval((int)(-200 + parallax1), (int)(-200 + parallax2), 500, 500);
         
     // Orb 2
     RadialGradientPaint gradient2 = new RadialGradientPaint(
@@ -336,9 +337,9 @@ public class WelcomePanel extends JPanel {
             new Color[]{new Color(139, 92, 246, 76), new Color(139, 92, 246, 0)}
         );
     g2.setPaint(gradient2);
-    g2.fillOval((int) (width - 350 + parallax1 * 1.5f),
-         (int) (height - 350 + parallax2 * 1.5f), 400, 400);
-  }
+    g2.fillOval((int)(width - 350 + parallax1 * 1.5f),
+         (int)(height - 350 + parallax2 * 1.5f), 400, 400);
+   }
     
   private void drawHeader(Graphics2D g2, int width) {
     int alpha = Math.min(255, fadeInProgress * 255 / 100);
@@ -364,7 +365,7 @@ public class WelcomePanel extends JPanel {
       g2.drawOval(logoX, logoY, logoSize, logoSize);
             
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-    }
+        }
         
     // Title (moved up)
     g2.setColor(new Color(255, 255, 255, alpha));
@@ -379,7 +380,7 @@ public class WelcomePanel extends JPanel {
     String subtitle = "Σύστημα Διαχείρισης Κρατικού Προϋπολογισμού";
     fm = g2.getFontMetrics();
     g2.drawString(subtitle, width / 2 - fm.stringWidth(subtitle) / 2, 300);
-  }
+    }
     
   private void drawStatsBar(Graphics2D g2, int width) {
 
@@ -395,7 +396,7 @@ public class WelcomePanel extends JPanel {
 
     for (int i = 0; i < values.length; i++) {
 
-      int x = startX + i * (itemWidth + spacing);
+        int x = startX + i * (itemWidth + spacing);
 
       // VALUE
       g2.setFont(new Font("Arial", Font.BOLD, 28));
@@ -413,7 +414,7 @@ public class WelcomePanel extends JPanel {
                 values[i],
                 x + (itemWidth - fmValue.stringWidth(values[i])) / 2,
                 y
-      );
+        );
 
       // LABEL
       g2.setFont(new Font("Arial", Font.BOLD, 10));
@@ -424,10 +425,11 @@ public class WelcomePanel extends JPanel {
                 labels[i].toUpperCase(),
                 x + (itemWidth - fmLabel.stringWidth(labels[i])) / 2,
                 y + 18
-      );
+        );
     }
-  }
-  
+}
+
+    
   private void drawFooter(Graphics2D g2, int width, int height) {
     g2.setColor(new Color(71, 85, 105));
     g2.setFont(new Font("Arial", Font.PLAIN, 10));

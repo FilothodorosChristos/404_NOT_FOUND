@@ -1,13 +1,12 @@
 package GUI;
 
-import static GUI.FinanceChartPanel.DataItem;
-
 import dao.CashFlow;
 import dao.Foreis;
-import java.util.ArrayList;
-import java.util.List;
 import service.CashFlowService;
 import service.ForeisService;
+import java.util.ArrayList;
+import java.util.List;
+import static GUI.FinanceChartPanel.DataItem;
 
 /**
  * Loads financial data from the database for a specific fiscal year.
