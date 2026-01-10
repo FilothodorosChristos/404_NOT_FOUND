@@ -1,12 +1,10 @@
 package GUI;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-
-
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import javax.swing.*;
 
 /**
  * Modern WelcomePanel with animated background and professional design.

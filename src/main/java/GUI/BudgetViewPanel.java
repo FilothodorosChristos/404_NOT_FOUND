@@ -1,15 +1,15 @@
 package GUI;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.plaf.basic.BasicComboBoxUI;
-import javax.swing.plaf.basic.BasicButtonUI;
-import javax.swing.plaf.basic.BasicComboPopup;
-import javax.swing.plaf.basic.ComboPopup;
 import java.awt.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.plaf.basic.ComboPopup;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import service.CashFlowService;
 import service.ForeisService;
 import dao.CashFlow;
