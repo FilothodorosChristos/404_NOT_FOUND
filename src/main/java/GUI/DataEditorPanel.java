@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import dao.CashFlow;
 import dao.Foreis;
@@ -76,14 +76,14 @@ public final class DataEditorPanel extends JPanel {
     this.cashFlowService = new CashFlowService();
     this.foreisService = new ForeisService();
     
-    initializeUI();
+    initializeUi();
     loadData();
   }
 
   /**
    * Αρχικοποίηση του UI.
    */
-  private void initializeUI() {
+  private void initializeUi() {
     setLayout(new BorderLayout());
     
     JPanel mainPanel = new JPanel(new BorderLayout(0, 10));

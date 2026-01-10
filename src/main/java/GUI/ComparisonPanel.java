@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import dto.CashFlowCompareDto;
 import dto.ForeasCompareDto;

@@ -1,6 +1,6 @@
-package GUI;
+package gui;
 
-import static GUI.FinanceChartPanel.DataItem;
+import static gui.FinanceChartPanel.DataItem;
 
 import java.awt.Color;
 import java.awt.Dimension;

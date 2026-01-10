@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.awt.AlphaComposite;

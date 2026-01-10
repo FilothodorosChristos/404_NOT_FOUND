@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -384,7 +384,7 @@ public class FinanceChartPanel extends JPanel {
 
     double totalRevenue = revenues.stream().mapToDouble(d -> d.amount).sum();
     double totalExpense = expenses.stream().mapToDouble(d -> d.amount).sum();
-    double balance = totalRevenue - totalExpense;
+    double balance = totalRevenue - totalExpense;   
 
     // TOTAL RESULTS SECTION
     JLabel mainTitle = new JLabel("ΣΥΝΟΛΙΚΑ ΑΠΟΤΕΛΕΣΜΑΤΑ");
@@ -403,7 +403,7 @@ public class FinanceChartPanel extends JPanel {
     JPanel expensePanel = createSummaryRow("Έξοδα", totalExpense, new Color(239, 68, 68));
     legendPanel.add(expensePanel);
     legendPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        
+       
     // Balance
     String balanceLabel;
     Color balanceColor;

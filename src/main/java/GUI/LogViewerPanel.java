@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import dao.Log;
 import dao.LogDao;
