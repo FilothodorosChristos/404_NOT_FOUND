@@ -1,11 +1,11 @@
 package GUI;
 
-import javax.swing.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import service.SimulationService;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import javax.swing.*;
+import service.SimulationService;
 
 /**
  * Modern ActionSelectionPanel with unified aesthetic matching WelcomePanel.

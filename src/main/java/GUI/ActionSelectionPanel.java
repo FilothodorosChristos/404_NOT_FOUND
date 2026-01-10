@@ -1,11 +1,10 @@
 package GUI;
 
-import javax.swing.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import javax.swing.*;
 
 /**
  * Modern ActionSelectionPanel with unified aesthetic matching WelcomePanel.
@@ -80,7 +79,7 @@ public class ActionSelectionPanel extends JPanel {
         col = i;  // 0,1,2
       } else {
         col = i - 3; // 0,1 για δεύτερη σειρά
-        }
+      }
 
       int buttonsInRow = (row == 0) ? firstRowButtons : secondRowButtons;
       int totalWidth = buttonsInRow * buttonWidth + (buttonsInRow - 1) * gapX;
@@ -271,8 +270,9 @@ public class ActionSelectionPanel extends JPanel {
   private void setupAnimations() {
     animationTimer = new Timer(30, e -> {
       rotationAngle += 0.5f;
-      if (rotationAngle >= 360) rotationAngle = 0;
-            
+      if (rotationAngle >= 360) {
+        rotationAngle = 0;
+      }     
       if (fadeInProgress < 100) {
         fadeInProgress += 2;
       }

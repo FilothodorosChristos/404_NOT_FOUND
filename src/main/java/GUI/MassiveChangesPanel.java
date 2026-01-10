@@ -3,10 +3,29 @@ package GUI;
 import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
@@ -52,11 +71,11 @@ public class MassiveChangesPanel extends JPanel {
   private static final Color TABLE_ROW_ALT = new Color(20, 30, 48);
   private static final Color SUCCESS_GREEN = new Color(16, 185, 129);
 
-    /**
-     * Constructor για το MassiveChangesPanel.
-     *
-     * @param mainFrame η κύρια φόρμα της εφαρμογής
-     */
+  /**
+   * Constructor για το MassiveChangesPanel.
+   *
+   * @param mainFrame η κύρια φόρμα της εφαρμογής
+   */
   @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
         justification = "MainFrame reference needed for navigation")
     public MassiveChangesPanel(MainFrame mainFrame) {
@@ -417,7 +436,7 @@ public class MassiveChangesPanel extends JPanel {
     panel.add(rightPanel, BorderLayout.EAST);
 
     return panel;
-    }
+  }
 
   /**
    * Ενημέρωση του label ποσοστού.
@@ -525,7 +544,9 @@ public class MassiveChangesPanel extends JPanel {
     summaryPanel.add(createSummaryCard("Νέο Σύνολο",
         String.format("€%,.2f", newAmount), TEXT_PRIMARY));
         
-    Color changeColor = change > 0 ? SUCCESS_GREEN : (change < 0 ? new Color(239, 68, 68) : TEXT_SECONDARY);
+    Color changeColor = change > 0 
+        ? SUCCESS_GREEN : (change < 0  
+        ? new Color(239, 68, 68) : TEXT_SECONDARY);
     summaryPanel.add(createSummaryCard("Αλλαγή",
         String.format("%+,.2f €", change), changeColor));
         
@@ -578,7 +599,8 @@ public class MassiveChangesPanel extends JPanel {
 
     int confirm = JOptionPane.showConfirmDialog(
             this,
-    String.format("Είστε σίγουροι ότι θέλετε να εφαρμόσετε μεταβολή %+.1f%%%% στην κατηγορία '%s';%n%n" +
+    String.format("Είστε σίγουροι ότι θέλετε να εφαρμόσετε μεταβολή %+.1f%%%% στην κατηγορία '%s';%n%n"
+        +
                          "Αυτή η ενέργεια θα αλλάξει όλες τις εγγραφές της κατηγορίας.",
                          percentage, category),
             "Επιβεβαίωση Εφαρμογής",
@@ -611,8 +633,10 @@ public class MassiveChangesPanel extends JPanel {
 
       JOptionPane.showMessageDialog(
                 this,
-                String.format("Το σενάριο εφαρμόστηκε επιτυχώς!%n%n" +
-                             "Ενημερώθηκαν %d εγγραφές%n" +
+                String.format("Το σενάριο εφαρμόστηκε επιτυχώς!%n%n" 
+                +
+                             "Ενημερώθηκαν %d εγγραφές%n" 
+                             +
                              "Ποσοστό αλλαγής: %+.1f%%%%",
                              totalUpdates, percentage),
                 "Επιτυχής Εφαρμογή",

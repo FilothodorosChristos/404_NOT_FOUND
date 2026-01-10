@@ -2,11 +2,16 @@ package GUI;
 
 import static GUI.FinanceChartPanel.DataItem;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import javax.swing.*;
+import javax.swing.JPanel;
 
 /**
  * Utility class responsible for rendering financial data as horizontal bar charts.
@@ -86,10 +91,12 @@ public class ChartRenderer {
             BiFunction<Integer, Integer, Color> expenseColorFunction,
             Function<Double, String> formatter) {
 
-    if (allItems.isEmpty()) return new JPanel();
-
+    if (allItems.isEmpty()) {
+      return new JPanel();
+    }
     // Calculate logarithmic range for scaling
-    double minAmount = allItems.stream().mapToDouble(d -> d.amount).filter(a -> a > 0).min().orElse(1.0);
+    double minAmount = allItems.stream()
+        .mapToDouble(d -> d.amount).filter(a -> a > 0).min().orElse(1.0);
     double maxAmount = allItems.stream().mapToDouble(d -> d.amount).max().orElse(1.0);
         
     final double LOG_MIN = Math.log10(Math.max(1.0, minAmount));
@@ -105,19 +112,19 @@ public class ChartRenderer {
             return new Dimension(700, preferredHeight + 25); 
         }
             
-            /**
-             * Custom paint method that renders the bar chart with logarithmic scaling.
-             * 
-             * <p>Rendering steps:
-             * <ol>
-             *   <li>Draw horizontal axis line</li>
-             *   <li>Draw logarithmic tick marks and labels</li>
-             *   <li>Render bars with calculated widths</li>
-             *   <li>Add item numbers and value labels</li>
-             * </ol>
-             * 
-             * @param g Graphics context for drawing
-             */
+        /**
+         * Custom paint method that renders the bar chart with logarithmic scaling.
+         * 
+         * <p>Rendering steps:
+         * <ol>
+         *   <li>Draw horizontal axis line</li>
+         *   <li>Draw logarithmic tick marks and labels</li>
+         *   <li>Render bars with calculated widths</li>
+         *   <li>Add item numbers and value labels</li>
+         * </ol>
+         * 
+         * @param g Graphics context for drawing
+         */
         @Override
             protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -126,9 +133,10 @@ public class ChartRenderer {
             final int paddingY = 20;
                 
             // Use larger left padding for revenue/expense charts to accommodate item numbers
-            final int paddingX = allItems.stream().anyMatch(d -> d.type.equals("Revenue") || d.type.equals("Expense")) ? 80 : 20;
+            final int paddingX = allItems.stream()
+                .anyMatch(d -> d.type.equals("Revenue") || d.type.equals("Expense")) ? 80 : 20;
             final int axisMarginBottom = 30; 
-            final int MIN_VISIBLE_BAR_WIDTH = 5; // Minimum width for very small values
+            final int MIN_VISIBLE_BAR_WIDTH = 5;
                 
             int graphWidth = width - paddingX - 20; 
             int chartBottomY = getHeight() - axisMarginBottom;
@@ -157,7 +165,7 @@ public class ChartRenderer {
                 // Draw label centered under tick
                 g2.drawString(label,
                          x - g2.getFontMetrics().stringWidth(label) / 2, chartBottomY + 20);
-                }
+            }
             }
 
             // Render bars for each data item
@@ -173,7 +181,9 @@ public class ChartRenderer {
                 barWidth = (int) (ratio * graphWidth);
                         
             // Ensure minimum visibility for very small values
-            if (barWidth < MIN_VISIBLE_BAR_WIDTH) barWidth = MIN_VISIBLE_BAR_WIDTH; 
+            if (barWidth < MIN_VISIBLE_BAR_WIDTH) {
+                barWidth = MIN_VISIBLE_BAR_WIDTH; 
+            }
             }
 
             // Set bar color based on item type

@@ -3,20 +3,40 @@ package GUI;
 import dto.CashFlowCompareDto;
 import dto.ForeasCompareDto;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.text.DecimalFormat;
 import java.time.Year;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.plaf.basic.ComboPopup;
-import javax.swing.table.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 /** 
- *class for  comparison between two years.
+ * Comparison between two years 
+ * based on their economic status and the currentn form of the database.
  */
 public class ComparisonPanel extends JPanel {
 
@@ -60,7 +80,7 @@ public class ComparisonPanel extends JPanel {
   }
 
   /** 
-   *kataskeyasths klashs.
+   *kataskeuasths klashs aparaithtos gia thn xrhsimopoish metablhtwn.
    */
 
   @SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -74,7 +94,8 @@ public class ComparisonPanel extends JPanel {
   }
 
   /** 
-   *set selected year method.
+   *set selected year method specfically 
+   *used for the comparison.
    */
   public void setSelectedYear(int year) {
     this.selectedYear = year;
@@ -206,7 +227,8 @@ public class ComparisonPanel extends JPanel {
             List<ForeasCompareDto> data = comparisonService.compareForeis(y1, y2);
             if (data != null && !data.isEmpty()) {
             for (ForeasCompareDto d : data) {
-                s1 += d.getTotalYear1(); s2 += d.getTotalYear2(); }
+                s1 += d.getTotalYear1(); s2 += d.getTotalYear2();
+                }
                 model = createForeisModel(data, y1, y2);
                 dataFound = true;
             }
@@ -215,7 +237,8 @@ public class ComparisonPanel extends JPanel {
             List<CashFlowCompareDto> data = comparisonService.compareCashFlows(y1, y2, dbType);
             if (data != null && !data.isEmpty()) {
               for (CashFlowCompareDto d : data) {
-                  s1 += d.getAmountYear1(); s2 += d.getAmountYear2();}
+                  s1 += d.getAmountYear1(); s2 += d.getAmountYear2(); 
+                }
                 model = createCashFlowModel(data, y1, y2, type);
                 dataFound = true;
               }
@@ -254,7 +277,8 @@ public class ComparisonPanel extends JPanel {
   private void updateSummaryCards(double t1, double t2, double diff, int y1, int y2) {
     cardsPanel.removeAll();
         
-    String winnerTitle = (diff > 0) ? "Υψηλότερο Έτος: " + y1 + " ↑" : (diff < 0) ? "Υψηλότερο Έτος: " + y2 + " ↓" : "Ισοπαλία";
+    String winnerTitle = (diff > 0) 
+        ? "Υψηλότερο Έτος: " + y1 + " ↑" : (diff < 0) ? "Υψηλότερο Έτος: " + y2 + " ↓" : "Ισοπαλία";
     Color winnerColor = (diff > 0) ? SUCCESS_GREEN : (diff < 0) ? DANGER_RED : TEXT_SECONDARY;
         
     cardsPanel.add(createCard("Έτος Βάσης (" + y1 + ")", decimalFormat.format(t1), TEXT_PRIMARY));
@@ -266,7 +290,8 @@ public class ComparisonPanel extends JPanel {
   }
 
   private JPanel createCard(String title, String val, Color valueColor) {
-    JPanel card = new JPanel(new GridLayout(2, 1));card.setBackground(CARD_BG);
+    JPanel card = new JPanel(new GridLayout(2, 1)); 
+    card.setBackground(CARD_BG);
     card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(BORDER_COLOR, 1),
             BorderFactory.createEmptyBorder(15, 18, 15, 18)));
@@ -320,7 +345,8 @@ public class ComparisonPanel extends JPanel {
             } else if (str.startsWith("-")) { 
               setForeground(DANGER_RED);
             } else { 
-              setForeground(TEXT_PRIMARY);}
+              setForeground(TEXT_PRIMARY); 
+            }
             } else {
             setForeground(TEXT_PRIMARY);
             }

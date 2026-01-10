@@ -1,6 +1,11 @@
 package GUI;
 
+import dao.CashFlow;
+import dao.Foreis;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
@@ -12,12 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import service.CashFlowService;
 import service.ForeisService;
-import dao.CashFlow;
-import dao.Foreis;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import util.PdfExporter;
-import java.util.ArrayList;
-import java.io.File;
 
 /**
  * BudgetViewPanel displays budget data in a single table.
@@ -217,7 +217,7 @@ public class BudgetViewPanel extends JPanel {
     scrollPane.getViewport().setBackground(DARKER_BG);
     scrollPane.setBorder(BorderFactory.createEmptyBorder());
     return scrollPane;
-    }
+  }
 
   /**
    * Applies consistent styling to a table.
