@@ -53,15 +53,15 @@ public class WelcomePanel extends JPanel {
     setLayout(null);
     setBackground(new Color(10, 14, 39));
         
-    createUI();
+    createUi();
     setupAnimations();
     setupMouseTracking();
-    }
+  }
     
   /**
    * Creates all UI components.
    */
-  private void createUI() {
+  private void createUi() {
     // Components will be positioned dynamically in paintComponent
     // Create enter button
     enterButton = createStyledButton();
@@ -75,7 +75,7 @@ public class WelcomePanel extends JPanel {
         @Override
             public void componentResized(ComponentEvent e) {
             repositionComponents();
-            }
+          }
         });
   }
     

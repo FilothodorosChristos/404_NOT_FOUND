@@ -54,8 +54,8 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
     this.mainFrame = mainFrame;
     setLayout(null);
     setBackground(new Color(10, 14, 39));
-    
-    createUI();
+  
+    createUi();
     setupAnimations();
     setupMouseTracking();
         
@@ -72,7 +72,7 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
   /**
    * Creates all UI components.
    */
-  private void createUI() {
+  private void createUi() {
     createActionButtons();
     createBackButton();
     repositionComponents();

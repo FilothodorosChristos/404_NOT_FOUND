@@ -79,14 +79,14 @@ public final class LogViewerPanel extends JPanel {
     this.returnDataType = dataType;
     this.logService = new LogService(new LogDao());
     setLayout(new BorderLayout());
-    createUI();
+    createUi();
     loadLogData();
   }
     
   /**
    * Creates and initializes the user interface components.
    */
-  private void createUI() {
+  private void createUi() {
 
     JPanel backgroundPanel = new JPanel(new BorderLayout()) {
         @Override
