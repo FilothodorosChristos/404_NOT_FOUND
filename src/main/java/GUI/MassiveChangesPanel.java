@@ -599,7 +599,7 @@ public class MassiveChangesPanel extends JPanel {
 
     int confirm = JOptionPane.showConfirmDialog(
             this,
-    String.format("Είστε σίγουροι ότι θέλετε να εφαρμόσετε μεταβολή %+.1f%%%% στην κατηγορία '%s';%n%n"
+        String.format("Είστε σίγουροι ότι θέλετε να εφαρμόσετε μεταβολή %+.1f%%%% στην κατηγορία '%s';%n%n"
         +
                          "Αυτή η ενέργεια θα αλλάξει όλες τις εγγραφές της κατηγορίας.",
                          percentage, category),

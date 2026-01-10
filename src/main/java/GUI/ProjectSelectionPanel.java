@@ -1,10 +1,30 @@
 package GUI;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-import javax.swing.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.RadialGradientPaint;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.Ellipse2D;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 import service.SimulationService;
 
 /**
@@ -235,7 +255,8 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
       
       int response = JOptionPane.showConfirmDialog(
             this,
-            "Θέλετε να ξεκινήσετε νέα προσομοίωση?\n" +
+            "Θέλετε να ξεκινήσετε νέα προσομοίωση?\n" 
+            +
             "ΠΡΟΣΟΧΗ: Όλες οι τρέχουσες αλλαγές θα χαθούν!",
             "Επιβεβαίωση Νέας Προσομοίωσης",
             JOptionPane.YES_NO_OPTION,
@@ -250,7 +271,8 @@ public ProjectSelectionPanel(MainFrame mainFrame) {
             
           JOptionPane.showMessageDialog(
                     this,
-                    "Η νέα προσομοίωση ξεκίνησε επιτυχώς!\n" +
+                    "Η νέα προσομοίωση ξεκίνησε επιτυχώς!\n"
+                     +
                     "Τα δεδομένα επαναφέρθηκαν στην αρχική τους κατάσταση.",
                     "Επιτυχία",
                     JOptionPane.INFORMATION_MESSAGE
