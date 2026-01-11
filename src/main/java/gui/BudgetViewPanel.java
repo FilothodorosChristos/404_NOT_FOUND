@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import dao.CashFlow;
 import dao.Foreis;
@@ -327,6 +327,7 @@ public class BudgetViewPanel extends JPanel {
     try {
       // Παίρνουμε το έτος ως int (π.χ. 2023)
       String yearStr = mainFrame.getSelectedYear();
+      
       int year = Integer.parseInt(yearStr);
 
       // Update section label

@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.awt.AlphaComposite;
@@ -52,7 +52,7 @@ public class YearSelectionPanel extends JPanel {
     setLayout(null);
     setBackground(new Color(10, 14, 39));
 
-    createUI();
+    createUi();
     setupAnimations();
     setupMouseTracking();
 
@@ -68,7 +68,7 @@ public class YearSelectionPanel extends JPanel {
   /**
    * Creates all UI components.
    */
-  private void createUI() {
+  private void createUi() {
     createYearButtons();
     createBackButton();
     repositionComponents();

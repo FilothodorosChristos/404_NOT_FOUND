@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import dao.CashFlow;
 import dao.Foreis;
@@ -88,13 +88,13 @@ public class MassiveChangesPanel extends JPanel {
     setLayout(new BorderLayout());
     setBackground(DARK_BG);
 
-    createUI();
+    createUi();
   }
 
   /**
    * Δημιουργία του UI.
    */
-  private void createUI() {
+  private void createUi() {
     JPanel mainContent = new JPanel(new BorderLayout(0, 15));
     mainContent.setBackground(DARK_BG);
     mainContent.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
