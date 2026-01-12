@@ -76,6 +76,7 @@
 ## Download
 
 Μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens για Windows:
+⚠️ **Σημαντικό:** Χρειάζεται να είναι εγκατεστημένο το **Java Runtime Environment (JRE)**
 
 **[⬇️ GoverLens.exe](https://github.com/FilothodorosChristos/404_NOT_FOUND/releases/download/v1.0.0/GoverLens.exe)**
 
@@ -388,6 +389,7 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
 
 
