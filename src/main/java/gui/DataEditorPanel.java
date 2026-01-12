@@ -3,29 +3,13 @@ package gui;
 import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
+import java.awt.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import java.util.ArrayList;
+import java.util.List;
 import service.CashFlowService;
 import service.ForeisService;
 import util.PdfExporter;
@@ -33,12 +17,12 @@ import util.ValidationUtils;
 
 /**
  * Panel για εμφάνιση και επεξεργασία δεδομένων από τη βάση.
- * Υποστηρίζει τόσο CashFlowς όσο και Foreis με δύο πίνακες (Έσοδα/Έξοδα).
- * Ενσωματώνεται στο MainFrame χωρίς να ανοίγει νέο παράθυρο.
+ * Υποστηρίζει τρεις πίνακες: Έσοδα, Έξοδα και Φορείς κατακόρυφα.
  */
 public final class DataEditorPanel extends JPanel {
 
   private static final Color LIGHT_GREEN = new Color(200, 230, 200);
+  private static final Color LIGHT_BLUE = new Color(200, 220, 240);
   private static final Font TITLE_FONT = new Font("Tahoma", Font.BOLD, 18);
   private static final Font TABLE_FONT = new Font("Arial", Font.PLAIN, 12);
   private static final Font HEADER_FONT = new Font("Arial", Font.BOLD, 12);
@@ -46,6 +30,8 @@ public final class DataEditorPanel extends JPanel {
 
   private DefaultTableModel incomeTableModel;
   private DefaultTableModel expenseTableModel;
+  private DefaultTableModel foreisTableModel;
+  
   private String dataType;
   private int selectedYear;
   private MainFrame mainFrame;
@@ -62,10 +48,12 @@ public final class DataEditorPanel extends JPanel {
   private static final Color BORDER_COLOR = new Color(51, 65, 85);
   private static final Color TABLE_HEADER_BG = new Color(30, 41, 59);
 
-  
-  
   /**
-   * Constructor - Δέχεται MainFrame, έτος και κατηγορία δεδομένων.
+   * Constructor για το DataEditorPanel.
+   *
+   * @param mainFrame η κύρια φόρμα της εφαρμογής
+   * @param year το έτος
+   * @param dataType η κατηγορία δεδομένων
    */
   @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
   
@@ -93,9 +81,9 @@ public final class DataEditorPanel extends JPanel {
     JPanel headerPanel = createHeaderPanel();
     mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-    // Split Panel με δύο πίνακες
-    JSplitPane splitPane = createSplitTablePanel();
-    mainPanel.add(splitPane, BorderLayout.CENTER);
+    // Main Content Panel με τρεις πίνακες κατακόρυφα
+    JPanel contentPanel = createContentPanel();
+    mainPanel.add(contentPanel, BorderLayout.CENTER);
 
     // Button Panel
     JPanel buttonPanel = createButtonPanel();
@@ -108,37 +96,39 @@ public final class DataEditorPanel extends JPanel {
    * Δημιουργία header panel με τίτλο και πληροφορίες.
    */
   private JPanel createHeaderPanel() {
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.setBackground(CARD_BG);
-    panel.setPreferredSize(new Dimension(0, 80));
-    panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+    JPanel headerPanel = new JPanel(new BorderLayout());
+    headerPanel.setBackground(CARD_BG);
+    headerPanel.setPreferredSize(new Dimension(0, 80));
+    headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
     String title = "cashflow".equalsIgnoreCase(dataType)
-            ? "Ταμειακές Ροές"
-            : "Φορείς";
+            ? "Ταμειακές Ροές & Φορείς"
+            : "Φορείς & Ταμειακές Ροές";
     JLabel titleLabel = new JLabel(title);
     titleLabel.setFont(new Font("Tahoma", Font.BOLD, 24));
     titleLabel.setForeground(TEXT_PRIMARY);
 
-    String info = String.format("<html>Έτος: <b>%d</b> | Εμφάνιση: <b>Έσοδα & Έξοδα</b></html>",
+    String info = String.format("<html>Έτος: <b>%d</b> | Εμφάνιση: <b>Έσοδα, Έξοδα & Φορείς</b></html>",
             selectedYear);
     JLabel infoLabel = new JLabel(info);
     infoLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
     infoLabel.setForeground(TEXT_SECONDARY);
 
-    JPanel textPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-    textPanel.setOpaque(false);
+    JPanel textPanel = new JPanel();
+    textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+    textPanel.setBackground(CARD_BG);
     textPanel.add(titleLabel);
+    textPanel.add(Box.createVerticalStrut(5));
     textPanel.add(infoLabel);
 
-    panel.add(textPanel, BorderLayout.WEST);
+    headerPanel.add(textPanel, BorderLayout.WEST);
 
     // Κουμπί Ιστορικού Αλλαγών
     JButton historyButton = new JButton("📊 Ιστορικό Αλλαγών");
     historyButton.setFont(new Font("Arial", Font.BOLD, 13));
     historyButton.setPreferredSize(new Dimension(180, 45));
     historyButton.setBackground(ACCENT_BLUE);
-    historyButton.setForeground(Color.BLACK); // Updated to Black
+    historyButton.setForeground(Color.BLACK);
     historyButton.setFocusPainted(false);
     historyButton.setBorder(BorderFactory.createCompoundBorder());
     historyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -148,14 +138,12 @@ public final class DataEditorPanel extends JPanel {
       public void mouseEntered(java.awt.event.MouseEvent evt) {
         historyButton.setBackground(ACCENT_BLUE.brighter());
       }
-      
       @Override
       public void mouseExited(java.awt.event.MouseEvent evt) {
         historyButton.setBackground(ACCENT_BLUE);
       }
     });
     
-    // *** ΑΥΤΗ ΕΙΝΑΙ Η ΣΗΜΑΝΤΙΚΗ ΑΛΛΑΓΗ ***
     historyButton.addActionListener(e -> {
       try {
         mainFrame.showLogViewer(selectedYear, dataType);
@@ -174,37 +162,57 @@ public final class DataEditorPanel extends JPanel {
     rightPanel.setOpaque(false);
     rightPanel.add(historyButton);
     
-    panel.add(rightPanel, BorderLayout.EAST);
+    headerPanel.add(rightPanel, BorderLayout.EAST);
 
-    return panel;
+    return headerPanel;
   }
+
   /**
-   * Δημιουργία split panel με δύο πίνακες (Έσοδα & Έξοδα).
+   * Δημιουργία του κεντρικού panel με τους τρεις πίνακες κατακόρυφα.
    */
+  private JPanel createContentPanel() {
+    JPanel contentPanel = new JPanel();
+    contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+    contentPanel.setBackground(DARK_BG);
+    contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-  private JSplitPane createSplitTablePanel() {
-    JPanel incomePanel = createTablePanel("Έσοδα", "Έσοδο", true);
-    JPanel expensePanel = createTablePanel("Έξοδα", "Έξοδο", false);
+    // Πίνακας Εσόδων
+    JPanel incomePanel = createTablePanel("Έσοδα", "Έσοδο", LIGHT_GREEN, true);
+    contentPanel.add(incomePanel);
+    contentPanel.add(Box.createVerticalStrut(15));
 
-    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, incomePanel, expensePanel);
-    splitPane.setDividerLocation(350);
-    splitPane.setResizeWeight(0.5);
-    splitPane.setBorder(BorderFactory.createCompoundBorder(
-        BorderFactory.createLineBorder(BORDER_COLOR, 1),
-        BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-    splitPane.setOpaque(false);
+    // Πίνακας Εξόδων
+    JPanel expensePanel = createTablePanel("Έξοδα", "Έξοδο", new Color(255, 200, 200), false);
+    contentPanel.add(expensePanel);
+    contentPanel.add(Box.createVerticalStrut(15));
 
-    return splitPane;
+    // Πίνακας Φορέων
+    JPanel foreisPanel = createForeisTablePanel();
+    contentPanel.add(foreisPanel);
+
+    JScrollPane mainScrollPane = new JScrollPane(contentPanel);
+    mainScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    mainScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+    mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+    mainScrollPane.setBorder(BorderFactory.createEmptyBorder());
+    mainScrollPane.setBackground(DARK_BG);
+    mainScrollPane.getViewport().setBackground(DARK_BG);
+
+    JPanel wrapperPanel = new JPanel(new BorderLayout());
+    wrapperPanel.add(mainScrollPane);
+    return wrapperPanel;
   }
 
   /**
    * Δημιουργία table panel για Έσοδα ή Έξοδα.
    */
-  private JPanel createTablePanel(String title, String type, boolean isIncome) {
+  private JPanel createTablePanel(String title, String type, Color borderColor, boolean isIncome) {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setOpaque(false);
+    panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 350));
+    panel.setPreferredSize(new Dimension(0, 350));
     panel.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(isIncome ? LIGHT_GREEN : Color.WHITE),
+            BorderFactory.createLineBorder(borderColor, 2),
             title,
             javax.swing.border.TitledBorder.LEFT,
             javax.swing.border.TitledBorder.TOP,
@@ -212,76 +220,33 @@ public final class DataEditorPanel extends JPanel {
             TEXT_PRIMARY
     ));
 
-    DefaultTableModel tableModel;
-    JTable table;
+    String[] columnNames = {"ID", "Έτος", "Τύπος", "Όνομα", "Ποσό (€)"};
+    DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
+      @Override
+      public boolean isCellEditable(int row, int column) {
+        return column == 3 || column == 4;
+      }
 
-    if ("cashflow".equalsIgnoreCase(dataType)) {
-      String[] columnNames = {"ID", "Έτος", "Τύπος", "Όνομα", "Ποσό (€)"};
-      tableModel = new DefaultTableModel(columnNames, 0) {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-          return column == 3 || column == 4;
-        }
+      @Override
+      public Class<?> getColumnClass(int columnIndex) {
+        if (columnIndex == 0 || columnIndex == 1) return Integer.class;
+        if (columnIndex == 4) return Double.class;
+        return String.class;
+      }
+    };
 
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-          if (columnIndex == 0 || columnIndex == 1) {
-            return Integer.class;
-          }
-          if (columnIndex == 4) {
-            return Double.class;
-          }
-          return String.class;
-        }
-      };
-    } else {
-      String[] columnNames = {"ID", "Foreas ID", "Έτος", "Τύπος", "Όνομα",
-          "Τακτικός Π/Υ (€)", "Δημόσιες Επενδύσεις (€)", "Σύνολο (€)"};
-      tableModel = new DefaultTableModel(columnNames, 0) {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-          return column == 4 || column == 5 || column == 6 || column == 7;
-        }
-
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-          if (columnIndex <= 2) {
-            return Integer.class;
-          }
-          if (columnIndex >= 5) {
-            return Double.class;
-          }
-          return String.class;
-        }
-      };
-    }
-
-    table = new JTable(tableModel);
-    table.setFont(TABLE_FONT);
-    table.setRowHeight(25);
-    table.getTableHeader().setFont(HEADER_FONT);
-    table.getTableHeader().setForeground(Color.BLACK);
-    table.getTableHeader().setBackground(TABLE_HEADER_BG);
-    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    table.setGridColor(BORDER_COLOR);
-    table.setBackground(DARKER_BG);
-    table.setForeground(TEXT_PRIMARY);
-    table.setSelectionBackground(ACCENT_BLUE);
-    table.setShowGrid(true);
-    table.setOpaque(true);
+    JTable table = new JTable(tableModel);
+    styleTable(table);
+    adjustCashFlowColumnWidths(table);
 
     tableModel.addTableModelListener(e -> {
       if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
         int row = e.getFirstRow();
         if (row >= 0) {
-          autoSaveRow(row, table, tableModel, type);
+          autoSaveCashFlowRow(row, table, tableModel, type);
         }
       }
     });
-
-    adjustColumnWidths(table);
-
-    table.setSelectionForeground(Color.BLACK);
 
     JScrollPane scrollPane = new JScrollPane(table);
     scrollPane.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
@@ -297,8 +262,8 @@ public final class DataEditorPanel extends JPanel {
     JButton addButton = createMiniButton("➕ Προσθήκη", ACCENT_BLUE);
     JButton deleteButton = createMiniButton("🗑️ Διαγραφή", ACCENT_BLUE);
 
-    addButton.addActionListener(e -> addNewRow(type));
-    deleteButton.addActionListener(e -> deleteSelectedRow(table, tableModel, type));
+    addButton.addActionListener(e -> addNewCashFlow(type));
+    deleteButton.addActionListener(e -> deleteCashFlowRow(table, tableModel, type));
 
     innerButtonPanel.add(addButton);
     innerButtonPanel.add(deleteButton);
@@ -307,7 +272,6 @@ public final class DataEditorPanel extends JPanel {
     if (isIncome) {
       incomeTableModel = tableModel;
     } else {
-      
       expenseTableModel = tableModel;
     }
 
@@ -315,27 +279,119 @@ public final class DataEditorPanel extends JPanel {
   }
 
   /**
-   * Ρύθμιση πλάτους στηλών ανάλογα με το περιεχόμενο.
+   * Δημιουργία table panel για Φορείς.
    */
-  private void adjustColumnWidths(JTable table) {
-    TableColumnModel columnModel = table.getColumnModel();
+  private JPanel createForeisTablePanel() {
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setOpaque(false);
+    panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 350));
+    panel.setPreferredSize(new Dimension(0, 350));
+    panel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(LIGHT_BLUE, 2),
+            "Φορείς",
+            javax.swing.border.TitledBorder.LEFT,
+            javax.swing.border.TitledBorder.TOP,
+            TITLE_FONT,
+            TEXT_PRIMARY
+    ));
 
-    if ("cashflow".equalsIgnoreCase(dataType)) {
-      columnModel.getColumn(0).setPreferredWidth(50);
-      columnModel.getColumn(1).setPreferredWidth(70);
-      columnModel.getColumn(2).setPreferredWidth(80);
-      columnModel.getColumn(3).setPreferredWidth(250);
-      columnModel.getColumn(4).setPreferredWidth(120);
-    } else {
-      columnModel.getColumn(0).setPreferredWidth(40);
-      columnModel.getColumn(1).setPreferredWidth(60);
-      columnModel.getColumn(2).setPreferredWidth(60);
-      columnModel.getColumn(3).setPreferredWidth(100);
-      columnModel.getColumn(4).setPreferredWidth(180);
-      columnModel.getColumn(5).setPreferredWidth(130);
-      columnModel.getColumn(6).setPreferredWidth(130);
-      columnModel.getColumn(7).setPreferredWidth(130);
-    }
+    String[] columnNames = {"ID", "Foreas ID", "Έτος", "Τύπος", "Όνομα",
+        "Τακτικός Π/Υ (€)", "Δημόσιες Επενδύσεις (€)", "Σύνολο (€)"};
+    foreisTableModel = new DefaultTableModel(columnNames, 0) {
+      @Override
+      public boolean isCellEditable(int row, int column) {
+        return column == 4 || column == 5 || column == 6 || column == 7;
+      }
+
+      @Override
+      public Class<?> getColumnClass(int columnIndex) {
+        if (columnIndex <= 2) return Integer.class;
+        if (columnIndex >= 5) return Double.class;
+        return String.class;
+      }
+    };
+
+    JTable table = new JTable(foreisTableModel);
+    styleTable(table);
+    adjustForeisColumnWidths(table);
+
+    foreisTableModel.addTableModelListener(e -> {
+      if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
+        int row = e.getFirstRow();
+        if (row >= 0) {
+          autoSaveForeisRow(row, table, foreisTableModel);
+        }
+      }
+    });
+
+    JScrollPane scrollPane = new JScrollPane(table);
+    scrollPane.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+    scrollPane.setOpaque(true);
+    scrollPane.getViewport().setOpaque(true);
+    scrollPane.getViewport().setBackground(DARKER_BG);
+    panel.add(scrollPane, BorderLayout.CENTER);
+
+    JPanel innerButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+    innerButtonPanel.setOpaque(true);
+    innerButtonPanel.setBackground(DARK_BG);
+
+    JButton addButton = createMiniButton("➕ Προσθήκη", ACCENT_BLUE);
+    JButton deleteButton = createMiniButton("🗑️ Διαγραφή", ACCENT_BLUE);
+
+    addButton.addActionListener(e -> addNewForeis());
+    deleteButton.addActionListener(e -> deleteForeisRow(table, foreisTableModel));
+
+    innerButtonPanel.add(addButton);
+    innerButtonPanel.add(deleteButton);
+    panel.add(innerButtonPanel, BorderLayout.SOUTH);
+
+    return panel;
+  }
+
+  /**
+   * Styling του πίνακα.
+   */
+  private void styleTable(JTable table) {
+    table.setFont(TABLE_FONT);
+    table.setRowHeight(25);
+    table.getTableHeader().setFont(HEADER_FONT);
+    table.getTableHeader().setForeground(Color.BLACK);
+    table.getTableHeader().setBackground(TABLE_HEADER_BG);
+    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    table.setGridColor(BORDER_COLOR);
+    table.setBackground(DARKER_BG);
+    table.setForeground(TEXT_PRIMARY);
+    table.setSelectionBackground(ACCENT_BLUE);
+    table.setShowGrid(true);
+    table.setOpaque(true);
+    table.setSelectionForeground(Color.BLACK);
+  }
+
+  /**
+   * Ρύθμιση πλάτους στηλών για CashFlow.
+   */
+  private void adjustCashFlowColumnWidths(JTable table) {
+    TableColumnModel columnModel = table.getColumnModel();
+    columnModel.getColumn(0).setPreferredWidth(50);
+    columnModel.getColumn(1).setPreferredWidth(70);
+    columnModel.getColumn(2).setPreferredWidth(80);
+    columnModel.getColumn(3).setPreferredWidth(250);
+    columnModel.getColumn(4).setPreferredWidth(120);
+  }
+
+  /**
+   * Ρύθμιση πλάτους στηλών για Foreis.
+   */
+  private void adjustForeisColumnWidths(JTable table) {
+    TableColumnModel columnModel = table.getColumnModel();
+    columnModel.getColumn(0).setPreferredWidth(40);
+    columnModel.getColumn(1).setPreferredWidth(60);
+    columnModel.getColumn(2).setPreferredWidth(60);
+    columnModel.getColumn(3).setPreferredWidth(100);
+    columnModel.getColumn(4).setPreferredWidth(180);
+    columnModel.getColumn(5).setPreferredWidth(130);
+    columnModel.getColumn(6).setPreferredWidth(130);
+    columnModel.getColumn(7).setPreferredWidth(130);
   }
 
   /**
@@ -346,17 +402,15 @@ public final class DataEditorPanel extends JPanel {
     panel.setBackground(DARK_BG);
     panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY));
 
-    // Δημιουργία backButton ακριβώς όπως το historyButton
     JButton backButton = new JButton("← Προηγούμενο");
     backButton.setFont(new Font("Arial", Font.BOLD, 13));
     backButton.setPreferredSize(new Dimension(160, 35));
-    backButton.setBackground(ACCENT_BLUE); 
-    backButton.setForeground(Color.BLACK); // Updated to Black
+    backButton.setBackground(ACCENT_BLUE);
+    backButton.setForeground(Color.BLACK);
     backButton.setFocusPainted(false);
     backButton.setBorder(BorderFactory.createCompoundBorder());
     backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-    // Κουμπί Εξαγωγής PDF
     JButton exportPdfButton = new JButton("📄 Εξαγωγή PDF");
     exportPdfButton.setFont(new Font("Arial", Font.BOLD, 13));
     exportPdfButton.setPreferredSize(new Dimension(160, 35));
@@ -380,7 +434,6 @@ public final class DataEditorPanel extends JPanel {
     
     exportPdfButton.addActionListener(e -> exportCurrentDataToPdf());
 
-    // Hover effect
     backButton.addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
         public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -393,7 +446,6 @@ public final class DataEditorPanel extends JPanel {
         }
     });
 
-    // ActionListener
     backButton.addActionListener(e -> mainFrame.showPanel(MainFrame.ACTION_SELECTION));
 
     panel.add(backButton);
@@ -411,34 +463,29 @@ public final class DataEditorPanel extends JPanel {
     button.setPreferredSize(new Dimension(120, 30));
     button.setBackground(bgColor);
     button.setOpaque(true);
-    button.setForeground(Color.BLACK); // Updated to Black
-
+    button.setForeground(Color.BLACK);
     return button;
   }
 
   /**
-   * Φόρτωση δεδομένων από τη βάση μέσω των Service κλάσεων.
+   * Φόρτωση δεδομένων από τη βάση.
    */
   private void loadData() {
     incomeTableModel.setRowCount(0);
     expenseTableModel.setRowCount(0);
+    foreisTableModel.setRowCount(0);
 
     try {
-      if ("cashflow".equalsIgnoreCase(dataType)) {
-        loadCashFlowData("Έσοδο", incomeTableModel);
-        loadCashFlowData("Έξοδο", expenseTableModel);
-      } else if ("foreis".equalsIgnoreCase(dataType)) {
-        loadForeisData("Έσοδο", incomeTableModel);
-        loadForeisData("Έξοδο", expenseTableModel);
-      }
-
+      loadCashFlowData("Έσοδο", incomeTableModel);
+      loadCashFlowData("Έξοδο", expenseTableModel);
+      loadForeisData();
     } catch (Exception e) {
       showError("Σφάλμα φόρτωσης δεδομένων: " + e.getMessage());
     }
   }
 
   /**
-   * Φόρτωση CashFlow δεδομένων μέσω CashFlowService.
+   * Φόρτωση CashFlow δεδομένων.
    */
   private void loadCashFlowData(String type, DefaultTableModel tableModel) {
     List<CashFlow> cashFlows = cashFlowService.getCashflows(selectedYear, type);
@@ -456,12 +503,15 @@ public final class DataEditorPanel extends JPanel {
   }
 
   /**
-   * Φόρτωση Foreis δεδομένων μέσω ForeisService.
+   * Φόρτωση Foreis δεδομένων.
    */
-  private void loadForeisData(String type, DefaultTableModel tableModel) {
-    List<Foreis> foreisList = foreisService.getForeisByYearAndType(selectedYear, type);
+  private void loadForeisData() {
+    List<Foreis> allForeis = new ArrayList<>();
+    allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Κεντρική Διοίκηση"));
+    allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Υπουργείο"));
+    allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Αποκεντρωμένη Διοίκηση"));
 
-    for (Foreis f : foreisList) {
+    for (Foreis f : allForeis) {
       Object[] row = {
               f.getId(),
               f.getForeasId(),
@@ -472,31 +522,24 @@ public final class DataEditorPanel extends JPanel {
               f.getPublicInvBudget(),
               f.getTotal()
       };
-      tableModel.addRow(row);
+      foreisTableModel.addRow(row);
     }
   }
 
   /**
-   * Αυτόματη αποθήκευση γραμμής κατά την επεξεργασία.
+   * Αυτόματη αποθήκευση γραμμής CashFlow.
    */
-  private void autoSaveRow(int row, JTable table, DefaultTableModel tableModel, String type) {
+  private void autoSaveCashFlowRow(int row, JTable table, DefaultTableModel tableModel, String type) {
     try {
-      if ("cashflow".equalsIgnoreCase(dataType)) {
-        saveCashFlowRow(row, tableModel);
+      saveCashFlowRow(row, tableModel);
 
-        // Υπολογισμός Budget Status 
-        List<CashFlow> allCashflows = cashFlowService.getCashflows(selectedYear, "Έσοδο");
-        allCashflows.addAll(cashFlowService.getCashflows(selectedYear, "Έξοδο"));
-        String status = ValidationUtils.calculateBudgetStatus(allCashflows);
+      List<CashFlow> allCashflows = cashFlowService.getCashflows(selectedYear, "Έσοδο");
+      allCashflows.addAll(cashFlowService.getCashflows(selectedYear, "Έξοδο"));
+      String status = ValidationUtils.calculateBudgetStatus(allCashflows);
 
-        // Εμφάνιση στον χρήστη
-        JOptionPane.showMessageDialog(this, status, "Κατάσταση Προϋπολογισμού",
-                JOptionPane.INFORMATION_MESSAGE);
+      JOptionPane.showMessageDialog(this, status, "Κατάσταση Προϋπολογισμού",
+              JOptionPane.INFORMATION_MESSAGE);
 
-
-      } else if ("foreis".equalsIgnoreCase(dataType)) {
-        saveForeisRow(row, tableModel);
-      }
     } catch (Exception e) {
       showError("Σφάλμα αυτόματης αποθήκευσης: " + e.getMessage());
       loadData();
@@ -504,28 +547,40 @@ public final class DataEditorPanel extends JPanel {
   }
 
   /**
-   * Αποθήκευση γραμμής CashFlow μέσω CashFlowService.
+   * Αυτόματη αποθήκευση γραμμής Foreis.
+   */
+  private void autoSaveForeisRow(int row, JTable table, DefaultTableModel tableModel) {
+    try {
+      saveForeisRow(row, tableModel);
+    } catch (Exception e) {
+      showError("Σφάλμα αυτόματης αποθήκευσης: " + e.getMessage());
+      loadData();
+    }
+  }
+
+  /**
+   * Αποθήκευση γραμμής CashFlow.
    */
   private void saveCashFlowRow(int row, DefaultTableModel tableModel) {
     int id = Integer.parseInt(tableModel.getValueAt(row, 0).toString());
     int yearId = Integer.parseInt(tableModel.getValueAt(row, 1).toString());
     String type = tableModel.getValueAt(row, 2).toString();
     String name = tableModel.getValueAt(row, 3).toString().trim();
-    double newAmount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
     double amount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
+
     if (name.isEmpty()) {
       throw new IllegalArgumentException("Το όνομα δεν μπορεί να είναι κενό!");
     }
 
     ValidationUtils.validateYear(yearId);
-    ValidationUtils.validateNonNegative(newAmount);
+    ValidationUtils.validateNonNegative(amount);
 
     CashFlow cf = new CashFlow(id, yearId, type, name, amount);
     cashFlowService.updateCashflow(cf);
   }
 
   /**
-   * Αποθήκευση γραμμής Foreis μέσω ForeisService.
+   * Αποθήκευση γραμμής Foreis.
    */
   private void saveForeisRow(int row, DefaultTableModel tableModel) {
     int id = Integer.parseInt(tableModel.getValueAt(row, 0).toString());
@@ -539,7 +594,6 @@ public final class DataEditorPanel extends JPanel {
 
     ValidationUtils.validateYear(yearId);
     ValidationUtils.validatePositiveId(foreasId, "Foreas ID");
-
     ValidationUtils.validateNonNegative(regularBudget);
     ValidationUtils.validateNonNegative(publicInvBudget);
     ValidationUtils.validateNonNegative(total);
@@ -550,23 +604,7 @@ public final class DataEditorPanel extends JPanel {
   }
 
   /**
-   * Προσθήκη νέας γραμμής μέσω των Service κλάσεων.
-   */
-  private void addNewRow(String type) {
-    try {
-      if ("cashflow".equalsIgnoreCase(dataType)) {
-        addNewCashFlow(type);
-      } else if ("foreis".equalsIgnoreCase(dataType)) {
-        addNewForeis(type);
-      }
-    } catch (Exception e) {
-      showError("Σφάλμα προσθήκης: " + e.getMessage());
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Προσθήκη νέου CashFlow μέσω dialog.
+   * Προσθήκη νέου CashFlow.
    */
   private void addNewCashFlow(String type) {
     JPanel panel = new JPanel(new GridLayout(2, 2, 10, 10));
@@ -589,35 +627,42 @@ public final class DataEditorPanel extends JPanel {
     );
 
     if (result == JOptionPane.OK_OPTION) {
-      String name = nameField.getText().trim();
-      String amountStr = amountField.getText().trim();
+      try {
+        String name = nameField.getText().trim();
+        String amountStr = amountField.getText().trim();
 
-      if (name.isEmpty() || amountStr.isEmpty()) {
-        throw new IllegalArgumentException("Όλα τα πεδία είναι υποχρεωτικά!");
+        if (name.isEmpty() || amountStr.isEmpty()) {
+          throw new IllegalArgumentException("Όλα τα πεδία είναι υποχρεωτικά!");
+        }
+
+        double amount = Double.parseDouble(amountStr);
+        ValidationUtils.validateYear(selectedYear);
+        ValidationUtils.validateNonNegative(amount);
+
+        CashFlow cf = new CashFlow(0, selectedYear, type, name, amount);
+        cashFlowService.addCashflow(cf);
+
+        showInfo("Η νέα εγγραφή προστέθηκε επιτυχώς!");
+        loadData();
+        showBudgetStatus();
+      } catch (Exception e) {
+        showError("Σφάλμα προσθήκης: " + e.getMessage());
       }
-
-      double amount = Double.parseDouble(amountStr);
-      ValidationUtils.validateYear(selectedYear);
-      ValidationUtils.validateNonNegative(amount);
-
-      CashFlow cf = new CashFlow(0, selectedYear, type, name, amount);
-      cashFlowService.addCashflow(cf);
-
-      showInfo("Η νέα εγγραφή προστέθηκε επιτυχώς!");
-      loadData();
-      showBudgetStatus(); 
     }
   }
 
   /**
-   * Προσθήκη νέου Foreis μέσω dialog.
+   * Προσθήκη νέου Foreis.
    */
-  private void addNewForeis(String type) {
-    JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
+  private void addNewForeis() {
+    JPanel panel = new JPanel(new GridLayout(6, 2, 10, 10));
     panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     JTextField foreasIdField = new JTextField(20);
     JTextField nameField = new JTextField(20);
+    JComboBox<String> typeCombo = new JComboBox<>(new String[]{
+        "Κεντρική Διοίκηση", "Υπουργείο", "Αποκεντρωμένη Διοίκηση"
+    });
     JTextField regularField = new JTextField(20);
     JTextField publicField = new JTextField(20);
     JTextField totalField = new JTextField(20);
@@ -628,6 +673,8 @@ public final class DataEditorPanel extends JPanel {
     panel.add(foreasIdField);
     panel.add(new JLabel("Όνομα:"));
     panel.add(nameField);
+    panel.add(new JLabel("Τύπος:"));
+    panel.add(typeCombo);
     panel.add(new JLabel("Τακτικός Π/Υ (€):"));
     panel.add(regularField);
     panel.add(new JLabel("Δημόσιες Επενδύσεις (€):"));
@@ -649,39 +696,43 @@ public final class DataEditorPanel extends JPanel {
     int result = JOptionPane.showConfirmDialog(
             this,
             panel,
-            "Προσθήκη Νέου Φορέα - " + type,
+            "Προσθήκη Νέου Φορέα",
             JOptionPane.OK_CANCEL_OPTION,
             JOptionPane.PLAIN_MESSAGE
     );
 
     if (result == JOptionPane.OK_OPTION) {
-      String foreasIdStr = foreasIdField.getText().trim();
-      String name = nameField.getText().trim();
-      String regularStr = regularField.getText().trim();
-      String publicStr = publicField.getText().trim();
+      try {
+        String foreasIdStr = foreasIdField.getText().trim();
+        String name = nameField.getText().trim();
+        String type = (String) typeCombo.getSelectedItem();
+        String regularStr = regularField.getText().trim();
+        String publicStr = publicField.getText().trim();
 
-      if (foreasIdStr.isEmpty() || name.isEmpty() || regularStr.isEmpty() || publicStr.isEmpty()) {
-        throw new IllegalArgumentException("Όλα τα πεδία είναι υποχρεωτικά!");
+        if (foreasIdStr.isEmpty() || name.isEmpty() || regularStr.isEmpty() || publicStr.isEmpty()) {
+          throw new IllegalArgumentException("Όλα τα πεδία είναι υποχρεωτικά!");
+        }
+
+        int foreasId = Integer.parseInt(foreasIdStr);
+        double regular = Double.parseDouble(regularStr);
+        double publicInv = Double.parseDouble(publicStr);
+        double total = regular + publicInv;
+
+        ValidationUtils.validatePositiveId(foreasId, "Foreas ID");
+        ValidationUtils.validateYear(selectedYear);
+        ValidationUtils.validateNonNegative(regular);
+        ValidationUtils.validateNonNegative(publicInv);
+        ValidationUtils.validateNonNegative(total);
+
+        Foreis f = new Foreis(0, foreasId, selectedYear, type, name,
+                regular, publicInv, total);
+        foreisService.addForeis(f);
+
+        showInfo("Ο νέος φορέας προστέθηκε επιτυχώς!");
+        loadData();
+      } catch (Exception e) {
+        showError("Σφάλμα προσθήκης: " + e.getMessage());
       }
-
-      int foreasId = Integer.parseInt(foreasIdStr);
-      double regular = Double.parseDouble(regularStr);
-      double publicInv = Double.parseDouble(publicStr);
-      double total = regular + publicInv;
-
-      ValidationUtils.validatePositiveId(foreasId, "Foreas ID");
-      ValidationUtils.validateYear(selectedYear);
-
-      ValidationUtils.validateNonNegative(regular);
-      ValidationUtils.validateNonNegative(publicInv);
-      ValidationUtils.validateNonNegative(total);
-
-      Foreis f = new Foreis(0, foreasId, selectedYear, type, name,
-              regular, publicInv, total);
-      foreisService.addForeis(f);
-
-      showInfo("Ο νέος φορέας προστέθηκε επιτυχώς!");
-      loadData();
     }
   }
 
@@ -700,9 +751,9 @@ public final class DataEditorPanel extends JPanel {
   }
 
   /**
-   * Διαγραφή επιλεγμένης γραμμής μέσω των Service κλάσεων.
+   * Διαγραφή επιλεγμένης γραμμής CashFlow.
    */
-  private void deleteSelectedRow(JTable table, DefaultTableModel tableModel, String type) {
+  private void deleteCashFlowRow(JTable table, DefaultTableModel tableModel, String type) {
     int selectedRow = table.getSelectedRow();
 
     if (selectedRow == -1) {
@@ -710,21 +761,13 @@ public final class DataEditorPanel extends JPanel {
       return;
     }
 
-    String rowInfo;
-    if ("cashflow".equalsIgnoreCase(dataType)) {
-      String name = tableModel.getValueAt(selectedRow, 3).toString();
-      double amount = Double.parseDouble(tableModel.getValueAt(selectedRow, 4).toString());
-      rowInfo = String.format("%s (%.2f €)", name, amount);
-    } else {
-      String name = tableModel.getValueAt(selectedRow, 4).toString();
-      double total = Double.parseDouble(tableModel.getValueAt(selectedRow, 7).toString());
-      rowInfo = String.format("%s (%.2f €)", name, total);
-    }
+    String name = tableModel.getValueAt(selectedRow, 3).toString();
+    double amount = Double.parseDouble(tableModel.getValueAt(selectedRow, 4).toString());
+    String rowInfo = String.format("%s (%.2f €)", name, amount);
 
     int confirm = JOptionPane.showConfirmDialog(
             this,
-            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n"
-             +
+            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n" +
                     "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί!", rowInfo),
             "Επιβεβαίωση Διαγραφής",
             JOptionPane.YES_NO_OPTION,
@@ -737,23 +780,60 @@ public final class DataEditorPanel extends JPanel {
 
     try {
       int id = Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString());
-
-      if ("cashflow".equalsIgnoreCase(dataType)) {
-        cashFlowService.deleteCashflow(id);
-      } else if ("foreis".equalsIgnoreCase(dataType)) {
-        foreisService.deleteForeis(id);
-      }
+      cashFlowService.deleteCashflow(id);
 
       showInfo("Η εγγραφή διαγράφηκε επιτυχώς!");
       loadData();
-      showBudgetStatus(); 
+      showBudgetStatus();
     } catch (Exception e) {
       showError("Σφάλμα διαγραφής: " + e.getMessage());
       e.printStackTrace();
     }
   }
 
-  // helper μέθοδος για εμφάνιση κατάστασης προϋπολογισμού
+  /**
+   * Διαγραφή επιλεγμένης γραμμής Foreis.
+   */
+  private void deleteForeisRow(JTable table, DefaultTableModel tableModel) {
+    int selectedRow = table.getSelectedRow();
+
+    if (selectedRow == -1) {
+      showWarning("Παρακαλώ επιλέξτε μια γραμμή για διαγραφή.");
+      return;
+    }
+
+    String name = tableModel.getValueAt(selectedRow, 4).toString();
+    double total = Double.parseDouble(tableModel.getValueAt(selectedRow, 7).toString());
+    String rowInfo = String.format("%s (%.2f €)", name, total);
+
+    int confirm = JOptionPane.showConfirmDialog(
+            this,
+            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n" +
+                    "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί!", rowInfo),
+            "Επιβεβαίωση Διαγραφής",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+    );
+
+    if (confirm != JOptionPane.YES_OPTION) {
+      return;
+    }
+
+    try {
+      int id = Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString());
+      foreisService.deleteForeis(id);
+
+      showInfo("Η εγγραφή διαγράφηκε επιτυχώς!");
+      loadData();
+    } catch (Exception e) {
+      showError("Σφάλμα διαγραφής: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Helper μέθοδος για εμφάνιση κατάστασης προϋπολογισμού.
+   */
   private void showBudgetStatus() {
     List<CashFlow> allCashflows = cashFlowService.getCashflows(selectedYear, "Έσοδο");
     allCashflows.addAll(cashFlowService.getCashflows(selectedYear, "Έξοδο"));
@@ -766,6 +846,62 @@ public final class DataEditorPanel extends JPanel {
             "Κατάσταση Προϋπολογισμού",
             JOptionPane.INFORMATION_MESSAGE
     );
+  }
+
+  /**
+   * Εξαγωγή δεδομένων σε PDF.
+   */
+  private void exportCurrentDataToPdf() {
+    try {
+      JFileChooser fileChooser = new JFileChooser();
+      fileChooser.setDialogTitle("Αποθήκευση PDF");
+      fileChooser.setSelectedFile(new File("GoverLens_Editor_" + selectedYear + ".pdf"));
+        
+      int userSelection = fileChooser.showSaveDialog(this);
+        
+      if (userSelection == JFileChooser.APPROVE_OPTION) {
+        File fileToSave = fileChooser.getSelectedFile();
+        String path = fileToSave.getAbsolutePath();
+            
+        if (!path.toLowerCase().endsWith(".pdf")) {
+          path += ".pdf";
+        }
+
+        // Εξαγωγή Εσόδων
+        List<CashFlow> income = cashFlowService.getCashflows(selectedYear, "Έσοδο");
+        PdfExporter.exportCashFlowToPdf(income, selectedYear, "Έσοδα", 
+                  path.replace(".pdf", "_Esoda.pdf"));
+              
+        // Εξαγωγή Εξόδων
+        List<CashFlow> expense = cashFlowService.getCashflows(selectedYear, "Έξοδο");
+        PdfExporter.exportCashFlowToPdf(expense, selectedYear, "Έξοδα", 
+                  path.replace(".pdf", "_Exoda.pdf"));
+              
+        // Εξαγωγή Φορέων
+        List<Foreis> allForeis = new ArrayList<>();
+        allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Κεντρική Διοίκηση"));
+        allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Υπουργείο"));
+        allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear,
+            "Αποκεντρωμένη Διοίκηση"));
+              
+        PdfExporter.exportForeisToPdf(allForeis, selectedYear, "Όλοι οι Φορείς",
+                  path.replace(".pdf", "_Foreis.pdf"));
+              
+        JOptionPane.showMessageDialog(this,
+                  "Δημιουργήθηκαν 3 PDF αρχεία:\n" + 
+                  path.replace(".pdf", "_Esoda.pdf") + "\n" +
+                  path.replace(".pdf", "_Exoda.pdf") + "\n" +
+                  path.replace(".pdf", "_Foreis.pdf"),
+                  "Επιτυχία",
+                  JOptionPane.INFORMATION_MESSAGE);
+      }
+    } catch (Exception ex) {
+      JOptionPane.showMessageDialog(this,
+            "Σφάλμα κατά τη δημιουργία του PDF:\n" + ex.getMessage(),
+            "Σφάλμα",
+            JOptionPane.ERROR_MESSAGE);
+      ex.printStackTrace();
+    }
   }
 
   /**
@@ -783,66 +919,5 @@ public final class DataEditorPanel extends JPanel {
   private void showWarning(String message) {
     JOptionPane.showMessageDialog(this, message, "Προειδοποίηση",
             JOptionPane.WARNING_MESSAGE);
-  }
-
-  private void exportCurrentDataToPdf() {
-    try {
-      // File chooser για επιλογή τοποθεσίας
-      JFileChooser fileChooser = new JFileChooser();
-      fileChooser.setDialogTitle("Αποθήκευση PDF");
-      fileChooser.setSelectedFile(new File("GoverLens_Editor_" + selectedYear + ".pdf"));
-        
-      int userSelection = fileChooser.showSaveDialog(this);
-        
-      if (userSelection == JFileChooser.APPROVE_OPTION) {
-        File fileToSave = fileChooser.getSelectedFile();
-        String path = fileToSave.getAbsolutePath();
-            
-        if (!path.toLowerCase().endsWith(".pdf")) {
-          path += ".pdf";
-        }
-
-        if ("cashflow".equalsIgnoreCase(dataType)) {
-          // Εξαγωγή Εσόδων
-          List<CashFlow> income = cashFlowService.getCashflows(selectedYear, "Έσοδο");
-          PdfExporter.exportCashFlowToPdf(income, selectedYear, "Έσοδα", 
-                    path.replace(".pdf", "_Esoda.pdf"));
-                
-          // Εξαγωγή Εξόδων
-          List<CashFlow> expense = cashFlowService.getCashflows(selectedYear, "Έξοδο");
-          PdfExporter.exportCashFlowToPdf(expense, selectedYear, "Έξοδα", 
-                    path.replace(".pdf", "_Exoda.pdf"));
-                
-          JOptionPane.showMessageDialog(this,
-                    "Δημιουργήθηκαν 2 PDF αρχεία:\n"
-                     + 
-                    path.replace(".pdf", "_Esoda.pdf") + "\n" 
-                    +
-                    path.replace(".pdf", "_Exoda.pdf"),
-                    "Επιτυχία",
-                    JOptionPane.INFORMATION_MESSAGE);
-        } else {
-          // Εξαγωγή Φορέων
-          List<Foreis> allForeis = new ArrayList<>();
-          allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Κεντρική Διοίκηση"));
-          allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear, "Υπουργείο"));
-          allForeis.addAll(foreisService.getForeisByYearAndType(selectedYear,
-              "Αποκεντρωμένη Διοίκηση"));
-                
-          PdfExporter.exportForeisToPdf(allForeis, selectedYear, "Όλοι οι Φορείς", path);
-                
-          JOptionPane.showMessageDialog(this,
-                    "Το PDF δημιουργήθηκε επιτυχώς!\n" + path,
-                    "Επιτυχία",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
-      }
-    } catch (Exception ex) {
-      JOptionPane.showMessageDialog(this,
-            "Σφάλμα κατά τη δημιουργία του PDF:\n" + ex.getMessage(),
-            "Σφάλμα",
-            JOptionPane.ERROR_MESSAGE);
-      ex.printStackTrace();
-    }
   }
 }

@@ -1,39 +1,23 @@
 package gui;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.plaf.basic.ComboPopup;
+import java.awt.*;
+import java.util.List;
+import service.CashFlowService;
+import service.ForeisService;
 import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.plaf.basic.BasicButtonUI;
-import javax.swing.plaf.basic.BasicComboBoxUI;
-import javax.swing.plaf.basic.BasicComboPopup;
-import javax.swing.plaf.basic.ComboPopup;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import service.CashFlowService;
-import service.ForeisService;
 import util.PdfExporter;
+import java.util.ArrayList;
+import java.io.File;
 
 /**
  * BudgetViewPanel displays budget data in a single table.
@@ -76,14 +60,14 @@ public class BudgetViewPanel extends JPanel {
     this.foreisService = new ForeisService();
     setLayout(new BorderLayout());
     setBackground(DARK_BG);
-    createUi();
+    createUI();
     loadData();
   }
 
   /**
    * Creates the user interface components.
    */
-  private void createUi() {
+  private void createUI() {
     // Main content panel
     JPanel contentPanel = new JPanel(new BorderLayout(0, 10));
     contentPanel.setBackground(DARK_BG);
@@ -167,25 +151,25 @@ public class BudgetViewPanel extends JPanel {
     });
     // Στο createFilterPanel() μετά το loadButton:
 
-    JButton exportPdfButton = new JButton("ΕΞΑΓΩΓΗ PDF");
-    exportPdfButton.setUI(new BasicButtonUI());
-    exportPdfButton.setFont(new Font("Segoe UI", Font.BOLD, 13));
-    exportPdfButton.setPreferredSize(new Dimension(180, 38));
-    exportPdfButton.setBackground(SUCCESS_GREEN);
-    exportPdfButton.setForeground(Color.WHITE);
-    exportPdfButton.setOpaque(true);
-    exportPdfButton.setBorder(BorderFactory.createEmptyBorder());
-    exportPdfButton.setFocusPainted(false);
-    exportPdfButton.addActionListener(e -> exportCurrentDataToPdf());
+JButton exportPdfButton = new JButton("ΕΞΑΓΩΓΗ PDF");
+exportPdfButton.setUI(new BasicButtonUI());
+exportPdfButton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+exportPdfButton.setPreferredSize(new Dimension(180, 38));
+exportPdfButton.setBackground(SUCCESS_GREEN);
+exportPdfButton.setForeground(Color.WHITE);
+exportPdfButton.setOpaque(true);
+exportPdfButton.setBorder(BorderFactory.createEmptyBorder());
+exportPdfButton.setFocusPainted(false);
+exportPdfButton.addActionListener(e -> exportCurrentDataToPdf());
 
-    filterPanel.add(exportPdfButton);
+filterPanel.add(exportPdfButton);
 
     filterPanel.add(typeLabel);
     filterPanel.add(typeCombo);
     filterPanel.add(loadButton);
 
     return filterPanel;
-  }
+    }
 
   /**
    * Creates and configures a table based on the selection.
@@ -233,7 +217,7 @@ public class BudgetViewPanel extends JPanel {
     scrollPane.getViewport().setBackground(DARKER_BG);
     scrollPane.setBorder(BorderFactory.createEmptyBorder());
     return scrollPane;
-  }
+    }
 
   /**
    * Applies consistent styling to a table.
@@ -248,7 +232,7 @@ public class BudgetViewPanel extends JPanel {
 
     JTableHeader header = table.getTableHeader();
     header.setDefaultRenderer(new DefaultTableCellRenderer() {
-          @Override
+            @Override
         public Component getTableCellRendererComponent(JTable t,
                 Object v, boolean isS, boolean hasF, int r, int c) {
             JLabel label = (JLabel) super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
@@ -266,15 +250,14 @@ public class BudgetViewPanel extends JPanel {
         @Override
             public Component getTableCellRendererComponent(JTable t, Object v,
                  boolean isS, boolean hasF, int r, int c) {
+            Component comp = super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
             setForeground(TEXT_PRIMARY);
             setBackground(r % 2 == 0 ? DARKER_BG : TABLE_ROW_ALT);
-            Component comp = super.getTableCellRendererComponent(t, v, isS, hasF, r, c);
-            setHorizontalAlignment(c == 0 ? LEFT : (c >= 5 || (c == 4 && t.getColumnCount() == 5))
-                ? RIGHT : LEFT);
-            return comp;
-          }
+            setHorizontalAlignment(c == 0 ? LEFT : (c >= 5 || (c == 4 && t.getColumnCount() == 5)) ? RIGHT : LEFT);
+                return comp;
+            }
         });
-  }
+    }
 
   private void styleComboBox(JComboBox<?> combo) {
     combo.setUI(new BasicComboBoxUI() {
@@ -309,7 +292,7 @@ public class BudgetViewPanel extends JPanel {
             l.setBackground(isSelected ? ACCENT_BLUE : TABLE_ROW_ALT);
             l.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
             return l;
-          }
+            }
         });
   }
 
@@ -336,7 +319,7 @@ public class BudgetViewPanel extends JPanel {
       // Remove old table if exists
       if (tableSection.getComponentCount() > 1) {
         tableSection.remove(1);
-      }
+          }
 
       // Create new table based on selection
       JScrollPane scrollPane = createTable(selection);
@@ -356,8 +339,8 @@ public class BudgetViewPanel extends JPanel {
       tableSection.repaint();
 
     } catch (Exception e) {
-      System.err.println("Σφάλμα κατά τη φόρτωση δεδομένων: " + e.getMessage());
-      e.printStackTrace();
+    System.err.println("Σφάλμα κατά τη φόρτωση δεδομένων: " + e.getMessage());
+    e.printStackTrace();
     }
   }
 
@@ -376,7 +359,7 @@ public class BudgetViewPanel extends JPanel {
                     cf.getType(),
                     cf.getName(),
                     String.format("%.2f", cf.getAmount())
-          };
+            };
       tableModel.addRow(row);
     }
   }
@@ -406,7 +389,7 @@ public class BudgetViewPanel extends JPanel {
                     String.format("%.2f", f.getRegularBudget()),
                     String.format("%.2f", f.getPublicInvBudget()),
                     String.format("%.2f", f.getTotal())
-          };
+            };
       tableModel.addRow(row);
     }
 
@@ -420,7 +403,7 @@ public class BudgetViewPanel extends JPanel {
                     String.format("%.2f", f.getRegularBudget()),
                     String.format("%.2f", f.getPublicInvBudget()),
                     String.format("%.2f", f.getTotal())
-          };
+            };
       tableModel.addRow(row);
     }
 
@@ -435,59 +418,58 @@ public class BudgetViewPanel extends JPanel {
                     String.format("%.2f", f.getRegularBudget()),
                     String.format("%.2f", f.getPublicInvBudget()),
                     String.format("%.2f", f.getTotal())
-          };
+            };
       tableModel.addRow(row);
     }
   }
-
   private void exportCurrentDataToPdf() {
     try {
-      String selectedType = (String) typeCombo.getSelectedItem();
-      String yearStr = mainFrame.getSelectedYear();
-      int year = Integer.parseInt(yearStr);
+        String selectedType = (String) typeCombo.getSelectedItem();
+        String yearStr = mainFrame.getSelectedYear();
+        int year = Integer.parseInt(yearStr);
 
-      // File chooser για επιλογή τοποθεσίας
-      JFileChooser fileChooser = new JFileChooser();
-      fileChooser.setDialogTitle("Αποθήκευση PDF");
-      fileChooser.setSelectedFile(new File("GoverLens_" + selectedType + "_" + year + ".pdf"));
+        // File chooser για επιλογή τοποθεσίας
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Αποθήκευση PDF");
+        fileChooser.setSelectedFile(new File("GoverLens_" + selectedType + "_" + year + ".pdf"));
         
-      int userSelection = fileChooser.showSaveDialog(this);
+        int userSelection = fileChooser.showSaveDialog(this);
         
-      if (userSelection == JFileChooser.APPROVE_OPTION) {
-        File fileToSave = fileChooser.getSelectedFile();
-        String path = fileToSave.getAbsolutePath();
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String path = fileToSave.getAbsolutePath();
             
-        // Εξασφάλιση .pdf extension
-        if (!path.toLowerCase().endsWith(".pdf")) {
-          path += ".pdf";
-        }
+            // Εξασφάλιση .pdf extension
+            if (!path.toLowerCase().endsWith(".pdf")) {
+                path += ".pdf";
+            }
 
-        if ("Φορείς".equals(selectedType)) {
-          List<Foreis> allForeis = new ArrayList<>();
-          allForeis.addAll(foreisService.getForeisByYearAndType(year, "Κεντρική Διοίκηση"));
-          allForeis.addAll(foreisService.getForeisByYearAndType(year, "Υπουργείο"));
-          allForeis.addAll(foreisService.getForeisByYearAndType(year, "Αποκεντρωμένη Διοίκηση"));
+            if ("Φορείς".equals(selectedType)) {
+                List<Foreis> allForeis = new ArrayList<>();
+                allForeis.addAll(foreisService.getForeisByYearAndType(year, "Κεντρική Διοίκηση"));
+                allForeis.addAll(foreisService.getForeisByYearAndType(year, "Υπουργείο"));
+                allForeis.addAll(foreisService.getForeisByYearAndType(year, "Αποκεντρωμένη Διοίκηση"));
                 
-          PdfExporter.exportForeisToPdf(allForeis, year, "Όλοι οι Φορείς", path);
-        } else if ("Έσοδα".equals(selectedType)) {
-          List<CashFlow> cashFlows = cashFlowService.getCashflows(year, "Έσοδο");
-          PdfExporter.exportCashFlowToPdf(cashFlows, year, "Έσοδα", path);
-        } else if ("Έξοδα".equals(selectedType)) {
-          List<CashFlow> cashFlows = cashFlowService.getCashflows(year, "Έξοδο");
-          PdfExporter.exportCashFlowToPdf(cashFlows, year, "Έξοδα", path);
-        }
+                PdfExporter.exportForeisToPdf(allForeis, year, "Όλοι οι Φορείς", path);
+            } else if ("Έσοδα".equals(selectedType)) {
+                List<CashFlow> cashFlows = cashFlowService.getCashflows(year, "Έσοδο");
+                PdfExporter.exportCashFlowToPdf(cashFlows, year, "Έσοδα", path);
+            } else if ("Έξοδα".equals(selectedType)) {
+                List<CashFlow> cashFlows = cashFlowService.getCashflows(year, "Έξοδο");
+                PdfExporter.exportCashFlowToPdf(cashFlows, year, "Έξοδα", path);
+            }
 
-        JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(this,
                 "Το PDF δημιουργήθηκε επιτυχώς!\n" + path,
                 "Επιτυχία",
                 JOptionPane.INFORMATION_MESSAGE);
-      }
+        }
     } catch (Exception ex) {
-      JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(this,
             "Σφάλμα κατά τη δημιουργία του PDF:\n" + ex.getMessage(),
             "Σφάλμα",
             JOptionPane.ERROR_MESSAGE);
-      ex.printStackTrace();
+        ex.printStackTrace();
     }
-  }
+}
 }

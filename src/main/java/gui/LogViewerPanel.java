@@ -1,31 +1,16 @@
 package gui;
 
-import dao.Log;
-import dao.LogDao;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.util.List;
+import dao.Log;
+import dao.LogDao;
 import service.LogService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * LogViewerPanel displays the history of all changes made by users.
@@ -63,13 +48,13 @@ public final class LogViewerPanel extends JPanel {
   /** LogService for accessing log data. */
   private final LogService logService;
     
-  /**
-   * Constructs a LogViewerPanel with the specified MainFrame reference.
-   *
-   * @param mainFrame the main application frame
-   * @param year the year to return to when going back
-   * @param dataType the data type to return to when going back
-   */
+    /**
+     * Constructs a LogViewerPanel with the specified MainFrame reference.
+     *
+     * @param mainFrame the main application frame
+     * @param year the year to return to when going back
+     * @param dataType the data type to return to when going back
+     */
 
   @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Necessary for GUI communication")
 
@@ -160,20 +145,19 @@ public final class LogViewerPanel extends JPanel {
             g2d.setColor(new Color(200, 200, 200));
             g2d.setStroke(new BasicStroke(1));
             g2d.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 20, 20);
-          }
+            }
         };
     tableContainer.setLayout(new BorderLayout());
     tableContainer.setOpaque(false);
     tableContainer.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
     // Create table with column names
-    String[] columnNames = {"ID", "Πίνακας",
-      "Λειτουργία", "ID Εγγραφής", "Παλιά Δεδομένα", "Νέα Δεδομένα", "Χρόνος"};
+    String[] columnNames = {"ID", "Πίνακας", "Λειτουργία", "ID Εγγραφής", "Παλιά Δεδομένα", "Νέα Δεδομένα", "Χρόνος"};
     tableModel = new DefaultTableModel(columnNames, 0) {
         @Override
             public boolean isCellEditable(int row, int column) {
             return false; // Make table read-only
-          }
+            }
         };
         
     logTable = new JTable(tableModel);
@@ -244,7 +228,7 @@ public final class LogViewerPanel extends JPanel {
                 "Τα δεδομένα ανανεώθηκαν επιτυχώς!",
                 "Ανανέωση",
                 JOptionPane.INFORMATION_MESSAGE
-      );
+          );
     });
         
     JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -277,12 +261,12 @@ public final class LogViewerPanel extends JPanel {
         @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
             button.setBackground(new Color(230, 240, 255));
-          }
+            }
             
         @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
         button.setBackground(Color.WHITE);
-          }
+            }
         });
         
     return button;
@@ -313,7 +297,7 @@ public final class LogViewerPanel extends JPanel {
                     truncateText(log.getOldData(), 50),
                     truncateText(log.getNewData(), 50),
                     log.getTimestamp() != null ? log.getTimestamp() : "N/A"
-            };
+                };
         tableModel.addRow(row);
       }
             
@@ -338,12 +322,8 @@ public final class LogViewerPanel extends JPanel {
    * @return the truncated text
    */
   private String truncateText(String text, int maxLength) {
-    if (text == null) {
-      return "N/A"; 
-    }
-    if (text.length() <= maxLength) {
-      return text;
-    }
+    if (text == null) return "N/A";
+    if (text.length() <= maxLength)  return text;
     return text.substring(0, maxLength) + "...";
   }
     
