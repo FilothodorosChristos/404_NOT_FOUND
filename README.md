@@ -211,6 +211,115 @@
 │               ├── B23ExodaTEST.csv
 │               └── B23ForeisTEST.csv
 │
+├── javadoc/
+│   ├── dao/
+│   │   ├── class-use/
+│   │   ├── CashFlow.html
+│   │   ├── CashFlowDao.html
+│   │   ├── Foreis.html
+│   │   ├── ForeisDao.html
+│   │   ├── Log.html
+│   │   ├── LogDao.html
+│   │   ├── package-summary.html
+│   │   ├── package-tree.html
+│   │   └── package-use.html
+│   │
+│   ├── database/
+│   │   ├── class-use/
+│   │   ├── DataImporter.html
+│   │   ├── DatabaseSetup.html
+│   │   ├── package-summary.html
+│   │   ├── package-tree.html
+│   │   └── package-use.html
+│   │
+│   ├── dto/
+│   │   ├── class-use/
+│   │   ├── CashFlowCompareDto.html
+│   │   ├── ForeasCompareDto.html
+│   │   ├── package-summary.html
+│   │   ├── package-tree.html
+│   │   └── package-use.html
+│   │
+│   ├── gui/
+│   │   ├── class-use/
+│   │   ├── ActionSelectionPanel.html
+│   │   ├── BudgetViewPanel.html
+│   │   ├── ChartRenderer.html
+│   │   ├── ComparisonPanel.html
+│   │   ├── ComparisonService.html
+│   │   ├── DataEditorPanel.html
+│   │   ├── FinanceChartPanel.html
+│   │   ├── FinanceChartPanel.DataItem.html
+│   │   ├── GraphDataImporter.html
+│   │   ├── LogViewerPanel.html
+│   │   ├── MainFrame.html
+│   │   ├── MassiveChangesPanel.html
+│   │   ├── ProjectSelectionPanel.html
+│   │   ├── WelcomePanel.html
+│   │   ├── YearSelectionPanel.html
+│   │   ├── package-summary.html
+│   │   ├── package-tree.html
+│   │   └── package-use.html
+│   │
+│   ├── legal/
+│   │   ├── COPYRIGHT
+│   │   ├── LICENSE
+│   │   ├── dejavufonts.md
+│   │   ├── jquery.md
+│   │   └── jqueryUI.md
+│   │
+│   ├── resource-files/
+│   │   ├── copy.svg
+│   │   ├── glass.png
+│   │   ├── jquery-ui.min.css
+│   │   ├── link.svg
+│   │   ├── stylesheet.css
+│   │   └── x.png
+│   │
+│   ├── script-files/
+│   │   ├── jquery-3.7.1.min.js
+│   │   ├── jquery-ui.min.js
+│   │   ├── script.js
+│   │   ├── search-page.js
+│   │   └── search.js
+│   │
+│   ├── service/
+│   │   ├── class-use/
+│   │   ├── CashFlowService.html
+│   │   ├── ForeisService.html
+│   │   ├── LogService.html
+│   │   ├── ScenarioCashflowService.html
+│   │   ├── ScenarioForeisService.html
+│   │   ├── SimulationService.html
+│   │   ├── package-summary.html
+│   │   ├── package-tree.html
+│   │   └── package-use.html
+│   │
+│   └── util/
+│       ├── class-use/
+│       ├── DbExistsChecker.html
+│       ├── PdfExporter.html
+│       ├── ValidationUtils.html
+│       ├── allclasses-index.html
+│       ├── allpackages-index.html
+│       ├── constant-values.html
+│       ├── element-list
+│       ├── help-doc.html
+│       ├── index-all.html
+│       ├── index.html
+│       ├── member-search-index.js
+│       ├── module-search-index.js
+│       ├── overview-summary.html
+│       ├── overview-tree.html
+│       ├── package-search-index.js
+│       ├── package-summary.html
+│       ├── package-tree.html
+│       ├── package-use.html
+│       ├── search.html
+│       ├── serialized-form.html
+│       ├── tag-search-index.js
+│       └── type-search-index.js
+│
 ├── docs/
 │   └── images/
 │       ├── Screenshot 2026-01-05 122437.png
@@ -225,7 +334,7 @@
 
 ## UML Class Diagram
 
-![uml diagram](docs/images/Screenshot 2026-01-12 213939.png)
+![uml diagram](docs/images/project_diagram.png)
 
 ## Αλγόριθμοι & Δομές Δεδομένων
 
