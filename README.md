@@ -117,7 +117,7 @@ jpackage ^
   --main-class gui.MainFrame ^
   --type exe ^
   --icon src\main\resources\GoverLensIcon.ico
-
+```
 
 
 
@@ -288,6 +288,7 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
 
 
