@@ -2,11 +2,19 @@ package util;
 
 import java.io.File;
 
+/**
+ ** Κλάση για έλεγχο ύπαρξης αρχείου βάσης δεδομένων.
+ */
+
 public class DbExistsChecker {
 
   private static String dbFile = "budgetDB.db";
 
-  // Επιτρέπει αλλαγή του filename για tests ή άλλες χρήσεις
+  /**
+   ** Ορισμός ονόματος αρχείου βάσης δεδομένων.
+   
+   * @param filename όνομα αρχείου βάσης δεδομένων
+   */
   public static void setDbFile(String filename) {
     if (filename != null && !filename.isEmpty()) {
       dbFile = filename;

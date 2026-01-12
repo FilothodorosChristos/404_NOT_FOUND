@@ -133,7 +133,7 @@ public void testSelectLogIndexTooHighReturnsEmpty() {
    * Επαναφέρει το URL στην κύρια βάση.
    */
   @AfterAll
-  public static void restoreDatabaseURL() {
+  public static void restoreDatabaseUrl() {
     DatabaseSetup.setURL(REAL_DB_URL);
   }
 }
