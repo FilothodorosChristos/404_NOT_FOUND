@@ -193,7 +193,7 @@
 
 ## UML Class Diagram
 
-![uml diagram](project_diagram.png)
+![uml diagram](docs/images/project_diagram.png)
 
 ## Αλγόριθμοι & Δομές Δεδομένων
 
@@ -224,7 +224,7 @@
 
 
 ## Έλεγχος ποιότητας κώδικα (JACOCO)
-![JACOCO](<Screenshot 2026-01-12 172431-1.png>)
+![JACOCO](docs/images/Screenshot%202026-01-12%20172431.png)
 
 ### επιπρόσθετες  μετρήσεις
 
