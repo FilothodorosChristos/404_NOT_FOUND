@@ -2,12 +2,11 @@ package gui;
 
 import dao.CashFlow;
 import dao.Foreis;
-import gui.FinanceChartPanel.DataItem;
-import service.CashFlowService;
-import service.ForeisService;
+import gui.FinanceChartPanel.DataItem; // ΑΥΤΟ ΧΡΕΙΑΖΕΤΑΙ
 import java.util.ArrayList;
 import java.util.List;
-import static gui.FinanceChartPanel.DataItem;
+import service.CashFlowService;
+import service.ForeisService;
 
 /**
  * Loads financial data from the database for a specific fiscal year.
@@ -85,7 +84,7 @@ public class GraphDataImporter {
         List<CashFlow> revenueData = cashFlowService.getCashflows(yearInt, "Έσοδο");
         for (CashFlow cf : revenueData) {
           if (cf.getAmount() > 0) {
-             revenues.add(new DataItem(cf.getName(), cf.getAmount(), "Revenue"));
+            revenues.add(new DataItem(cf.getName(), cf.getAmount(), "Revenue"));
           }
         }
       } catch (Exception e) {

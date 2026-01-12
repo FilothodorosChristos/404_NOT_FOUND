@@ -1,11 +1,29 @@
 package gui;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.RadialGradientPaint;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.Ellipse2D;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  * Modern YearSelectionPanel with unified aesthetic matching WelcomePanel.
@@ -13,13 +31,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class YearSelectionPanel extends JPanel {
 
-    private final MainFrame mainFrame;
-    private Timer animationTimer;
-    private float rotationAngle = 0;
-    private int fadeInProgress = 0;
-    private Point mousePosition = new Point(0, 0);
-    private JButton[] yearButtons;
-    private JButton backButton;
+  private final MainFrame mainFrame;
+  private Timer animationTimer;
+  private float rotationAngle = 0;
+  private int fadeInProgress = 0;
+  private Point mousePosition = new Point(0, 0);
+  private JButton[] yearButtons;
+  private JButton backButton;
 
   /**
    * Constructs a YearSelectionPanel with modern design.
@@ -54,7 +72,7 @@ public class YearSelectionPanel extends JPanel {
     createYearButtons();
     createBackButton();
     repositionComponents();
-    }
+  }
 
   /**
    * Repositions all components to center of panel.
@@ -87,7 +105,7 @@ public class YearSelectionPanel extends JPanel {
 
     // Position back button
     backButton.setBounds(30, height - 70, 150, 40);
-    }
+  }
 
   /**
    * Creates the year selection buttons.
@@ -170,7 +188,7 @@ public class YearSelectionPanel extends JPanel {
             btn.putClientProperty("hover", false);
             repositionComponents();
             btn.repaint();
-            }
+          }
         });
 
     button.addActionListener(e -> {
@@ -249,7 +267,7 @@ public class YearSelectionPanel extends JPanel {
         @Override
             public void mouseMoved(MouseEvent e) {
             mousePosition = e.getPoint();
-            }
+          }
         });
   }
 
@@ -370,5 +388,5 @@ public class YearSelectionPanel extends JPanel {
     String footer = "© 2025 GoverLens. Όλα τα δικαιώματα διατηρούνται.";
     FontMetrics fm = g2.getFontMetrics();
     g2.drawString(footer, width / 2 - fm.stringWidth(footer) / 2, height - 15);
-    }
+  }
 }
