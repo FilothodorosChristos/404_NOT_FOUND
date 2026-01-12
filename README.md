@@ -87,7 +87,7 @@
 ├── src/
 │   ├── main/
 │   │   ├── java/
-│   │   │   ├── GUI/
+│   │   │   ├── gui/
 │   │   │   │   ├── ActionSelectionPanel.java
 │   │   │   │   ├── BudgetViewPanel.java
 │   │   │   │   ├── ChartRenderer.java
@@ -129,6 +129,7 @@
 │   │   │   │
 │   │   │   └── util/
 │   │   │       ├── DbExistsChecker.java
+│   │   │       ├── PdfExporter.java
 │   │   │       └── ValidationUtils.java
 │   │   │
 │   │   └── resources/
@@ -137,8 +138,11 @@
 │   │       │   ├── B21Exoda.csv - B26Exoda.csv
 │   │       │   └── B21Foreis.csv - B26Foreis.csv
 │   │       │
-│   │       └── db/
-│   │           └── originalDB.db
+│   │       ├── db/
+│   │       │   └── originalDB.db
+│   │       │
+│   │       ├── BackgroundPhoto.jpg
+│   │       └── GoverLensLogo.jpg
 │   │
 │   └── test/
 │       └── java/
@@ -167,6 +171,7 @@
 │           │
 │           ├── util/
 │           │   ├── DbExistsCheckerTest.java
+│           │   ├── PdfExporterTest.java
 │           │   └── ValidationUtilsTest.java
 │           │
 │           └── resources/data/
@@ -179,17 +184,16 @@
 │       ├── Screenshot 2026-01-05 122437.png
 │       └── project_diagram.png
 │
-├── BackgroundPhoto.jpg
-├── GoverLensLogo.jpg
-├── README.md
+├── .gitignore
 ├── checkstyle.xml
+├── LICENSE
 ├── pom.xml
-└── .gitignore
+└── README.md
 ```
 
 ## UML Class Diagram
 
-![UML Class Diagram](docs/images/project_diagram.png) 
+![uml diagram](project_diagram.png)
 
 ## Αλγόριθμοι & Δομές Δεδομένων
 
@@ -220,22 +224,23 @@
 
 
 ## Έλεγχος ποιότητας κώδικα (JACOCO)
-![jacoco](./docs/images/Screenshot%202026-01-05%20122437.png)
+![JACOCO](<Screenshot 2026-01-12 172431-1.png>)
 
 ### επιπρόσθετες  μετρήσεις
 
 ```text
+
+Total : 55 files,  7954 codes, 1684 comments, 1917 blanks, all 11555 lines
+
+Languages
 +----------+------------+------------+------------+------------+------------+
 | language | files      | code       | comment    | blank      | total      |
 +----------+------------+------------+------------+------------+------------+
-| Java     |         44 |      5,885 |      1,454 |      1,529 |      8,868 |
-| XML      |          2 |        598 |         43 |         34 |        675 |
-| Markdown |          1 |        164 |          0 |         36 |        200 |
+| Java     |         51 |      7,125 |      1,633 |      1,816 |     10,574 |
+| XML      |          2 |        604 |         44 |         36 |        684 |
+| Markdown |          1 |        195 |          0 |         54 |        249 |
 | YAML     |          1 |         30 |          7 |         11 |         48 |
 +----------+------------+------------+------------+------------+------------+
-
-
-
 
 ```
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)

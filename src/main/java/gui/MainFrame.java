@@ -72,8 +72,8 @@ public class MainFrame extends JFrame {
     BufferedImage tempLogo = null;
     BufferedImage tempBackground = null;
     try {
-      tempLogo = toBufferedImage(new ImageIcon("GoverLensLogo.jpg").getImage());
-      tempBackground = toBufferedImage(new ImageIcon("BackroundPhoto.jpg").getImage());
+tempLogo = toBufferedImage(new ImageIcon("src/GoverLensLogo.jpg").getImage());
+tempBackground = toBufferedImage(new ImageIcon("src/BackroundPhoto.jpg").getImage());
     } catch (Exception e) {
       System.err.println("Error loading images: " + e.getMessage());
     }
