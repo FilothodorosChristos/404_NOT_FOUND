@@ -72,8 +72,15 @@
 - **Microsoft Teams**
   - Επικοινωνία και ανατροφοδότηση μεταξύ των μελών της ομάδας
 
-## Οδηγίες εκτέλεσης του προγράμματος  
+ 
 
+## Download
+
+Μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens:  
+[⬇️ GoverLens.exe](https://github.com/FilothodorosChristos/404_NOT_FOUND/releases/download/v1.0.0/GoverLens.exe)
+
+
+## (Εναλλακτικά) Οδηγίες εκτέλεσης του προγράμματος από Windows Command-Line
 ---
 
 ## Προαπαιτούμενα
@@ -82,9 +89,6 @@
 - **Java:** JDK 17 ή νεότερη  
 - **Maven:** 3.8 ή νεότερο  
 
-> Σημείωση: Αν θέλετε να δημιουργήσετε EXE, απαιτείται JDK 25 ή νεότερη έκδοση για χρήση του `jpackage`.
-
----
 
 ## Τρέξιμο εφαρμογής
 
@@ -105,19 +109,7 @@
    ```bash
    java -jar target/GoverLens-0.0.1-SNAPSHOT.jar
 
-4. (Προαιρετικά) Δημιουργία EXE
-```markdown
-Αν θέλετε να φτιάξετε EXE:
 
-
-jpackage ^
-  --input target ^
-  --name GoverLens ^
-  --main-jar GoverLens-0.0.1-SNAPSHOT.jar ^
-  --main-class gui.MainFrame ^
-  --type exe ^
-  --icon src\main\resources\GoverLensIcon.ico
-```
 
 
 
@@ -288,6 +280,7 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
 
 
