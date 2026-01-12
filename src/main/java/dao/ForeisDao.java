@@ -38,11 +38,11 @@ public class ForeisDao {
    */
   public List<Foreis> selectForeis(int year, String type) {
     List<Foreis> foreisList = new ArrayList<>();
-    final String SQL = "SELECT * FROM foreis WHERE year_id = ? AND type = ? "
+    final String sql = "SELECT * FROM foreis WHERE year_id = ? AND type = ? "
                      + "ORDER BY foreas_id ASC, type ASC, name ASC";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setInt(1, year);
       statement.setString(2, type);
@@ -64,14 +64,14 @@ public class ForeisDao {
    * Εισάγει μια νέα εγγραφή foreis στη βάση δεδομένων.
    */
   public void addForeis(Foreis foreis) {
-    final String SQL =
+    final String sql =
         "INSERT INTO foreis(" 
         + "year_id, type, name, regular_budget," 
         + "public_inv_budget, total, foreas_id) " 
         + "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
     try (Connection connection = DatabaseSetup.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
       preparedStatement.setInt(1, foreis.getYearId());
       preparedStatement.setString(2, foreis.getType());
@@ -91,12 +91,12 @@ public class ForeisDao {
    * Ενημερώνει μια υπάρχουσα εγγραφή foreis με νέα δεδομένα.
    */
   public void updateForeis(Foreis foreis) {
-    final String SQL =
+    final String sql =
         "UPDATE foreis SET year_id = ?, type = ?, name = ?, regular_budget = ?, "
         + "public_inv_budget = ?, total = ?, foreas_id = ? WHERE id = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
       preparedStatement.setInt(1, foreis.getYearId());
       preparedStatement.setString(2, foreis.getType());
@@ -117,10 +117,10 @@ public class ForeisDao {
    * Διαγράφει μια εγγραφή foreis με βάση το ID της.
    */
   public void deleteForeis(int id) {
-    final String SQL = "DELETE FROM foreis WHERE id = ?";
+    final String sql = "DELETE FROM foreis WHERE id = ?";
 
     try (Connection connection = DatabaseSetup.getConnection();
-              PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
@@ -139,9 +139,9 @@ public class ForeisDao {
    */
 
   public Foreis selectForeisById(int id) {
-    final String SQL = "SELECT * FROM foreis WHERE id = ?";
+    final String sql = "SELECT * FROM foreis WHERE id = ?";
     try (Connection connection = DatabaseSetup.getConnection();
-          PreparedStatement statement = connection.prepareStatement(SQL)) {
+          PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setInt(1, id);
 
@@ -157,7 +157,16 @@ public class ForeisDao {
     return null;
   }
 
-    public List<ForeasCompareDto> compareYears(int year1, int year2) throws SQLException {
+  /**
+   *  Συγκρίνει τα Foreis μεταξύ δύο ετών και επιστρέφει μια λίστα DTO
+   *  με τα αποτελέσματα της σύγκρισης.
+   * * @param year1 πρώτο έτος
+   * * @param year2 δεύτερο έτος
+   * 
+   * @return λίστα DTO με τα αποτελέσματα σύγκρισης
+   * @throws SQLException αν προκύψει σφάλμα κατά την επικοινωνία με τη βάση
+   */
+  public List<ForeasCompareDto> compareYears(int year1, int year2) throws SQLException {
     List<ForeasCompareDto> results = new ArrayList<>();
 
     String sql = """

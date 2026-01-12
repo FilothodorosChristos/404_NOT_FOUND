@@ -3,6 +3,9 @@ package util;
 import dao.CashFlow;
 import java.util.List;
 
+/**
+ * Κλάση με βοηθητικές μεθόδους για έλεγχο εγκυρότητας δεδομένων.
+ */
 public class ValidationUtils {
   private ValidationUtils() {}
   
@@ -48,6 +51,14 @@ public class ValidationUtils {
       throw new IllegalArgumentException("Το ποσό δεν μπορεί να είναι αρνητικό: " + amount);
     }
   }
+
+  /**
+   * Έλεγχος θετικού id.
+   *
+   * @param id το id προς έλεγχο
+   * @param fieldName όνομα πεδίου για το μήνυμα σφάλματος
+   * @throws IllegalArgumentException αν το id δεν είναι θετικό
+   */
   
   public static void validatePositiveId(int id, String fieldName) {
     if (id <= 0) {

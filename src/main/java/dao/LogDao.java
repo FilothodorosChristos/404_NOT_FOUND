@@ -8,6 +8,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Η κλάση LogDao χειρίζεται την επικοινωνία με τη βάση δεδομένων
+ * και την πρόσβαση στον πίνακα "log".
+ * Παρέχει λειτουργίες για ανάγνωση εγγραφών.
+ */
 public class LogDao {
 
   private Log mapRow(ResultSet rs) throws SQLException {
@@ -21,14 +26,20 @@ public class LogDao {
                 rs.getString("timestamp")
     );
   }
+
+  /**
+   * Επιστρέφει όλες τις εγγραφές log με id μεγαλύτερο ή ίσο από το δοσμένο index.
+   * 
+   * @param index το ελάχιστο id για τις εγγραφές log
+   */
     
   public List<Log> selectLog(int index) {
     List<Log> log = new ArrayList<>();
 
-    final String SQL = "SELECT * FROM log WHERE id >= ? ORDER BY id";
+    final String sql = "SELECT * FROM log WHERE id >= ? ORDER BY id";
 
     try (Connection connection = DatabaseSetup.getConnection();
-        PreparedStatement statement = connection.prepareStatement(SQL)) {
+        PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setInt(1, index);
 

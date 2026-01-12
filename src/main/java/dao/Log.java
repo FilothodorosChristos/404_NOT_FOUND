@@ -1,5 +1,8 @@
 package dao;
 
+/**
+ * Αντικείμενο που αναπαριστά μια εγγραφή στον πίνακα logs της βάσης δεδομένων.
+ */
 public class Log {
   private int id;
   private String tableName;
@@ -8,6 +11,18 @@ public class Log {
   private String oldData;
   private String newData;
   private String timestamp;
+  
+  /**
+   * Δημιουργεί ένα αντικείμενο Log με τα δοσμένα πεδία.
+   * 
+   * @param id το αναγνωριστικό του log
+   * @param tableName το όνομα του πίνακα
+   * @param operation η λειτουργία (INSERT, UPDATE, DELETE)
+   * @param rowId το αναγνωριστικό της εγγραφής που επηρεάστηκε
+   * @param oldData τα παλιά δεδομένα (για UPDATE/DELETE)
+   * @param newData τα νέα δεδομένα (για INSERT/UPDATE)
+   * @param timestamp η χρονική σήμανση της εγγραφής
+   */
 
   public Log(int id, String tableName, String operation, Integer rowId,
                     String oldData, String newData, String timestamp) {

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import database.DataImporter;
 import database.DatabaseSetup;
 import dto.ForeasCompareDto;
-
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -146,7 +145,7 @@ public void testSelectForeisById() {
    * Επαναφέρει το URL στην κύρια βάση.
    */
   @AfterAll
-    public static void restoreDatabaseURL() {
+    public static void restoreDatabaseUrl() {
     DatabaseSetup.setURL(REAL_DB_URL);
   }
 
@@ -222,7 +221,7 @@ public void testSelectForeis_multipleEntries() {
   @Test
   public void testAddForeis_totalMismatch() {
     Foreis f = new Foreis(0, 701, 2023, "TYPE_Y", "Mismatch", 10, 20, 40);
-    dao.addForeis(f); // μπορεί να προσθέσουμε έλεγχο ότι η DAO δεν ελέγχει το total, αυτό είναι στο Service
+    dao.addForeis(f);
     List<Foreis> list = dao.selectForeis(2023, "TYPE_Y");
     assertEquals(1, list.size());
     assertEquals(40, list.get(0).getTotal());

@@ -3,10 +3,13 @@ package service;
 import database.DataImporter;
 import util.DbExistsChecker;
 
+/**
+ * Κλάση υπηρεσίας για την προσομοίωση.
+ */
 public class SimulationService {
 
   /**
-   * Κανονική μέθοδος για να ξεκινήσει νέα προσομοίωση
+   * Κανονική μέθοδος για να ξεκινήσει νέα προσομοίωση.
    */
   public static void startNewSimulation() {
     DataImporter.importer();
