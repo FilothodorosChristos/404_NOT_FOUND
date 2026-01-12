@@ -74,8 +74,49 @@
 
 ## Οδηγίες εκτέλεσης του προγράμματος  
 
+---
 
-##  Οδηγίες μεταγλώττισης του προγράμματος
+## Προαπαιτούμενα
+
+- **Λειτουργικό Σύστημα:** Windows  
+- **Java:** JDK 17 ή νεότερη  
+- **Maven:** 3.8 ή νεότερο  
+
+> Σημείωση: Αν θέλετε να δημιουργήσετε EXE, απαιτείται JDK 25 ή νεότερη έκδοση για χρήση του `jpackage`.
+
+---
+
+## Τρέξιμο εφαρμογής
+
+1. Κλωνοποίηση του repo:
+   ```bash
+   git clone https://github.com/FilothodorosChristos/404_NOT_FOUND.git
+   cd 404_NOT_FOUND
+
+2. Build με maven
+   ```bash
+   mvn clean package
+
+Μετά την ολοκλήρωση, το εκτελέσιμο JAR θα είναι:
+- target/GoverLens-0.0.1-SNAPSHOT.jar
+
+3. Εκτέλεση της εφαρμογής
+   ```bash
+   java -jar target/GoverLens-0.0.1-SNAPSHOT.jar
+
+4. **(Προαιρετικά) Δημιουργία EXE**
+```markdown
+Αν θέλετε να φτιάξετε EXE:
+
+```bash
+jpackage ^
+  --input target ^
+  --name GoverLens ^
+  --main-jar GoverLens-0.0.1-SNAPSHOT.jar ^
+  --main-class gui.MainFrame ^
+  --type exe ^
+  --icon src\main\resources\GoverLensIcon.ico
+
 
 
 
@@ -246,4 +287,5 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
