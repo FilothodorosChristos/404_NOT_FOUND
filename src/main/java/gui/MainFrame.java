@@ -1,10 +1,21 @@
 package gui;
 
-import javax.swing.*; 
-import java.awt.*;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+
 
 /**
  * Main GUI application class for GoverLens.
@@ -14,9 +25,9 @@ import java.awt.image.WritableRaster;
  */
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
     value = "SING_SINGLETON_IMPLEMENTS_SERIALIZABLE", 
-    justification = "JFrame is native Serializable, but we don't use serialization for this Singleton"
+    justification = "JFrame is native Serializable, "
+    +  "but we don't use serialization for this Singleton"
 )
-
 public class MainFrame extends JFrame { 
     
   /** Singleton instance of MainFrame (volatile for thread safety). */
@@ -72,8 +83,9 @@ public class MainFrame extends JFrame {
     BufferedImage tempLogo = null;
     BufferedImage tempBackground = null;
     try {
-tempLogo = toBufferedImage(new ImageIcon("src/GoverLensLogo.jpg").getImage());
-tempBackground = toBufferedImage(new ImageIcon("src/BackroundPhoto.jpg").getImage());
+      tempLogo = toBufferedImage(new ImageIcon("src/main/resources/GoverLensLogo.jpg").getImage());
+      tempBackground = toBufferedImage(new ImageIcon("src/main/resources/BackroundPhoto.jpg")
+      .getImage());
     } catch (Exception e) {
       System.err.println("Error loading images: " + e.getMessage());
     }
@@ -85,15 +97,17 @@ tempBackground = toBufferedImage(new ImageIcon("src/BackroundPhoto.jpg").getImag
   }
 
   private static BufferedImage toBufferedImage(Image img) {
-    if (img == null) return null;
+    if (img == null) {
+      return null;
+    }  
     if (img instanceof BufferedImage) {
       return (BufferedImage) img;
-        }
+    }
     BufferedImage bimage = new BufferedImage(img.getWidth(null),
          img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-    Graphics2D bGr = bimage.createGraphics();
-    bGr.drawImage(img, 0, 0, null);
-    bGr.dispose();
+    Graphics2D bgr = bimage.createGraphics();
+    bgr.drawImage(img, 0, 0, null);
+    bgr.dispose();
     return bimage;
   }
     
@@ -132,7 +146,7 @@ tempBackground = toBufferedImage(new ImageIcon("src/BackroundPhoto.jpg").getImag
     mainPanel = new JPanel(cardLayout);
     mainPanel.setBackground(new Color(10, 14, 39));
     add(mainPanel);
-    }
+  }
     
   /**
    * Shows the finance chart panel for the selected year.
@@ -147,7 +161,7 @@ tempBackground = toBufferedImage(new ImageIcon("src/BackroundPhoto.jpg").getImag
     FinanceChartPanel chartPanel = FinanceChartPanel.createPanel(selectedYear);
     mainPanel.add(chartPanel, FINANCE_CHART); 
     showPanel(FINANCE_CHART);
-    }
+  }
 
   /**
    * Initializes and adds all panel instances to the CardLayout.
@@ -266,10 +280,12 @@ tempBackground = toBufferedImage(new ImageIcon("src/BackroundPhoto.jpg").getImag
    */
   public Image getBackgroundImage() { 
     return backgroundImage != null ? copyImage(backgroundImage) : null;
-    }
+  }
 
   private BufferedImage copyImage(BufferedImage img) {
-      if (img == null) return null;
+    if (img == null) {  
+      return null;
+    }
     ColorModel cm = img.getColorModel();
     boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
     WritableRaster raster = img.copyData(null);
@@ -297,16 +313,17 @@ tempBackground = toBufferedImage(new ImageIcon("src/BackroundPhoto.jpg").getImag
       if (comp instanceof ComparisonPanel) {
         mainPanel.remove(comp);
         break;
-        }
+      }
     }
     
     ComparisonPanel compPanel = new ComparisonPanel(this);
     mainPanel.add(compPanel, COMPARISON);
     showPanel(COMPARISON);
   }
-  /**show changes. 
-   */
 
+  /**
+   * Displays the massive changes panel to the user.
+   */
   public void showMassiveChanges() {
     if (selectedYear == null) {
       JOptionPane.showMessageDialog(
@@ -329,7 +346,7 @@ tempBackground = toBufferedImage(new ImageIcon("src/BackroundPhoto.jpg").getImag
     MassiveChangesPanel panel = new MassiveChangesPanel(this);
     mainPanel.add(panel, MASSIVE_CHANGES);
     showPanel(MASSIVE_CHANGES);
-}
+  }
 
   /**
    * Sets the selected budget year.

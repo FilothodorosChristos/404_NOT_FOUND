@@ -3,13 +3,32 @@ package gui;
 import dao.CashFlow;
 import dao.Foreis;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.io.File;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox; 
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import service.CashFlowService;
 import service.ForeisService;
 import util.PdfExporter;
@@ -108,7 +127,8 @@ public final class DataEditorPanel extends JPanel {
     titleLabel.setFont(new Font("Tahoma", Font.BOLD, 24));
     titleLabel.setForeground(TEXT_PRIMARY);
 
-    String info = String.format("<html>Έτος: <b>%d</b> | Εμφάνιση: <b>Έσοδα, Έξοδα & Φορείς</b></html>",
+    String info = String.format("<html>Έτος: <b>%d</b> | Εμφάνιση: <b>Έσοδα,"
+        +     "Έξοδα & Φορείς</b></html>",
             selectedYear);
     JLabel infoLabel = new JLabel(info);
     infoLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -138,6 +158,7 @@ public final class DataEditorPanel extends JPanel {
       public void mouseEntered(java.awt.event.MouseEvent evt) {
         historyButton.setBackground(ACCENT_BLUE.brighter());
       }
+
       @Override
       public void mouseExited(java.awt.event.MouseEvent evt) {
         historyButton.setBackground(ACCENT_BLUE);
@@ -229,8 +250,12 @@ public final class DataEditorPanel extends JPanel {
 
       @Override
       public Class<?> getColumnClass(int columnIndex) {
-        if (columnIndex == 0 || columnIndex == 1) return Integer.class;
-        if (columnIndex == 4) return Double.class;
+        if (columnIndex == 0 || columnIndex == 1) {
+          return Integer.class;
+        }
+        if (columnIndex == 4) {
+          return Double.class;
+        }
         return String.class;
       }
     };
@@ -305,8 +330,12 @@ public final class DataEditorPanel extends JPanel {
 
       @Override
       public Class<?> getColumnClass(int columnIndex) {
-        if (columnIndex <= 2) return Integer.class;
-        if (columnIndex >= 5) return Double.class;
+        if (columnIndex <= 2) { 
+          return Integer.class;
+        }
+        if (columnIndex >= 5) {
+          return Double.class;
+        }
         return String.class;
       }
     };
@@ -529,7 +558,8 @@ public final class DataEditorPanel extends JPanel {
   /**
    * Αυτόματη αποθήκευση γραμμής CashFlow.
    */
-  private void autoSaveCashFlowRow(int row, JTable table, DefaultTableModel tableModel, String type) {
+  private void autoSaveCashFlowRow(int row, JTable table,
+      DefaultTableModel tableModel, String type) {
     try {
       saveCashFlowRow(row, tableModel);
 
@@ -562,9 +592,7 @@ public final class DataEditorPanel extends JPanel {
    * Αποθήκευση γραμμής CashFlow.
    */
   private void saveCashFlowRow(int row, DefaultTableModel tableModel) {
-    int id = Integer.parseInt(tableModel.getValueAt(row, 0).toString());
     int yearId = Integer.parseInt(tableModel.getValueAt(row, 1).toString());
-    String type = tableModel.getValueAt(row, 2).toString();
     String name = tableModel.getValueAt(row, 3).toString().trim();
     double amount = Double.parseDouble(tableModel.getValueAt(row, 4).toString());
 
@@ -574,6 +602,8 @@ public final class DataEditorPanel extends JPanel {
 
     ValidationUtils.validateYear(yearId);
     ValidationUtils.validateNonNegative(amount);
+    int id = Integer.parseInt(tableModel.getValueAt(row, 0).toString());
+    String type = tableModel.getValueAt(row, 2).toString();
 
     CashFlow cf = new CashFlow(id, yearId, type, name, amount);
     cashFlowService.updateCashflow(cf);
@@ -658,29 +688,34 @@ public final class DataEditorPanel extends JPanel {
     JPanel panel = new JPanel(new GridLayout(6, 2, 10, 10));
     panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-    JTextField foreasIdField = new JTextField(20);
-    JTextField nameField = new JTextField(20);
-    JComboBox<String> typeCombo = new JComboBox<>(new String[]{
-        "Κεντρική Διοίκηση", "Υπουργείο", "Αποκεντρωμένη Διοίκηση"
-    });
-    JTextField regularField = new JTextField(20);
-    JTextField publicField = new JTextField(20);
+
+
+
     JTextField totalField = new JTextField(20);
     totalField.setEditable(false);
     totalField.setBackground(Color.LIGHT_GRAY);
-
+    
+    JTextField foreasIdField = new JTextField(20);
+    JTextField nameField = new JTextField(20);
     panel.add(new JLabel("Foreas ID:"));
     panel.add(foreasIdField);
     panel.add(new JLabel("Όνομα:"));
     panel.add(nameField);
     panel.add(new JLabel("Τύπος:"));
+    JComboBox<String> typeCombo = new JComboBox<>(new String[]{
+        "Κεντρική Διοίκηση", "Υπουργείο", "Αποκεντρωμένη Διοίκηση"
+    });
     panel.add(typeCombo);
     panel.add(new JLabel("Τακτικός Π/Υ (€):"));
+    JTextField regularField = new JTextField(20);
+    JTextField publicField = new JTextField(20);
     panel.add(regularField);
     panel.add(new JLabel("Δημόσιες Επενδύσεις (€):"));
     panel.add(publicField);
     panel.add(new JLabel("Σύνολο (€):"));
     panel.add(totalField);
+    
+
 
     regularField.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -705,14 +740,14 @@ public final class DataEditorPanel extends JPanel {
       try {
         String foreasIdStr = foreasIdField.getText().trim();
         String name = nameField.getText().trim();
-        String type = (String) typeCombo.getSelectedItem();
         String regularStr = regularField.getText().trim();
         String publicStr = publicField.getText().trim();
 
-        if (foreasIdStr.isEmpty() || name.isEmpty() || regularStr.isEmpty() || publicStr.isEmpty()) {
+        if (foreasIdStr.isEmpty() || name
+            .isEmpty() || regularStr.isEmpty() || publicStr.isEmpty()) {
           throw new IllegalArgumentException("Όλα τα πεδία είναι υποχρεωτικά!");
         }
-
+        String type = (String) typeCombo.getSelectedItem();
         int foreasId = Integer.parseInt(foreasIdStr);
         double regular = Double.parseDouble(regularStr);
         double publicInv = Double.parseDouble(publicStr);
@@ -767,7 +802,8 @@ public final class DataEditorPanel extends JPanel {
 
     int confirm = JOptionPane.showConfirmDialog(
             this,
-            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n" +
+            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n" 
+            +
                     "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί!", rowInfo),
             "Επιβεβαίωση Διαγραφής",
             JOptionPane.YES_NO_OPTION,
@@ -808,7 +844,8 @@ public final class DataEditorPanel extends JPanel {
 
     int confirm = JOptionPane.showConfirmDialog(
             this,
-            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n" +
+            String.format("Είστε σίγουροι ότι θέλετε να διαγράψετε:%n%n%s%n%n" 
+            +
                     "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί!", rowInfo),
             "Επιβεβαίωση Διαγραφής",
             JOptionPane.YES_NO_OPTION,
@@ -888,9 +925,12 @@ public final class DataEditorPanel extends JPanel {
                   path.replace(".pdf", "_Foreis.pdf"));
               
         JOptionPane.showMessageDialog(this,
-                  "Δημιουργήθηκαν 3 PDF αρχεία:\n" + 
-                  path.replace(".pdf", "_Esoda.pdf") + "\n" +
-                  path.replace(".pdf", "_Exoda.pdf") + "\n" +
+                  "Δημιουργήθηκαν 3 PDF αρχεία:\n" 
+                  + 
+                  path.replace(".pdf", "_Esoda.pdf") + "\n" 
+                  +
+                  path.replace(".pdf", "_Exoda.pdf") + "\n"
+                   +
                   path.replace(".pdf", "_Foreis.pdf"),
                   "Επιτυχία",
                   JOptionPane.INFORMATION_MESSAGE);
