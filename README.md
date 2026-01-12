@@ -76,20 +76,20 @@
 
 ## Download
 
-# Μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens:  
+- Μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens:  
 [⬇️ GoverLens.exe](https://github.com/FilothodorosChristos/404_NOT_FOUND/releases/download/v1.0.0/GoverLens.exe)
 
 
 # (Εναλλακτικά) Οδηγίες εκτέλεσης του προγράμματος από Windows Command-Line
 
-# Προαπαιτούμενα
+ **Προαπαιτούμενα**
 
 - **Λειτουργικό Σύστημα:** Windows  
 - **Java:** JDK 17 ή νεότερη  
 - **Maven:** 3.8 ή νεότερο  
 
 
-# Τρέξιμο εφαρμογής
+# **Τρέξιμο εφαρμογής**
 
 1. Κλωνοποίηση του repo:
    ```bash
@@ -102,7 +102,7 @@
 
   Μετά την ολοκλήρωση, το εκτελέσιμο JAR θα είναι:
    ```bash
- target/GoverLens-0.0.1-SNAPSHOT.jar
+   target/GoverLens-0.0.1-SNAPSHOT.jar
    ```
 3. Εκτέλεση της εφαρμογής
    ```bash
@@ -259,7 +259,7 @@
 ## Έλεγχος ποιότητας κώδικα (JACOCO)
 ![JACOCO](docs/images/Screenshot%202026-01-12%20213939.png)
 
-### επιπρόσθετες  μετρήσεις
+### Πρόσθετες  μετρήσεις
 
 ```text
 
@@ -279,6 +279,7 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
 
 
