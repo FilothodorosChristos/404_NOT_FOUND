@@ -72,11 +72,43 @@
 - **Microsoft Teams**
   - Επικοινωνία και ανατροφοδότηση μεταξύ των μελών της ομάδας
 
-## Οδηγίες εκτέλεσης του προγράμματος  
 
+## Download
 
-##  Οδηγίες μεταγλώττισης του προγράμματος
+Μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens για Windows:
 
+**[⬇️ GoverLens.exe](https://github.com/FilothodorosChristos/404_NOT_FOUND/releases/download/v1.0.0/GoverLens.exe)**
+
+---
+
+## Εναλλακτικά: Εκτέλεση της εφαρμογής από Windows Command-Line
+
+ **Προαπαιτούμενα**
+
+- **Λειτουργικό Σύστημα:** Windows  
+- **Java:** JDK 17 ή νεότερη  
+- **Maven:** 3.8 ή νεότερο  
+
+---
+
+Βήματα:
+
+1. Κλωνοποίηση του repo:
+   ```bash
+   git clone https://github.com/FilothodorosChristos/404_NOT_FOUND.git
+   cd 404_NOT_FOUND
+
+2. Build με maven
+   ```bash
+   mvn clean package
+
+  Μετά την ολοκλήρωση, το εκτελέσιμο JAR θα είναι:
+   ```bash
+   target/GoverLens-0.0.1-SNAPSHOT.jar
+   ```
+3. Εκτέλεση της εφαρμογής
+   ```bash
+   java -jar target/GoverLens-0.0.1-SNAPSHOT.jar
 
 
 ## Δομή Αποθετηρίου
@@ -217,6 +249,7 @@
 ## Πρόσθετη Τεχνική Τεκμηρίωση
 
 ### JavaDoc Documentation
+https://filothodoroschristos.github.io/404_NOT_FOUND/javadoc/
 
 - **Πλήρης τεκμηρίωση classes**: Όλες οι κλάσεις περιέχουν JavaDoc comments με περιγραφή σκοπού
 - **Τεκμηρίωση μεθόδων**: Κάθε public/protected μέθοδος περιλαμβάνει:
@@ -226,7 +259,7 @@
 ## Έλεγχος ποιότητας κώδικα (JACOCO)
 ![JACOCO](docs/images/Screenshot%202026-01-12%20213939.png)
 
-### επιπρόσθετες  μετρήσεις
+### Πρόσθετες  μετρήσεις
 
 ```text
 
@@ -246,4 +279,23 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
