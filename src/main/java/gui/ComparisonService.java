@@ -1,15 +1,15 @@
 package gui;
 
-import dto.CashFlowCompareDto;
-import dto.ForeasCompareDto;
 import dao.CashFlow;
 import dao.Foreis;
-import service.CashFlowService;
-import service.ForeisService;
+import dto.CashFlowCompareDto;
+import dto.ForeasCompareDto;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import service.CashFlowService;
+import service.ForeisService;
 
 /**
  * Service for comparing budget data between two years.
@@ -25,7 +25,7 @@ public class ComparisonService {
   public ComparisonService() {
     this.cashFlowService = new CashFlowService();
     this.foreisService = new ForeisService();
-    }
+  }
     
   /**
    * Compares cash flows between two years.
@@ -88,7 +88,7 @@ public class ComparisonService {
                     true,
                     false
                 ));
-        }
+      }
     }
         
     return results;

@@ -1,11 +1,29 @@
 package gui;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.RadialGradientPaint;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.Ellipse2D;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  * Modern ActionSelectionPanel with unified aesthetic matching WelcomePanel.
@@ -33,7 +51,7 @@ public class ActionSelectionPanel extends JPanel {
     setLayout(null);
     setBackground(new Color(10, 14, 39));
         
-    createUI();
+    createUi();
     setupAnimations();
     setupMouseTracking();
         
@@ -49,11 +67,11 @@ public class ActionSelectionPanel extends JPanel {
   /**
    * Creates all UI components.
    */
-  private void createUI() {
+  private void createUi() {
     createActionButtons();
     createBackButton();
     repositionComponents();
-    }
+  }
     
   /**
    * Repositions all components to center of panel.
@@ -80,7 +98,7 @@ public class ActionSelectionPanel extends JPanel {
         col = i;  // 0,1,2
       } else {
         col = i - 3; // 0,1 για δεύτερη σειρά
-        }
+      }
 
       int buttonsInRow = (row == 0) ? firstRowButtons : secondRowButtons;
       int totalWidth = buttonsInRow * buttonWidth + (buttonsInRow - 1) * gapX;
@@ -115,7 +133,7 @@ public class ActionSelectionPanel extends JPanel {
     for (int i = 0; i < 5; i++) {
       actionButtons[i] = createActionButton(titles[i], icons[i], descriptions[i]);
       add(actionButtons[i]);
-        }
+    }
   }
     
   /**
@@ -141,7 +159,7 @@ public class ActionSelectionPanel extends JPanel {
             g2.setPaint(gradient);
             } else {
               g2.setColor(new Color(15, 23, 42, 128));
-                }
+            }
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 
             // Border (matching WelcomePanel cards)
@@ -190,7 +208,7 @@ public class ActionSelectionPanel extends JPanel {
             btn.putClientProperty("hover", true);
             btn.setBounds(btn.getX(), btn.getY() - 3, btn.getWidth(), btn.getHeight());
             btn.repaint();
-            }
+          }
             
         @Override
             public void mouseExited(MouseEvent e) {
@@ -264,16 +282,16 @@ public class ActionSelectionPanel extends JPanel {
       mainFrame.showMassiveChanges();
     }
   }
-
-    
+  
   /**
    * Sets up animation timer.
    */
   private void setupAnimations() {
     animationTimer = new Timer(30, e -> {
       rotationAngle += 0.5f;
-      if (rotationAngle >= 360) rotationAngle = 0;
-            
+      if (rotationAngle >= 360) {
+        rotationAngle = 0;
+      }     
       if (fadeInProgress < 100) {
         fadeInProgress += 2;
       }
@@ -328,7 +346,7 @@ public class ActionSelectionPanel extends JPanel {
     g2.setStroke(new BasicStroke(1));
         
     int gridSize = 50;
-    int offset = (int)(rotationAngle % gridSize);
+    int offset = (int) (rotationAngle % gridSize);
         
     for (int x = -offset; x < width; x += gridSize) {
       g2.drawLine(x, 0, x, height);
@@ -349,7 +367,7 @@ public class ActionSelectionPanel extends JPanel {
             new Color[]{new Color(99, 102, 241, 76), new Color(99, 102, 241, 0)}
         );
     g2.setPaint(gradient1);
-    g2.fillOval((int)(-200 + parallax1), (int)(-200 + parallax2), 500, 500);
+    g2.fillOval((int) (-200 + parallax1), (int) (-200 + parallax2), 500, 500);
         
     // Orb 2 (bottom-right)
     RadialGradientPaint gradient2 = new RadialGradientPaint(
@@ -358,8 +376,8 @@ public class ActionSelectionPanel extends JPanel {
             new Color[]{new Color(139, 92, 246, 76), new Color(139, 92, 246, 0)}
         );
     g2.setPaint(gradient2);
-    g2.fillOval((int)(width - 350 + parallax1 * 1.5f),
-         (int)(height - 350 + parallax2 * 1.5f), 400, 400);
+    g2.fillOval((int) (width - 350 + parallax1 * 1.5f),
+         (int) (height - 350 + parallax2 * 1.5f), 400, 400);
   }
     
   private void drawHeader(Graphics2D g2, int width) {
