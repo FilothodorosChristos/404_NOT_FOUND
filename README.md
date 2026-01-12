@@ -250,6 +250,7 @@
 ## Πρόσθετη Τεχνική Τεκμηρίωση
 
 ### JavaDoc Documentation
+https://filothodoroschristos.github.io/404_NOT_FOUND/javadoc/
 
 - **Πλήρης τεκμηρίωση classes**: Όλες οι κλάσεις περιέχουν JavaDoc comments με περιγραφή σκοπού
 - **Τεκμηρίωση μεθόδων**: Κάθε public/protected μέθοδος περιλαμβάνει:
