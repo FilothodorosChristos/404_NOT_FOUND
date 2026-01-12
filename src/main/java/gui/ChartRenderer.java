@@ -1,11 +1,14 @@
-package GUI;
+package gui;
 
 import javax.swing.*;
+
+import gui.FinanceChartPanel.DataItem;
+
 import java.awt.*;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import static GUI.FinanceChartPanel.DataItem;
+import static gui.FinanceChartPanel.DataItem;
 
 /**
  * Utility class responsible for rendering financial data as horizontal bar charts.

@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,15 +34,15 @@ public class WelcomePanel extends JPanel {
     setLayout(null);
     setBackground(new Color(10, 14, 39));
         
-    createUI();
+    createUi();
     setupAnimations();
     setupMouseTracking();
-    }
+  }
     
   /**
    * Creates all UI components.
    */
-  private void createUI() {
+  private void createUi() {
     // Components will be positioned dynamically in paintComponent
     // Create enter button
     enterButton = createStyledButton();
@@ -56,7 +56,7 @@ public class WelcomePanel extends JPanel {
         @Override
             public void componentResized(ComponentEvent e) {
             repositionComponents();
-            }
+          }
         });
   }
     
@@ -250,8 +250,9 @@ public class WelcomePanel extends JPanel {
   private void setupAnimations() {
     animationTimer = new Timer(30, e -> {
       rotationAngle += 0.5f;
-       if (rotationAngle >= 360) rotationAngle = 0;
-            
+      if (rotationAngle >= 360) {
+        rotationAngle = 0;
+      }      
       if (fadeInProgress < 100) {
         fadeInProgress += 2;
       }
@@ -271,7 +272,7 @@ public class WelcomePanel extends JPanel {
             mousePosition = e.getPoint();
         }
         });
-    }
+  }
     
   @Override
     protected void paintComponent(Graphics g) {

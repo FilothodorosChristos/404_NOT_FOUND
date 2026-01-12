@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -310,6 +310,7 @@ filterPanel.add(exportPdfButton);
     try {
       // Παίρνουμε το έτος ως int (π.χ. 2023)
       String yearStr = mainFrame.getSelectedYear();
+      
       int year = Integer.parseInt(yearStr);
 
       // Update section label
