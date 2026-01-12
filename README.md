@@ -72,15 +72,16 @@
 - **Microsoft Teams**
   - Επικοινωνία και ανατροφοδότηση μεταξύ των μελών της ομάδας
 
- 
 
-## **Κατεβάστε την εφαρμογή**
+## Κατεβάστε την εφαρμογή
 
-- Εδώ μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens για Windows:  
-[⬇️ GoverLens.exe](https://github.com/FilothodorosChristos/404_NOT_FOUND/releases/download/v1.0.0/GoverLens.exe)
+Μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens για Windows:
 
+**[⬇️ GoverLens.exe](https://github.com/FilothodorosChristos/404_NOT_FOUND/releases/download/v1.0.0/GoverLens.exe)**
 
-# *Εναλλακτικά: Οδηγίες εκτέλεσης του προγράμματος από Windows Command-Line*
+---
+
+## Εναλλακτικά: Εκτέλεση της εφαρμογής από Windows Command-Line
 
  **Προαπαιτούμενα**
 
@@ -280,6 +281,7 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
 
 
