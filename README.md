@@ -87,7 +87,7 @@
 ├── src/
 │   ├── main/
 │   │   ├── java/
-│   │   │   ├── GUI/
+│   │   │   ├── gui/
 │   │   │   │   ├── ActionSelectionPanel.java
 │   │   │   │   ├── BudgetViewPanel.java
 │   │   │   │   ├── ChartRenderer.java
@@ -129,6 +129,7 @@
 │   │   │   │
 │   │   │   └── util/
 │   │   │       ├── DbExistsChecker.java
+│   │   │       ├── PdfExporter.java
 │   │   │       └── ValidationUtils.java
 │   │   │
 │   │   └── resources/
@@ -137,8 +138,11 @@
 │   │       │   ├── B21Exoda.csv - B26Exoda.csv
 │   │       │   └── B21Foreis.csv - B26Foreis.csv
 │   │       │
-│   │       └── db/
-│   │           └── originalDB.db
+│   │       ├── db/
+│   │       │   └── originalDB.db
+│   │       │
+│   │       ├── BackgroundPhoto.jpg
+│   │       └── GoverLensLogo.jpg
 │   │
 │   └── test/
 │       └── java/
@@ -167,6 +171,7 @@
 │           │
 │           ├── util/
 │           │   ├── DbExistsCheckerTest.java
+│           │   ├── PdfExporterTest.java
 │           │   └── ValidationUtilsTest.java
 │           │
 │           └── resources/data/
@@ -179,12 +184,11 @@
 │       ├── Screenshot 2026-01-05 122437.png
 │       └── project_diagram.png
 │
-├── BackgroundPhoto.jpg
-├── GoverLensLogo.jpg
-├── README.md
+├── .gitignore
 ├── checkstyle.xml
+├── LICENSE
 ├── pom.xml
-└── .gitignore
+└── README.md
 ```
 
 ## UML Class Diagram
