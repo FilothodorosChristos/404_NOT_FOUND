@@ -242,8 +242,3 @@
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
 
-```
-
-
-
-
