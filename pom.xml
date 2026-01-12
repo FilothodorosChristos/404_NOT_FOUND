@@ -66,6 +66,7 @@
 
     <!-- Plugins -->
     <build>
+        <finalName>GoverLens</finalName>
         <plugins>
 
             <!-- Maven Compiler -->
@@ -78,6 +79,56 @@
                 </configuration>
             </plugin>
 
+            <!-- Maven Compiler Plugin -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version>
+            <configuration>
+                <release>17</release>
+            </configuration>
+        </plugin>
+
+        <!-- Launch4j Plugin για EXE -->
+        <plugin>
+            <groupId>com.akathist.maven.plugins.launch4j</groupId>
+            <artifactId>launch4j-maven-plugin</artifactId>
+            <version>2.5.0</version>
+            <configuration>
+                    <!-- Path του JAR που φτιάχνει το Maven -->
+                    <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
+
+                    <!-- Όνομα του τελικού EXE -->
+                    <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
+
+                    <!-- Full qualified Main class -->
+                    <mainClass>gui.MainFrame</mainClass>
+
+                    <!-- Icon -->
+                    <icon>src/main/resources/GoverLensIcon.ico</icon>
+
+                    <!-- Optional: περιγραφή εφαρμογής -->
+                    <dontWrapJar>false</dontWrapJar>
+                    <stayAlive>false</stayAlive>
+                    <headerType>gui</headerType>
+                    <jreMinVersion>17</jreMinVersion>
+
+                    <!-- Optional JVM options -->
+                    <jvmOptions>
+                        <jvmOption>-Xmx512m</jvmOption>
+                    </jvmOptions>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>create-exe</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- JaCoCo για code coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
