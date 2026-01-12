@@ -73,7 +73,7 @@
   - Επικοινωνία και ανατροφοδότηση μεταξύ των μελών της ομάδας
 
 
-## Κατεβάστε την εφαρμογή
+## Download
 
 Μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens για Windows:
 
@@ -91,6 +91,8 @@
 
 ---
 
+Βήματα:
+
 1. Κλωνοποίηση του repo:
    ```bash
    git clone https://github.com/FilothodorosChristos/404_NOT_FOUND.git
@@ -107,9 +109,6 @@
 3. Εκτέλεση της εφαρμογής
    ```bash
    java -jar target/GoverLens-0.0.1-SNAPSHOT.jar
-
-
-
 
 
 ## Δομή Αποθετηρίου
@@ -280,6 +279,7 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
 
 
