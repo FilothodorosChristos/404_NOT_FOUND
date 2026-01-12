@@ -69,7 +69,7 @@ public class MassiveChangesPanel extends JPanel {
     setLayout(new BorderLayout());
     setBackground(DARK_BG);
 
-    createTable();
+    createUi();
     }
 
   /**
