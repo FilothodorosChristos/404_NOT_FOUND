@@ -193,7 +193,7 @@
 
 ## UML Class Diagram
 
-![UML Class Diagram](docs/images/project_diagram.png) 
+![uml diagram](project_diagram.png)
 
 ## Αλγόριθμοι & Δομές Δεδομένων
 
