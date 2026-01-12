@@ -4,11 +4,19 @@ import dao.Log;
 import dao.LogDao;
 import java.util.List;
 
+/**
+ * Service κλάση για την διαχείριση των logs.
+ */
 public class LogService {
 
   private final LogDao logDao;
   private int defaultIndex = 335; // index καθορίζεται εδώ
 
+  /**
+   * Δημιουργεί ένα LogService με το δοσμένο LogDao.
+   *
+   * @param logDao το LogDao για πρόσβαση στα δεδομένα των logs
+   */
   public LogService(LogDao logDao) {
     this.logDao = logDao;
   }
