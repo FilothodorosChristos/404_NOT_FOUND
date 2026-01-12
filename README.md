@@ -109,7 +109,7 @@
 ```markdown
 Αν θέλετε να φτιάξετε EXE:
 
-```bash
+
 jpackage ^
   --input target ^
   --name GoverLens ^
@@ -288,6 +288,7 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
 
 
