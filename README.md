@@ -89,8 +89,7 @@
 - **Java:** JDK 17 ή νεότερη  
 - **Maven:** 3.8 ή νεότερο  
 
-
-# Εκτέλεση εφαρμογής από Windows Command-Line
+---
 
 1. Κλωνοποίηση του repo:
    ```bash
@@ -281,6 +280,7 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
 
 
