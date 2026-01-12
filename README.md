@@ -76,11 +76,11 @@
 
 ## Download
 
-- Μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens:  
+- Εδώ πορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens για Windows:  
 [⬇️ GoverLens.exe](https://github.com/FilothodorosChristos/404_NOT_FOUND/releases/download/v1.0.0/GoverLens.exe)
 
 
-*(Εναλλακτικά) Οδηγίες εκτέλεσης του προγράμματος από Windows Command-Line*
+# **(Εναλλακτικά) Οδηγίες εκτέλεσης του προγράμματος από Windows Command-Line**
 
  **Προαπαιτούμενα**
 
@@ -89,7 +89,7 @@
 - **Maven:** 3.8 ή νεότερο  
 
 
-# **Τρέξιμο εφαρμογής**
+# Εκτέλεση εφαρμογής από Windows Command-Line
 
 1. Κλωνοποίηση του repo:
    ```bash
@@ -279,6 +279,7 @@ Languages
 ## Αναφορά για τη χρήση Τεχνητής Νοημοσύνης (ChatGPT)
 
 - **AI Report**: [PDF](https://github.com/user-attachments/files/24563073/AI.Report.pdf)
+
 
 
 
