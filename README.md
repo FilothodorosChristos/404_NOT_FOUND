@@ -74,16 +74,9 @@
 
 
 ## Download
-
-Μπορείτε να κατεβάσετε την τελευταία έκδοση της GoverLens για Windows:
-
-⚠️ **Σημαντικό:** Χρειάζεται να είναι εγκατεστημένο το **Java Runtime Environment (JRE)**
-
-**[⬇️ GoverLens.exe](https://github.com/FilothodorosChristos/404_NOT_FOUND/releases/download/v1.0.0/GoverLens.exe)**
-
 ---
-
-## Εναλλακτικά: Εκτέλεση της εφαρμογής από Windows Command-Line
+⚠️ **Σημαντικό:** Χρειάζεται να είναι εγκατεστημένο το **Java Runtime Environment (JRE)**
+## Εκτέλεση της εφαρμογής από Windows Command-Line
 
  **Προαπαιτούμενα**
 
@@ -92,7 +85,6 @@
 - **Maven:** 3.8 ή νεότερο  
 
 ---
-
 Βήματα:
 
 1. Κλωνοποίηση του repo:
@@ -106,11 +98,11 @@
 
   Μετά την ολοκλήρωση, το εκτελέσιμο JAR θα είναι:
    ```bash
-   target/GoverLens-0.0.1-SNAPSHOT.jar
+   target/GoverLens.jar
    ```
 3. Εκτέλεση της εφαρμογής
    ```bash
-   java -jar target/GoverLens-0.0.1-SNAPSHOT.jar
+   java -jar target/GoverLens.jar
 
 
 ## Δομή Αποθετηρίου
